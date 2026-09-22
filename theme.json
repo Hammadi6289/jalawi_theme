@@ -1,16 +1,16 @@
 {
     "name": {
-        "ar": "فلك 2026",
-        "en": "Falak Theme 2026"
+        "ar": "جلوي",
+        "en": "Jalawi"
     },
-    "slug": "falak-theme-2026",
-    "version": "1.0.0",
-    "author": "Falak Cart",
-    "author_email": "themes@falakcart.sa",
-    "support_url": "https://falakcart.sa/support",
+    "slug": "jalawi",
+    "version": "0.1.0",
+    "author": "Afrasiab Ahmad",
+    "author_email": "a.ahemd@serajj.sa",
+    "support_url": null,
     "description": {
-        "ar": "الثيم الافتراضي لمنصة فلك كارت — المرجع الرسمي لبنية الثيمات",
-        "en": "Falak Cart's default theme — the official reference implementation of the theme structure"
+        "ar": "",
+        "en": ""
     },
     "features": [
         "fonts",
@@ -531,5 +531,6 @@
                 "footer_is_dark": true
             }
         }
-    ]
+    ],
+    "repository": "https://github.com/aahemd-glitch/jalawi_theme"
 }
