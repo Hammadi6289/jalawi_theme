@@ -1,0 +1,30 @@
+{#
+    Wishlist — server-rendered for the signed-in customer (auth cookie) and
+    for a guest (the browser's guest token), the same list the hearts toggle.
+    | Variable | Type  | Description                             |
+    | products | array | product-card shape (mapProduct)         |
+#}
+{% extends "layouts.customer" %}
+
+{% set account_page = 'wishlist' %}
+
+{% block title %}{{ trans('account.wishlist') }} — {{ store.name }}{% endblock %}
+
+{% block account_content %}
+    <h1>{{ trans('account.wishlist') }}</h1>
+    {% if products|default([])|length > 0 %}
+        <p class="page-head__meta">{{ trans('cart.items_count', {count: products|length}) }}</p>
+    {% endif %}
+
+    {% if products|default([])|length > 0 %}
+        <div class="product-grid">
+            {% for product in products %}
+                {% include 'pages.partials.product-card' %}
+            {% endfor %}
+        </div>
+    {% else %}
+        <falak-placeholder icon="♡" text="{{ trans('account.no_wishlist') }}"
+                           action-text="{{ trans('cart.start_shopping') }}" action-href="/products"
+                           action-class="btn btn--primary"></falak-placeholder>
+    {% endif %}
+{% endblock %}

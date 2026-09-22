@@ -1,0 +1,193 @@
+{
+    "key": "falak-offer-countdown",
+    "path": "home.offer-countdown",
+    "title": {
+        "ar": "عرض بعداد تنازلي",
+        "en": "Offer Countdown"
+    },
+    "icon": "timer-line",
+    "is_default": false,
+    "areas": [
+        "home",
+        "pages"
+    ],
+    "styleable": [
+        {
+            "id": "heading",
+            "label": {
+                "ar": "العنوان",
+                "en": "Headline"
+            },
+            "properties": [
+                "font_size",
+                "font_weight",
+                "color"
+            ]
+        },
+        {
+            "id": "copy",
+            "label": {
+                "ar": "الوصف",
+                "en": "Description"
+            },
+            "properties": [
+                "font_size",
+                "font_weight",
+                "color"
+            ]
+        },
+        {
+            "id": "cta",
+            "label": {
+                "ar": "الزر",
+                "en": "Button"
+            },
+            "properties": [
+                "font_size",
+                "font_weight",
+                "color",
+                "background_color",
+                "border_radius"
+            ]
+        }
+    ],
+    "fields": [
+        {
+            "id": "title",
+            "type": "string",
+            "format": "text",
+            "label": {
+                "ar": "العنوان",
+                "en": "Title"
+            },
+            "multilanguage": true,
+            "required": true,
+            "maxLength": 100,
+            "value": {
+                "ar": "عرض لفترة محدودة",
+                "en": "Limited-time offer"
+            }
+        },
+        {
+            "id": "description",
+            "type": "string",
+            "format": "textarea",
+            "label": {
+                "ar": "الوصف",
+                "en": "Description"
+            },
+            "multilanguage": true,
+            "required": false,
+            "maxLength": 255
+        },
+        {
+            "id": "ends_at",
+            "type": "string",
+            "format": "datetime",
+            "label": {
+                "ar": "ينتهي العرض في",
+                "en": "Offer ends at"
+            },
+            "description": {
+                "ar": "بتوقيت المتجر",
+                "en": "In the store's time"
+            },
+            "required": true,
+            "value": "2026-12-31 23:59"
+        },
+        {
+            "id": "end_text",
+            "type": "string",
+            "format": "text",
+            "label": {
+                "ar": "نص انتهاء العرض",
+                "en": "Text once the offer ends"
+            },
+            "multilanguage": true,
+            "required": false,
+            "maxLength": 100
+        },
+        {
+            "id": "image",
+            "type": "string",
+            "format": "image",
+            "label": {
+                "ar": "صورة الخلفية",
+                "en": "Background image"
+            },
+            "description": {
+                "ar": "اختيارية — المقاس المناسب 1200×400 بكسل",
+                "en": "Optional — recommended size 1200x400 px"
+            },
+            "required": false
+        },
+        {
+            "id": "style",
+            "type": "items",
+            "format": "dropdown-list",
+            "label": {
+                "ar": "النمط",
+                "en": "Style"
+            },
+            "value": "dark",
+            "options": [
+                {
+                    "label": {
+                        "ar": "داكن",
+                        "en": "Dark"
+                    },
+                    "value": "dark"
+                },
+                {
+                    "label": {
+                        "ar": "فاتح",
+                        "en": "Light"
+                    },
+                    "value": "light"
+                },
+                {
+                    "label": {
+                        "ar": "لون المتجر",
+                        "en": "Store colour"
+                    },
+                    "value": "primary"
+                }
+            ]
+        },
+        {
+            "id": "button_text",
+            "type": "string",
+            "format": "text",
+            "label": {
+                "ar": "نص الزر",
+                "en": "Button label"
+            },
+            "multilanguage": true,
+            "required": false,
+            "maxLength": 40,
+            "conditions": [
+                {
+                    "id": "show_button",
+                    "value": true
+                }
+            ]
+        },
+        {
+            "id": "button_url",
+            "type": "string",
+            "format": "text",
+            "label": {
+                "ar": "رابط الزر",
+                "en": "Button link"
+            },
+            "required": false,
+            "maxLength": 255,
+            "conditions": [
+                {
+                    "id": "show_button",
+                    "value": true
+                }
+            ]
+        }
+    ]
+}
