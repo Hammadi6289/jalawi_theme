@@ -1,38 +1,64 @@
 {#
-    Promo banner — merchant-placeable component (home + builder pages).
-    | Variable              | Type    | Description                       |
-    | component.image       | string  | background image URL              |
-    | component.title       | ?string | localized server-side             |
-    | component.description | ?string | localized server-side             |
-    | component.button_text | ?string | CTA label, localized server-side  |
-    | component.button_url  | ?string | CTA target                        |
-    | position              | int     |                                   |
+    Promo banners — merchant-placeable component (home + builder pages).
+    Jalawi layout: one large banner at the start, the others stacked beside
+    it (the "featured" layout), or equal columns. Any number of banners.
+
+    | Variable                        | Type    | Description                         |
+    | component.banners[]             | list    | the banners, in order               |
+    | component.banners[].image       | string  | image URL                           |
+    | component.banners[].subtitle    | ?string | small line, localized server-side   |
+    | component.banners[].title       | ?string | big line, localized server-side     |
+    | component.banners[].button_text | ?string | CTA label, localized server-side    |
+    | component.banners[].button_url  | ?string | CTA target                          |
+    | component.banners[].text_align  | ?string | start | center | end                |
+    | component.banners[].text_color  | ?string | dark | light                        |
+    | component.layout                | ?string | featured | columns                  |
+    | position                        | int     |                                     |
+
+    Banners placed before this was a list carry a single image/title/
+    description/button instead; they render as one banner.
 
     Customizer bindings — full rules in README, "Customizer annotations".
-    | Element           | Tag                                                              |
-    | .banner           | data-falak-field="image" data-falak-bind="background"             |
-    | .banner__content  | data-falak-part="content"                                        |
-    | h2                | data-falak-field="title"                                         |
-    | p                 | data-falak-field="description"                                   |
-    | a.btn             | data-falak-field="button_text" data-falak-bind-href="button_url" |
-
-    A text binding replaces the element's content, so it belongs on the element
-    that holds that value and nothing else — never on a wrapper.
-
-    `.banner__content` carries `data-falak-part`, not `data-falak-field`: it is
-    styleable but holds no value, so it must not become a clickable field in the
-    editor. See README, "Styleable parts".
+    | Element       | Tag                                                 |
+    | .promo-tile   | data-falak-field="banners" data-falak-bind="none"   |
+    `banners` is a collection, so each tile takes bind="none": selectable in
+    the preview, edited in the panel.
 #}
+{% set banners = component.banners|default([]) %}
+{% if not banners|length and component.image|default(null) %}
+    {% set banners = [{
+        image: component.image,
+        subtitle: component.description|default(null),
+        title: component.title|default(null),
+        button_text: component.button_text|default(null),
+        button_url: component.button_url|default(null)
+    }] %}
+{% endif %}
+{% set layout = component.layout|default('featured') %}
+{% set count = banners|length %}
+
 <section class="block block--banner" id="banner-{{ position }}" {{ falak_section() }}>
     <div class="container">
-        <div class="banner" data-falak-field="image" data-falak-label="{{ trans('editor.field.image') }}" data-falak-bind="background" style="background-image: url({{ component.image }});">
-            <div class="banner__content" data-falak-part="content">
-                {% if component.title %}<h2 data-falak-field="title" data-falak-label="{{ trans('editor.field.title') }}">{{ component.title }}</h2>{% endif %}
-                {% if component.description %}<p data-falak-field="description" data-falak-label="{{ trans('editor.field.description') }}">{{ component.description }}</p>{% endif %}
-                {% if component.button_text and component.button_url %}
-                    <a class="btn btn--primary" data-falak-field="button_text" data-falak-label="{{ trans('editor.field.button') }}" data-falak-bind-href="button_url" href="{{ component.button_url }}">{{ component.button_text }}</a>
-                {% endif %}
-            </div>
+        {% if count %}
+        <div class="promo-grid promo-grid--{{ layout == 'columns' ? 'columns' : 'featured' }} promo-grid--count-{{ count }}"
+             style="--promo-rows: {{ count > 1 ? count - 1 : 1 }}; --promo-count: {{ count }};">
+            {% for banner in banners %}
+                {% set align = banner.text_align|default('start') %}
+                <div class="promo-tile promo-tile--{{ align }}{{ banner.text_color|default('dark') == 'light' ? ' promo-tile--light' : '' }}{{ loop.first ? ' promo-tile--main' : '' }}"
+                     data-falak-field="banners" data-falak-label="{{ trans('editor.field.items') }}" data-falak-bind="none">
+                    {% if banner.image|default(null) %}
+                        <img class="promo-tile__img" src="{{ banner.image }}" alt="" loading="lazy">
+                    {% endif %}
+                    <div class="promo-tile__content" data-falak-part="content">
+                        {% if banner.subtitle|default(null) %}<h2 class="promo-tile__subtitle" data-falak-part="subtitle">{{ banner.subtitle }}</h2>{% endif %}
+                        {% if banner.title|default(null) %}<p class="promo-tile__title" data-falak-part="title">{{ banner.title }}</p>{% endif %}
+                        {% if banner.button_text|default(null) and banner.button_url|default(null) %}
+                            <a class="promo-tile__button" data-falak-part="button_text" href="{{ banner.button_url }}">{{ banner.button_text }}</a>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
         </div>
+        {% endif %}
     </div>
 </section>

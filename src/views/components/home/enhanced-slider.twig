@@ -6,7 +6,23 @@
     | component.slides[].description | ?string  | localized server-side                    |
     | component.slides[].button_text | ?string  | CTA label, localized server-side         |
     | component.slides[].button_url  | ?string  | CTA target                               |
+    | component.slides[].video       | ?string  | MP4/WebM URL, plays instead of the image |
+    | component.slides[].thumb_product  | ?string | product id → <falak-product-card> as glass  |
+    | component.slides[].thumb_category | ?string | category id → glass card with an arrow     |
+    | component.slides[].card_type      | ?string | auto|product|video|category|link|image     |
+    | component.slides[].card_link      | ?string | page-link card target (else button_url)    |
+    | component.slides[].card_title     | ?string | text on a link / category card             |
+    | component.slides[].thumb_image    | ?string | card image (video, link, category, image)  |
+    | component.show_cards              | ?bool   | glass cards on/off (default on)            |
     | position                       | int      | render order index, starts at 0          |
+
+    Built on the SDK's <falak-slider>: slides go in slot="items", and when any
+    slide has a card (product / category / thumbnail image) the glass cards go
+    in slot="thumbs" (type="thumbs") — one per slide, so clicking a card shows
+    its slide. The SDK owns scrolling, autoplay, loop, arrows and dots, and
+    a product card is <falak-product-card>; home.js only plays the active
+    slide's video, adds the product's description line and fills category
+    cards from the SDK.
 
     Customizer bindings — full rules in README, "Customizer annotations".
     | Element             | Tag                                             |
@@ -25,35 +41,131 @@
     | slide_button  | each slide's a.btn    |
 #}
 <section class="block block--hero-slider" id="hero-slider-{{ position }}" {{ falak_section() }}>
-    <div class="hero-slider">
-        {% for slide in component.slides %}
-            <div class="hero-slider__slide{{ loop.first ? ' is-active' : '' }}" data-falak-field="slides" data-falak-label="{{ trans('editor.field.slides') }}" data-falak-bind="none">
-                <img class="hero-slider__img" src="{{ slide.image }}"
-                     alt="{{ slide.title|default('') }}"{{ loop.first ? '' : ' loading="lazy"' }}>
-                <div class="hero-slider__content container" data-falak-part="slide_content">
-                    {% if slide.title %}<h2 data-falak-part="slide_title">{{ slide.title }}</h2>{% endif %}
-                    {% if slide.description %}<p data-falak-part="slide_text">{{ slide.description }}</p>{% endif %}
-                    {% if slide.button_text|default(null) and slide.button_url|default(null) %}
-                        <a class="btn btn--primary" data-falak-part="slide_button" href="{{ slide.button_url }}">{{ slide.button_text }}</a>
+    {% set slides = component.slides|default([]) %}
+    {# Glass cards (Jalawi): on by default whenever there is more than one
+       slide — a slide with nothing picked gets a card of its own image. #}
+    {% set show_cards = component.show_cards is defined ? component.show_cards : true %}
+    {% set has_thumbs = show_cards and slides|length > 1 %}
+
+    {# Jalawi: autoplay every 3s, looping, no arrows or dots — the glass
+       cards are the navigation. #}
+    <falak-slider class="hero-slider{{ has_thumbs ? ' hero-slider--thumbs' : '' }}"
+                  type="{{ has_thumbs ? 'thumbs' : 'fullwidth' }}"
+                  auto-play auto-play-delay="3000" loop static-when-single
+                  show-controls="false" show-thumbs-controls="false">
+        <div slot="items">
+            {% for slide in slides %}
+                {% set slide_link = slide.button_url|default(null) %}
+                <div class="hero-slider__slide{{ loop.first ? ' is-active' : '' }}" data-falak-field="slides" data-falak-label="{{ trans('editor.field.slides') }}" data-falak-bind="none">
+                    {# A video link plays instead of the image (muted, looping, like
+                       Jalawi); the image, when set, stays as its poster. Only the
+                       first slide autoplays — home.js plays whichever is active. #}
+                    {% set slide_video = slide.video|default(null) %}
+                    {% if slide_video %}
+                        <video class="hero-slider__img hero-slider__video" src="{{ slide_video }}"{% if slide.image %} poster="{{ slide.image }}"{% endif %}
+                               muted loop playsinline aria-hidden="true"{{ loop.first ? ' autoplay preload="auto"' : ' preload="metadata"' }}></video>
+                    {% else %}
+                        <img class="hero-slider__img" src="{{ slide.image }}"
+                             alt="{{ slide.title|default('') }}"{{ loop.first ? '' : ' loading="lazy"' }}>
+                    {% endif %}
+
+                    {# The whole slide is a link to the button's target, under
+                       the dark bottom-up overlay (Jalawi's banner-overlay). #}
+                    {% if slide_link %}
+                        <a class="hero-slider__overlay" href="{{ slide_link }}" tabindex="-1" aria-hidden="true"></a>
+                    {% else %}
+                        <span class="hero-slider__overlay" aria-hidden="true"></span>
+                    {% endif %}
+
+                    <div class="hero-slider__content" data-falak-part="slide_content">
+                        {% if slide.title %}<h2 class="hero-slider__title" data-falak-part="slide_title">{{ slide.title }}</h2>{% endif %}
+                        {% if slide.description %}<p class="hero-slider__text" data-falak-part="slide_text">{{ slide.description }}</p>{% endif %}
+                        {% if slide.button_text|default(null) and slide_link %}
+                            <a class="hero-slider__button" data-falak-part="slide_button" href="{{ slide_link }}">{{ slide.button_text }}</a>
+                        {% endif %}
+                    </div>
+
+                    {# Phones: the description moves to the bottom corner,
+                       beside the glass card (Jalawi's subtext-bottom). #}
+                    {% if slide.description %}
+                        <div class="hero-slider__text-bottom" aria-hidden="true"><p>{{ slide.description }}</p></div>
                     {% endif %}
                 </div>
-            </div>
-        {% endfor %}
+            {% endfor %}
+        </div>
 
-        {% if component.slides|length > 1 %}
-            <button type="button" class="hero-slider__arrow hero-slider__arrow--prev"
-                    data-slide-dir="-1" aria-label="{{ trans('common.previous') }}"><span>‹</span></button>
-            <button type="button" class="hero-slider__arrow hero-slider__arrow--next"
-                    data-slide-dir="1" aria-label="{{ trans('common.next') }}"><span>›</span></button>
+        {% if has_thumbs %}
+            {# One glass card per slide. A product card is glass only (name,
+               price, add to cart, view); a category card shows its image
+               with the name and an arrow pill; otherwise the thumbnail image,
+               with a play icon for a video slide. Links inside a card work
+               once it's the active one — a first tap selects its slide. #}
+            <div slot="thumbs">
+                {% for slide in slides %}
+                    {# Card type — chosen per slide (Card type), or "auto":
+                       product → category → page link → video → image, by
+                       whichever field is filled. A type whose field is empty
+                       falls back to the image card. #}
+                    {% set product_id = slide.thumb_product|default(null) %}
+                    {% set category_id = slide.thumb_category|default(null) %}
+                    {% set slide_video = slide.video|default(null) %}
+                    {% set card_link = slide.card_link|default(slide.button_url|default(null)) %}
+                    {% set card_title = slide.card_title|default(null) %}
+                    {% set card_image = slide.thumb_image|default(null) %}
+                    {% set card_type = slide.card_type|default('auto') %}
+                    {% if card_type == 'auto' %}
+                        {% set card_type = product_id ? 'product' : (category_id ? 'category' : (slide.card_link|default(null) ? 'link' : (slide_video ? 'video' : 'image'))) %}
+                    {% endif %}
+                    {% if (card_type == 'product' and not product_id) or (card_type == 'category' and not category_id) or (card_type == 'link' and not card_link) %}
+                        {% set card_type = 'image' %}
+                    {% endif %}
 
-            <div class="hero-slider__dots" role="tablist">
-                {% for slide in component.slides %}
-                    <button type="button"
-                            class="hero-slider__dot{{ loop.first ? ' is-active' : '' }}"
-                            data-slide-to="{{ loop.index0 }}"
-                            aria-label="{{ loop.index }}"></button>
+                    {% if card_type == 'product' %}
+                        {# The SDK's own product card fetches the product and
+                           renders name, price (with the old price) and the
+                           add-to-cart button — skinned to Jalawi's glass card.
+                           The eye link is slotted into the card's actions; the
+                           description line is filled by home.js from the
+                           card's own data. #}
+                        <div class="hero-thumb hero-thumb--product">
+                            <div class="hero-thumb__body">
+                                <falak-product-card product-id="{{ product_id }}" fetch show-add-button hide-offer source="hero">
+                                    <a class="hero-thumb__btn hero-thumb__view" href="/product/{{ product_id }}" aria-label="{{ trans('compare.view') }}">
+                                        <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="1.8"/></svg>
+                                    </a>
+                                </falak-product-card>
+                                <span class="hero-thumb__desc" data-hero-thumb-desc></span>
+                            </div>
+                        </div>
+                    {% elseif card_type == 'category' or card_type == 'link' %}
+                        {# Category or page link: image, name centred, arrow pill.
+                           A category's name and image come from the SDK unless
+                           the merchant set their own title / image. #}
+                        {% set href = card_type == 'category' ? '/category/' ~ category_id : card_link %}
+                        <div class="hero-thumb hero-thumb--category{{ card_type == 'link' ? ' hero-thumb--link' : '' }}"
+                             {% if card_type == 'category' %}data-hero-category="{{ category_id }}"{% endif %}>
+                            <a class="hero-thumb__media" href="{{ href }}" tabindex="-1" aria-hidden="true">
+                                {% if card_image|default(slide.image) %}<img src="{{ card_image|default(slide.image) }}" alt="" loading="lazy" data-hero-thumb-image{{ card_image ? ' data-custom' : '' }}>{% endif %}
+                            </a>
+                            <a class="hero-thumb__name" href="{{ href }}" data-hero-thumb-title{{ card_title ? ' data-custom' : '' }}>{{ card_title|default(slide.title|default('')) }}</a>
+                            <a class="hero-thumb__pill" href="{{ href }}" aria-label="{{ card_title|default(slide.title|default(trans('common.view_category'))) }}">
+                                <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M7 17 17 7M8 7h9v9"/></svg>
+                            </a>
+                        </div>
+                    {% else %}
+                        {# Video (play icon, hidden once its slide is showing) or
+                           a plain image card. #}
+                        <div class="hero-thumb hero-thumb--image">
+                            {% if card_type == 'video' %}
+                                <span class="hero-thumb__play" aria-hidden="true">
+                                    <svg viewBox="0 0 31 32"><circle cx="15.5" cy="16" r="14.5" fill="none" stroke="currentColor" stroke-width="1.5"/><path fill="currentColor" d="M12.5 10.8v10.4a.8.8 0 0 0 1.2.68l8.2-5.2a.8.8 0 0 0 0-1.36l-8.2-5.2a.8.8 0 0 0-1.2.68Z"/></svg>
+                                </span>
+                            {% endif %}
+                            {% if card_image|default(slide.image) %}<img src="{{ card_image|default(slide.image) }}" alt="" loading="lazy">{% endif %}
+                        </div>
+                    {% endif %}
                 {% endfor %}
             </div>
         {% endif %}
-    </div>
+    </falak-slider>
 </section>

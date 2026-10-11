@@ -1,10 +1,11 @@
 {#
     Site header — statically included from master.twig via {% component 'header.header' %}.
 
-    Al-Mahud layout: the top bar carries the brand, the page menu (main-menu)
-    and actions; the second bar carries ONLY the categories menu — a separate
-    tenant menu with the handle `categories-menu`, managed like any other menu.
-    No categories menu -> no second bar.
+    Jalawi layout: top bar (marquee + contacts/locale), then the main bar
+    (menu button, centred logo, icons); the main menu lives in the mega menu
+    panel. An optional second bar carries ONLY the categories menu — a
+    separate tenant menu with the handle `categories-menu`. No categories
+    menu -> no second bar.
 
     Customizer: the platform wraps every {% component %} in draft renders, so
     this block is selectable in the preview on its own and opens the "Header &
@@ -40,22 +41,90 @@
        offers + display in popup); renders nothing otherwise. #}
     <falak-offer-modal></falak-offer-modal>
 
+    {# Top bar — running messages, then a row with contact details and the
+       language/currency switch. Each message is text plus either a discount
+       code (bold, with a copy button) or a small image. The list is rendered
+       four times and the track moves by half, so the loop is seamless on
+       wide screens; only the first copy is exposed to assistive tech. #}
+    {% set topbar_on = theme.settings.get('topbar_enabled', true) %}
+    {% if topbar_on %}
+        {% set topbar_items = theme.settings.get('topbar_items')|default([]) %}
+        {% set topbar_speed = theme.settings.get('topbar_speed')|default(30) %}
+        <div class="site-topbar">
+            {% if topbar_items|length > 0 %}
+                <div class="site-topbar__marquee">
+                    <div class="container site-topbar__mask">
+                        <div class="site-topbar__track" style="--topbar-speed: {{ topbar_speed }}s;">
+                            {% for copy in 1..4 %}
+                                <ul class="site-topbar__list"{{ copy > 1 ? ' aria-hidden="true"' : '' }}>
+                                    {% for item in topbar_items %}
+                                        {% set text = item.text|default(item['topbar_items.text']|default('')) %}
+                                        {% set code = item.code|default(item['topbar_items.code']|default('')) %}
+                                        {% set image = item.image|default(item['topbar_items.image']|default('')) %}
+                                        {% if text %}
+                                            <li class="site-topbar__item">
+                                                <p>
+                                                    <span>{{ text }}</span>
+                                                    {% if code %}<span class="site-topbar__code">{{ code }}</span>{% endif %}
+                                                </p>
+                                                {% if code %}
+                                                    <button class="site-topbar__copy" type="button" data-copy-code="{{ code }}"{{ copy > 1 ? ' tabindex="-1"' : '' }}>
+                                                        <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M9 9h10v10H9zM5 15V5h10"/></svg>
+                                                        <small data-copy-label data-copied="{{ trans('common.copied') }}">{{ trans('common.copy') }}</small>
+                                                    </button>
+                                                {% elseif image %}
+                                                    <img src="{{ image }}" alt="" width="56" height="32" loading="lazy">
+                                                {% endif %}
+                                            </li>
+                                        {% endif %}
+                                    {% endfor %}
+                                </ul>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+
+            <div class="site-topbar__row">
+                <div class="container site-topbar__row-inner">
+                    {# Contact details come from the store's contact info in the
+                       dashboard, rendered by the SDK. The chips show the value
+                       itself (from their title) rather than the channel name,
+                       and the first number carries the "Contact us:" prefix. #}
+                    {% if theme.settings.get('topbar_show_contact', true) %}
+                        <falak-contact-links class="site-topbar__contact" only="mobile,phone,email" labels="false"
+                            style="--contact-prefix: '{{ trans('common.contact_us') }}: ';"></falak-contact-links>
+                    {% endif %}
+
+                    <div class="site-topbar__locale">
+                        <falak-localization-modal show-trigger></falak-localization-modal>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+    {# Main bar (Jalawi layout): "Menu" button at the start, logo centred,
+       icons at the end — search, wishlist, cart, account. The button opens
+       the mega menu panel (header.menu, rendered after </header>). #}
     <div class="site-header__topbar">
         <div class="container site-header__topbar-inner">
-            <button class="menu-toggle" type="button" data-menu-toggle
-                    aria-label="{{ trans('common.menu') }}" aria-expanded="false" aria-controls="main-menu">
-                <span></span><span></span><span></span>
-            </button>
+            <div class="site-header__start">
+                <button class="mega-trigger" type="button" data-mega-open aria-expanded="false" aria-controls="mega-menu">
+                    <span class="mega-trigger__lines" aria-hidden="true"><span></span><span></span><span></span></span>
+                    <span>{{ trans('common.menu') }}</span>
+                </button>
+            </div>
 
-            <a href="{{ store.url }}" class="site-header__logo" aria-label="{{ store.name }}">
-                {% if store.logo %}
-                    <img src="{{ store.logo }}" alt="{{ store.name }}" width="42" height="42">
-                {% else %}
-                    <span>{{ store.name }}</span>
-                {% endif %}
-            </a>
-
-            {% component 'header.menu' %}
+            <div class="site-header__center">
+                <a href="{{ store.url }}" class="site-header__logo" aria-label="{{ store.name }}">
+                    {% if store.logo %}
+                        <img src="{{ store.logo }}" alt="{{ store.name }}">
+                    {% else %}
+                        <span>{{ store.name }}</span>
+                    {% endif %}
+                </a>
+            </div>
 
             <div class="site-header__actions">
                 {# Live product search — a magnifier that opens a dropdown of
@@ -63,23 +132,22 @@
                    Enter or "view all results" lands on the full /search page. #}
                 <falak-search class="search-link" limit="6"></falak-search>
 
-                {# Language and currency in one sheet. Replaces the two-language
-                   toggle: a store with more than one currency needs both. #}
-                <falak-localization-modal show-trigger></falak-localization-modal>
-
-                {# Signed out, this is the sign-in entry point; signed in, the
-                   account dropdown. It redraws itself on auth events. #}
-                <falak-user-menu avatar-only show-header show-trigger></falak-user-menu>
+                {# Language and currency in one sheet — lives in the top bar
+                   when that is on. #}
+                {% if not topbar_on %}
+                    <falak-localization-modal show-trigger></falak-localization-modal>
+                {% endif %}
 
                 {# Saved products — heart with a count; opens the wishlist
                    drawer. Guest or customer, same list the card hearts toggle. #}
                 <falak-wishlist-drawer show-trigger href="/customer/wishlist" class="wishlist-link"></falak-wishlist-drawer>
 
-                {# Cart entry — the platform component. Count and total are
-                   computed in the browser from the SDK's cart, so they are
-                   right for a guest and a signed-in customer alike and follow
-                   every change (add, quantity, coupon, sign-in) on their own. #}
-                <falak-cart-summary class="cart-link" show-cart-label href="/cart"></falak-cart-summary>
+                {# Cart entry — the platform component; icon + count badge. #}
+                <falak-cart-summary class="cart-link" href="/cart"></falak-cart-summary>
+
+                {# Signed out, this is the sign-in entry point; signed in, the
+                   account dropdown. It redraws itself on auth events. #}
+                <falak-user-menu avatar-only show-header show-trigger></falak-user-menu>
             </div>
         </div>
     </div>
@@ -102,5 +170,6 @@
         </div>
     {% endif %}
 
-    <div class="menu-backdrop" data-menu-backdrop hidden></div>
 </header>
+
+{% component 'header.menu' %}

@@ -1,0 +1,219 @@
+{
+    "key": "falak-faq",
+    "path": "home.faq",
+    "title": {
+        "ar": "الأسئلة الشائعة",
+        "en": "FAQ"
+    },
+    "icon": "question-line",
+    "is_default": false,
+    "areas": [
+        "home",
+        "pages"
+    ],
+    "styleable": [
+        {
+            "id": "title",
+            "label": {
+                "ar": "عنوان القسم",
+                "en": "Section title"
+            }
+        },
+        {
+            "id": "question",
+            "label": {
+                "ar": "السؤال",
+                "en": "Question"
+            }
+        },
+        {
+            "id": "answer",
+            "label": {
+                "ar": "الإجابة",
+                "en": "Answer"
+            }
+        }
+    ],
+    "fields": [
+        {
+            "id": "title",
+            "type": "string",
+            "format": "text",
+            "label": {
+                "ar": "العنوان",
+                "en": "Title"
+            },
+            "multilanguage": true,
+            "required": false,
+            "maxLength": 100,
+            "value": {
+                "ar": "الأسئلة الشائعة",
+                "en": "Frequently Asked Questions"
+            }
+        },
+        {
+            "id": "items",
+            "type": "collection",
+            "format": "collection",
+            "label": {
+                "ar": "الأسئلة",
+                "en": "Questions"
+            },
+            "item_label": {
+                "ar": "سؤال",
+                "en": "Question"
+            },
+            "required": true,
+            "minLength": 1,
+            "maxLength": 30,
+            "value": [
+                {
+                    "items.question": {
+                        "ar": "هل منتجاتكم مختبرة طبياً وآمنة للاستخدام؟",
+                        "en": "Are your products medically tested and safe to use?"
+                    },
+                    "items.answer": {
+                        "ar": "نعم، جميع منتجاتنا مختبرة طبياً وخضعت لمعايير السلامة لضمان الاستخدام الآمن لجميع أنواع البشرة.",
+                        "en": "Yes, all our products are medically tested and have undergone safety standards to ensure safe use for all skin types"
+                    }
+                },
+                {
+                    "items.question": {
+                        "ar": "هل منتجاتكم خالية من المواد الضارة؟",
+                        "en": "Are your products free from harmful substances?"
+                    },
+                    "items.answer": {
+                        "ar": "نعم، جميع منتجاتنا خالية من البارابين والكبريتات والمواد الضارة، لتكون آمنة على بشرتك.",
+                        "en": "Yes, all our products are free of parabens, sulfates and harmful substances, to be safe for your skin"
+                    }
+                },
+                {
+                    "items.question": {
+                        "ar": "هل تقدمون خيارات لجميع أنواع البشرة؟",
+                        "en": "Do you offer options for all skin types?"
+                    },
+                    "items.answer": {
+                        "ar": "بالتأكيد، نقدم منتجات تناسب جميع أنواع البشرة، سواء كانت دهنية، جافة، مختلطة أو حساسة.",
+                        "en": "Absolutely, we offer products suitable for all skin types, whether oily, dry, combination or sensitive"
+                    }
+                },
+                {
+                    "items.question": {
+                        "ar": "كم يستغرق وصول الطلب؟",
+                        "en": "How long does it take for the order to arrive?"
+                    },
+                    "items.answer": {
+                        "ar": "عادة يصل الطلب خلال 3–5 أيام عمل داخل المملكة، مع إمكانية تتبع الشحنة خطوة بخطوة.",
+                        "en": "Orders typically arrive within 3–5 business days within the Kingdom, with the possibility of tracking the shipment step by step"
+                    }
+                },
+                {
+                    "items.question": {
+                        "ar": "هل يمكنني إعادة المنتجات إذا لم أكن راضيًا عنها؟",
+                        "en": "Can I return the products if I am not satisfied with them?"
+                    },
+                    "items.answer": {
+                        "ar": "نعم، نقدم سياسة إعادة سهلة ومرنة. يمكنك إعادة المنتج خلال 7 أيام، وسنقوم برد المبلغ أو استبداله.",
+                        "en": "Yes, we offer an easy and flexible return policy. You can return the product within 7 days, and we will refund or replace it"
+                    }
+                },
+                {
+                    "items.question": {
+                        "ar": "هل هناك خصومات أو عروض خاصة؟",
+                        "en": "Are there any discounts or special offers?"
+                    },
+                    "items.answer": {
+                        "ar": "نعم، نقدم عروضاً موسمية وأكواد خصم حصرية طوال العام — اشترك في نشرتنا البريدية حتى لا يفوتك أي عرض.",
+                        "en": "Yes, we run seasonal offers and exclusive discount codes throughout the year — subscribe to our newsletter so you never miss one"
+                    }
+                },
+                {
+                    "items.question": {
+                        "ar": "هل تقدمون خدمة التوصيل؟",
+                        "en": "Do you offer delivery service?"
+                    },
+                    "items.answer": {
+                        "ar": "نعم، نوفر خدمة توصيل سريعة وموثوقة داخل المملكة مع إمكانية تتبع الطلب حتى وصوله.",
+                        "en": "Yes, we provide fast and reliable delivery service within the Kingdom with the ability to track the order until it arrives"
+                    }
+                },
+                {
+                    "items.question": {
+                        "ar": "هل يمكنني شراء منتجاتكم عبر الإنترنت؟",
+                        "en": "Can I buy your products online?"
+                    },
+                    "items.answer": {
+                        "ar": "بالتأكيد، جميع منتجاتنا متاحة للشراء عبر الموقع الإلكتروني مع خيارات الدفع الآمنة والشحن إلى جميع مناطق المملكة.",
+                        "en": "Certainly, all our products are available for purchase through the website with secure payment options and shipping to all regions of the Kingdom"
+                    }
+                }
+            ],
+            "fields": [
+                {
+                    "id": "items.question",
+                    "type": "string",
+                    "format": "text",
+                    "label": {
+                        "ar": "السؤال",
+                        "en": "Question"
+                    },
+                    "multilanguage": true,
+                    "required": true,
+                    "maxLength": 200
+                },
+                {
+                    "id": "items.answer",
+                    "type": "string",
+                    "format": "textarea",
+                    "label": {
+                        "ar": "الإجابة",
+                        "en": "Answer"
+                    },
+                    "multilanguage": true,
+                    "required": true,
+                    "maxLength": 1000
+                }
+            ]
+        },
+        {
+            "id": "columns",
+            "type": "items",
+            "format": "dropdown-list",
+            "label": {
+                "ar": "الأعمدة",
+                "en": "Columns"
+            },
+            "description": {
+                "ar": "على الشاشات الكبيرة — الجوال عمود واحد دائماً",
+                "en": "On large screens — phones always show one column"
+            },
+            "value": "2",
+            "options": [
+                {
+                    "label": {
+                        "ar": "عمود واحد",
+                        "en": "One"
+                    },
+                    "value": "1"
+                },
+                {
+                    "label": {
+                        "ar": "عمودان (جلوي)",
+                        "en": "Two (Jalawi)"
+                    },
+                    "value": "2"
+                }
+            ]
+        },
+        {
+            "id": "first_open",
+            "type": "boolean",
+            "format": "switch",
+            "label": {
+                "ar": "فتح السؤال الأول",
+                "en": "Open the first question"
+            },
+            "value": false
+        }
+    ]
+}

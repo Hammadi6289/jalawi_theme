@@ -2,8 +2,8 @@
     "key": "falak-banner",
     "path": "home.banner",
     "title": {
-        "ar": "بنر ترويجي",
-        "en": "Promo Banner"
+        "ar": "بنرات ترويجية",
+        "en": "Promo Banners"
     },
     "icon": "image-line",
     "is_default": false,
@@ -29,17 +29,17 @@
             ]
         },
         {
+            "id": "subtitle",
+            "label": {
+                "ar": "السطر الصغير",
+                "en": "Small line"
+            }
+        },
+        {
             "id": "title",
             "label": {
                 "ar": "العنوان",
                 "en": "Title"
-            }
-        },
-        {
-            "id": "description",
-            "label": {
-                "ar": "الوصف",
-                "en": "Description"
             }
         },
         {
@@ -64,69 +64,232 @@
     ],
     "fields": [
         {
-            "id": "image",
-            "type": "string",
-            "format": "image",
+            "id": "banners",
+            "type": "collection",
+            "format": "collection",
             "label": {
-                "ar": "صورة الخلفية",
-                "en": "Background image"
+                "ar": "البنرات",
+                "en": "Banners"
+            },
+            "item_label": {
+                "ar": "بنر",
+                "en": "Banner"
             },
             "description": {
-                "ar": "المقاس المناسب 1200×340 بكسل",
-                "en": "Recommended size 1200x340 px"
+                "ar": "أضف ما تشاء. في تخطيط «مميّز» يكون الأول هو البنر الكبير وتُرصّ البقية بجانبه (جلوي: 3).",
+                "en": "Add as many as you like. With the “Featured” layout the first one is the large banner and the rest stack beside it (Jalawi: 3)."
             },
-            "required": true
-        },
-        {
-            "id": "title",
-            "type": "string",
-            "format": "text",
-            "label": {
-                "ar": "العنوان",
-                "en": "Title"
-            },
-            "multilanguage": true,
-            "required": false,
-            "maxLength": 100
-        },
-        {
-            "id": "description",
-            "type": "string",
-            "format": "textarea",
-            "label": {
-                "ar": "الوصف",
-                "en": "Description"
-            },
-            "multilanguage": true,
-            "required": false,
-            "maxLength": 255
-        },
-        {
-            "id": "button_text",
-            "type": "string",
-            "format": "text",
-            "label": {
-                "ar": "نص الزر",
-                "en": "Button label"
-            },
-            "multilanguage": true,
-            "required": false,
-            "maxLength": 40
-        },
-        {
-            "id": "button_url",
-            "type": "string",
-            "format": "text",
-            "label": {
-                "ar": "رابط الزر",
-                "en": "Button link"
-            },
-            "required": false,
-            "maxLength": 255,
-            "conditions": [
+            "required": true,
+            "minLength": 1,
+            "maxLength": 8,
+            "value": [
                 {
-                    "id": "button_text",
-                    "operation": "not_empty"
+                    "banners.image": "https://cdn.files.salla.network/homepage/2070588102/4fbb4d86-d9c5-46a5-9dcd-5a5b3f551e6f.webp",
+                    "banners.subtitle": {
+                        "ar": "منتجات مختارة بعناية",
+                        "en": "carefully selected products"
+                    },
+                    "banners.title": {
+                        "ar": "إشراقة لا تُقاوَم",
+                        "en": "Glow Beyond Resistance"
+                    },
+                    "banners.button_text": {
+                        "ar": "تسوقي الآن",
+                        "en": "Shop now"
+                    },
+                    "banners.button_url": "/",
+                    "banners.text_align": "start",
+                    "banners.text_color": "dark"
+                },
+                {
+                    "banners.image": "https://cdn.files.salla.network/homepage/2070588102/57365c80-ec7b-484a-8321-aa843c9e72aa.webp",
+                    "banners.subtitle": {
+                        "ar": "جمال الموسم",
+                        "en": "The beauty of the season"
+                    },
+                    "banners.title": {
+                        "ar": "من منتجات جلوي",
+                        "en": "From the products of glowy"
+                    },
+                    "banners.button_text": {
+                        "ar": "تسوقي الآن",
+                        "en": "Shop now"
+                    },
+                    "banners.button_url": "/",
+                    "banners.text_align": "end",
+                    "banners.text_color": "dark"
+                },
+                {
+                    "banners.image": "https://cdn.files.salla.network/homepage/2070588102/27be0f0d-f02c-47cd-ae2b-68c2842f7f90.webp",
+                    "banners.subtitle": {
+                        "ar": "دلّلي شعرك",
+                        "en": "Treat Your Hair Right"
+                    },
+                    "banners.title": {
+                        "ar": "بمستحضرات فاخرة",
+                        "en": "With luxurious installations"
+                    },
+                    "banners.button_text": {
+                        "ar": "تسوقي الآن",
+                        "en": "Shop now"
+                    },
+                    "banners.button_url": "/",
+                    "banners.text_align": "start",
+                    "banners.text_color": "dark"
+                }
+            ],
+            "fields": [
+                {
+                    "id": "banners.image",
+                    "type": "string",
+                    "format": "image",
+                    "label": {
+                        "ar": "الصورة",
+                        "en": "Image"
+                    },
+                    "description": {
+                        "ar": "البنر الكبير ~800×1000، الجانبية ~800×500",
+                        "en": "Large banner ~800×1000, side banners ~800×500"
+                    },
+                    "required": true
+                },
+                {
+                    "id": "banners.subtitle",
+                    "type": "string",
+                    "format": "text",
+                    "label": {
+                        "ar": "السطر الصغير",
+                        "en": "Small line"
+                    },
+                    "multilanguage": true,
+                    "required": false,
+                    "maxLength": 80
+                },
+                {
+                    "id": "banners.title",
+                    "type": "string",
+                    "format": "text",
+                    "label": {
+                        "ar": "العنوان",
+                        "en": "Title"
+                    },
+                    "multilanguage": true,
+                    "required": false,
+                    "maxLength": 100
+                },
+                {
+                    "id": "banners.button_text",
+                    "type": "string",
+                    "format": "text",
+                    "label": {
+                        "ar": "نص الزر",
+                        "en": "Button label"
+                    },
+                    "multilanguage": true,
+                    "required": false,
+                    "maxLength": 40
+                },
+                {
+                    "id": "banners.button_url",
+                    "type": "string",
+                    "format": "text",
+                    "label": {
+                        "ar": "رابط الزر",
+                        "en": "Button link"
+                    },
+                    "required": false,
+                    "maxLength": 255
+                },
+                {
+                    "id": "banners.text_align",
+                    "type": "items",
+                    "format": "dropdown-list",
+                    "label": {
+                        "ar": "جهة النص",
+                        "en": "Text side"
+                    },
+                    "value": "start",
+                    "options": [
+                        {
+                            "label": {
+                                "ar": "البداية",
+                                "en": "Start"
+                            },
+                            "value": "start"
+                        },
+                        {
+                            "label": {
+                                "ar": "الوسط",
+                                "en": "Center"
+                            },
+                            "value": "center"
+                        },
+                        {
+                            "label": {
+                                "ar": "النهاية",
+                                "en": "End"
+                            },
+                            "value": "end"
+                        }
+                    ],
+                    "required": false
+                },
+                {
+                    "id": "banners.text_color",
+                    "type": "items",
+                    "format": "dropdown-list",
+                    "label": {
+                        "ar": "لون النص",
+                        "en": "Text colour"
+                    },
+                    "value": "dark",
+                    "options": [
+                        {
+                            "label": {
+                                "ar": "داكن",
+                                "en": "Dark"
+                            },
+                            "value": "dark"
+                        },
+                        {
+                            "label": {
+                                "ar": "فاتح (للصور الداكنة)",
+                                "en": "Light (on dark photos)"
+                            },
+                            "value": "light"
+                        }
+                    ],
+                    "required": false
+                }
+            ]
+        },
+        {
+            "id": "layout",
+            "type": "items",
+            "format": "dropdown-list",
+            "label": {
+                "ar": "التخطيط",
+                "en": "Layout"
+            },
+            "description": {
+                "ar": "مميّز: بنر كبير والبقية بجانبه. أعمدة: بنرات متساوية جنباً إلى جنب.",
+                "en": "Featured: one large banner with the rest stacked beside it. Columns: equal banners side by side."
+            },
+            "value": "featured",
+            "options": [
+                {
+                    "label": {
+                        "ar": "مميّز (جلوي)",
+                        "en": "Featured (Jalawi)"
+                    },
+                    "value": "featured"
+                },
+                {
+                    "label": {
+                        "ar": "أعمدة متساوية",
+                        "en": "Equal columns"
+                    },
+                    "value": "columns"
                 }
             ]
         }

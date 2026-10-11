@@ -1,43 +1,77 @@
 {#
-    Photo grid — merchant-placeable image tiles with optional links.
-    | Variable                 | Type    | Description                 |
-    | component.title          | ?string | section title               |
-    | component.items[].image  | string  | image URL                   |
-    | component.items[].title  | ?string | caption, localized          |
-    | component.items[].url    | ?string | tile link                   |
-    | position                 | int     |                             |
+    Photo grid — merchant-placeable (home + builder pages), Jalawi's "Shop by
+    category" layout: centred title and text over a slider of flip cards. The
+    front is the photo; on hover (desktop) the card turns to a darkened copy
+    listing the category's sub-categories. Phones show that back face directly.
+
+    | Variable                   | Type    | Description                                |
+    | component.title            | ?string | section title                              |
+    | component.subtitle         | ?string | text under the title                       |
+    | component.items[].category | ?string | category id — name, link, sub-categories   |
+    | component.items[].image    | ?string | photo (else the category's own image)      |
+    | component.items[].title    | ?string | caption — replaces the category's name     |
+    | component.items[].url      | ?string | target when no category is picked          |
+    | component.items[].subs     | ?string | back-face links, one per line: Name | link  |
+    | component.autoplay         | ?bool   | slide every 3s (default on)                |
+    | position                   | int     |                                            |
+
+    SDK parts: <falak-slider> (scrolling, loop, autoplay; no arrows) and the
+    store's categories from falak.product.categories() — home.js fills names,
+    images and sub-categories (typed ones win), and, when the list is empty, builds the cards
+    for all main categories itself.
 
     Customizer bindings — full rules in README, "Customizer annotations".
-    | Element                     | Tag                                             |
-    | h2.block__title             | data-falak-field="title"                        |
-    | .photo-tile (both branches) | data-falak-field="items" data-falak-bind="none" |
+    | Element          | Tag                                             |
+    | h2.cats__title   | data-falak-field="title"                        |
+    | p.cats__subtitle | data-falak-field="subtitle"                     |
+    | .cat-card        | data-falak-field="items" data-falak-bind="none" |
 
-    Both sides of the {% if item.url %} carry the tag, or half the tiles would
-    be unselectable depending on whether the merchant set a link.
-
-    Styleable parts: `caption` on the tile caption, in both the linked and the
-    plain branch. The tile is styled through its data-falak-field="items" tag.
+    Styleable parts: `caption` on the card name. The card itself is styled
+    through its data-falak-field="items" tag.
 #}
-<section class="block block--photo-grid" id="photo-grid-{{ position }}" {{ falak_section() }}>
+{% set items = component.items|default([]) %}
+{% set autoplay = component.autoplay is defined ? component.autoplay : true %}
+
+<section class="block block--photo-grid block--cats" id="photo-grid-{{ position }}" {{ falak_section() }}>
     <div class="container">
-        {% if component.title %}
-            <h2 class="block__title" data-falak-field="title" data-falak-label="{{ trans('editor.field.title') }}">{{ component.title }}</h2>
+        {% if component.title or component.subtitle %}
+            <div class="cats__head" data-reveal="fade" style="--reveal-delay: 100ms;">
+                {% if component.title %}<h2 class="cats__title" data-falak-field="title" data-falak-label="{{ trans('editor.field.title') }}" data-falak-part="title">{{ component.title }}</h2>{% endif %}
+                {% if component.subtitle %}<p class="cats__subtitle" data-falak-field="subtitle" data-falak-label="{{ trans('editor.field.text') }}" data-falak-part="subtitle">{{ component.subtitle }}</p>{% endif %}
+            </div>
         {% endif %}
 
-        <div class="photo-grid">
-            {% for item in component.items %}
-                {% if item.url|default(null) %}
-                    <a class="photo-tile" data-falak-field="items" data-falak-label="{{ trans('editor.field.items') }}" data-falak-bind="none" href="{{ item.url }}">
-                        <img src="{{ item.image }}" alt="{{ item.title|default('') }}" loading="lazy">
-                        {% if item.title %}<span class="photo-tile__caption" data-falak-part="caption">{{ item.title }}</span>{% endif %}
-                    </a>
-                {% else %}
-                    <div class="photo-tile" data-falak-field="items" data-falak-label="{{ trans('editor.field.items') }}" data-falak-bind="none">
-                        <img src="{{ item.image }}" alt="{{ item.title|default('') }}" loading="lazy">
-                        {% if item.title %}<span class="photo-tile__caption" data-falak-part="caption">{{ item.title }}</span>{% endif %}
+        {% if items|length %}
+            <falak-slider class="cats__slider" {{ autoplay ? 'auto-play' : '' }} auto-play-delay="3000" loop show-controls="false" static-when-single>
+                {% for item in items %}
+                    {% set category_id = item.category|default(null) %}
+                    {% set href = category_id ? '/category/' ~ category_id : item.url|default('#') %}
+                    {% set image = item.image|default(null) %}
+                    <div class="cat-card" data-reveal="slide-left" style="--reveal-delay: {{ 100 + loop.index0 * 80 }}ms;"
+                         {% if category_id %}data-category-id="{{ category_id }}"{% endif %}
+                         data-falak-field="items" data-falak-label="{{ trans('editor.field.items') }}" data-falak-bind="none">
+                        <div class="cat-card__inner">
+                            <a class="cat-card__front" href="{{ href }}" tabindex="-1" aria-hidden="true">
+                                {% if image %}<img src="{{ image }}" alt="" loading="lazy" data-cat-image data-custom>{% else %}<img alt="" loading="lazy" data-cat-image hidden>{% endif %}
+                            </a>
+                            <div class="cat-card__back">
+                                {% if image %}<img class="cat-card__back-img" src="{{ image }}" alt="" loading="lazy" data-cat-image data-custom>{% else %}<img class="cat-card__back-img" alt="" loading="lazy" data-cat-image hidden>{% endif %}
+                                <span class="cat-card__overlay" aria-hidden="true"></span>
+                                <a class="cat-card__cover" href="{{ href }}" tabindex="-1" aria-hidden="true"></a>
+                                <ul class="cat-card__subs" data-cat-subs{% if item.subs|default(null) %} data-subs="{{ item.subs }}"{% endif %}></ul>
+                            </div>
+                        </div>
+                        <a class="cat-card__label" href="{{ href }}">
+                            <span class="cat-card__name" data-cat-name{{ item.title|default(null) ? ' data-custom' : '' }} data-falak-part="caption">{{ item.title|default('') }}</span>
+                            <svg class="cat-card__arrow" viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M5 12h14m-6-6 6 6-6 6"/></svg>
+                        </a>
                     </div>
-                {% endif %}
-            {% endfor %}
-        </div>
+                {% endfor %}
+            </falak-slider>
+        {% else %}
+            {# Empty list: home.js builds the cards (and the slider) from every
+               main category in the store. #}
+            <div class="cats__auto" data-cats-auto{{ autoplay ? ' data-autoplay' : '' }}></div>
+        {% endif %}
     </div>
 </section>

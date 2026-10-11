@@ -1,0 +1,58 @@
+{#
+    Blog articles — merchant-placeable (home + builder pages), Jalawi layout:
+    a centred title and text, then two columns of article cards (image beside
+    date, title, short text and "Read more").
+
+    The storefront has no blog feed yet (the SDK has none and /blog is not
+    wired), so the articles are entered here by the merchant; each links
+    wherever they choose.
+
+    | Variable                  | Type    | Description                     |
+    | component.title           | ?string | section title                   |
+    | component.subtitle        | ?string | text under the title            |
+    | component.items[].image   | string  | article image                   |
+    | component.items[].date    | ?string | shown as written                |
+    | component.items[].title   | string  | localized server-side           |
+    | component.items[].excerpt | ?string | localized server-side           |
+    | component.items[].link    | ?string | target of image, title, link    |
+    | component.read_more       | ?string | link label                      |
+    | position                  | int     |                                 |
+
+    Customizer bindings — full rules in README, "Customizer annotations".
+    | Element          | Tag                                             |
+    | h2.blog__title   | data-falak-field="title"                        |
+    | p.blog__subtitle | data-falak-field="subtitle"                     |
+    | .blog-card       | data-falak-field="items" data-falak-bind="none" |
+#}
+{% set items = component.items|default([]) %}
+{% set read_more = component.read_more|default(trans('blog.read_more')) %}
+
+<section class="block block--blog" id="blog-{{ position }}" {{ falak_section() }}>
+    <div class="container">
+        {% if component.title or component.subtitle %}
+            <div class="blog__head">
+                {% if component.title %}<h2 class="blog__title" data-falak-field="title" data-falak-label="{{ trans('editor.field.title') }}" data-falak-part="title">{{ component.title }}</h2>{% endif %}
+                {% if component.subtitle %}<p class="blog__subtitle" data-falak-field="subtitle" data-falak-label="{{ trans('editor.field.text') }}" data-falak-part="subtitle">{{ component.subtitle }}</p>{% endif %}
+            </div>
+        {% endif %}
+
+        <div class="blog__grid">
+            {% for item in items %}
+                {% set link = item.link|default(null) %}
+                <article class="blog-card" data-falak-field="items" data-falak-label="{{ trans('editor.field.items') }}" data-falak-bind="none">
+                    <a class="blog-card__media"{% if link %} href="{{ link }}"{% endif %} tabindex="-1" aria-hidden="true">
+                        {% if item.image|default(null) %}<img src="{{ item.image }}" alt="" loading="lazy">{% endif %}
+                    </a>
+                    <div class="blog-card__body">
+                        {% if item.date|default(null) %}<p class="blog-card__date">{{ item.date }}</p>{% endif %}
+                        <h3 class="blog-card__title" data-falak-part="article_title">
+                            {% if link %}<a href="{{ link }}">{{ item.title|default('') }}</a>{% else %}{{ item.title|default('') }}{% endif %}
+                        </h3>
+                        {% if item.excerpt|default(null) %}<p class="blog-card__excerpt">{{ item.excerpt }}</p>{% endif %}
+                        {% if link and read_more %}<a class="blog-card__more" data-falak-part="read_more" href="{{ link }}">{{ read_more }}</a>{% endif %}
+                    </div>
+                </article>
+            {% endfor %}
+        </div>
+    </div>
+</section>

@@ -1,0 +1,50 @@
+{#
+    FAQ — merchant-placeable (home + builder pages), Jalawi layout: a centred
+    title over two columns of question cards. Each card is the SDK's
+    <falak-accordion> (head = question, body = answer); it owns the open/close
+    state (`data-collapsed`), the theme only skins it — the open card gets a
+    tinted background, a primary edge and a flipped caret.
+
+    | Variable                  | Type    | Description                    |
+    | component.title           | ?string | section title                  |
+    | component.items[].question| string  | localized server-side          |
+    | component.items[].answer  | string  | localized server-side          |
+    | component.columns         | ?string | "1" or "2" (large screens)     |
+    | component.first_open      | ?bool   | first question starts open     |
+    | position                  | int     |                                |
+
+    Customizer bindings — full rules in README, "Customizer annotations".
+    | Element         | Tag                                             |
+    | h2.block__title | data-falak-field="title"                        |
+    | .faq__item      | data-falak-field="items" data-falak-bind="none" |
+
+    `items` is a collection — see bind="none" in the README.
+#}
+{% set items = component.items|default([]) %}
+{% set first_open = component.first_open is defined ? component.first_open : false %}
+
+<section class="block block--faq" id="faq-{{ position }}" {{ falak_section() }}>
+    <div class="container">
+        {% if component.title %}
+            <h2 class="faq__title" data-falak-field="title" data-falak-label="{{ trans('editor.field.title') }}" data-falak-part="title">{{ component.title }}</h2>
+        {% endif %}
+
+        <div class="faq__grid{{ component.columns|default('2') == '1' ? ' faq__grid--single' : '' }}">
+            {% for item in items %}
+                {% if item.question|default(null) %}
+                    <falak-accordion class="faq__item" collapsible name="faq-{{ position }}-{{ loop.index }}"
+                                     collapsed="{{ first_open and loop.first ? 'false' : 'true' }}"
+                                     data-falak-field="items" data-falak-label="{{ trans('editor.field.items') }}" data-falak-bind="none">
+                        <falak-accordion-head class="faq__head">
+                            <span class="faq__question" data-falak-part="question">{{ item.question }}</span>
+                            <svg class="faq__caret" viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" d="m6 9 6 6 6-6"/></svg>
+                        </falak-accordion-head>
+                        <falak-accordion-body class="faq__body">
+                            <div class="faq__answer" data-falak-part="answer"><p>{{ item.answer|default('') }}</p></div>
+                        </falak-accordion-body>
+                    </falak-accordion>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+</section>

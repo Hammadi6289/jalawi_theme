@@ -1,0 +1,247 @@
+{
+    "key": "falak-blog-articles",
+    "path": "home.blog-articles",
+    "title": {
+        "ar": "مقالات المدونة",
+        "en": "Blog articles"
+    },
+    "icon": "article-line",
+    "is_default": false,
+    "areas": [
+        "home",
+        "pages"
+    ],
+    "styleable": [
+        {
+            "id": "title",
+            "label": {
+                "ar": "عنوان القسم",
+                "en": "Section title"
+            }
+        },
+        {
+            "id": "subtitle",
+            "label": {
+                "ar": "نص القسم",
+                "en": "Section text"
+            }
+        },
+        {
+            "id": "article_title",
+            "label": {
+                "ar": "عنوان المقال",
+                "en": "Article title"
+            }
+        },
+        {
+            "id": "read_more",
+            "label": {
+                "ar": "رابط اقرأ المزيد",
+                "en": "Read more link"
+            }
+        }
+    ],
+    "fields": [
+        {
+            "id": "title",
+            "type": "string",
+            "format": "text",
+            "label": {
+                "ar": "العنوان",
+                "en": "Title"
+            },
+            "multilanguage": true,
+            "required": false,
+            "maxLength": 100,
+            "value": {
+                "ar": "جمالك يبدأ بالمعرفة",
+                "en": "Your beauty begins with knowledge"
+            }
+        },
+        {
+            "id": "subtitle",
+            "type": "string",
+            "format": "textarea",
+            "label": {
+                "ar": "نص تحت العنوان",
+                "en": "Text under the title"
+            },
+            "multilanguage": true,
+            "required": false,
+            "maxLength": 255,
+            "value": {
+                "ar": "نقدّم لكِ نصائح وخبرات من عالم الجمال والعناية لتستمتعي بإطلالة فخمة وثقة تدوم كل يوم",
+                "en": "We offer you tips and expertise from the world of beauty and care so you can enjoy a luxurious look and confidence that lasts every day"
+            }
+        },
+        {
+            "id": "items",
+            "type": "collection",
+            "format": "collection",
+            "label": {
+                "ar": "المقالات",
+                "en": "Articles"
+            },
+            "item_label": {
+                "ar": "مقال",
+                "en": "Article"
+            },
+            "description": {
+                "ar": "كل مقال يفتح الرابط الذي تختاره — مقال أو صفحة أو منتج.",
+                "en": "Each article links wherever you want — a blog post, a page or a product."
+            },
+            "required": true,
+            "minLength": 1,
+            "maxLength": 12,
+            "value": [
+                {
+                    "items.image": "https://cdn.salla.sa/lGlWoD/4c1ecf87-b1d6-4ace-8f3e-aaa3d5da4f5e-760.86956521739x1000-CUJn4PN3Pkpc2DvqtqKNR13GLU2WUlCFd6T2wFcq.jpg",
+                    "items.date": {
+                        "ar": "13 نوفمبر 2025",
+                        "en": "13 November 2025"
+                    },
+                    "items.title": {
+                        "ar": "روتين Glamour للعناية الليلية بالبشرة",
+                        "en": "Glamour Nighttime Skincare Routine"
+                    },
+                    "items.excerpt": {
+                        "ar": "الليل هو الوقت الذي تستعيد فيه البشرة توازنها وتجدد خلاياها، لذلك فإن روتين العناية الليلية هو المفتاح الحقيقي لبشرة مشر",
+                        "en": "Nighttime is when your skin restores its balance and regenerates, making your evening routine the secret to waking up wi"
+                    },
+                    "items.link": "/"
+                },
+                {
+                    "items.image": "https://cdn.salla.sa/lGlWoD/a702bb9e-a6d0-413c-b945-47bba635e48a-998.64314789688x1000-DP1lWySJ6Nlpgu8tPB7T5p8ccXAcnlWzh16qM07S.jpg",
+                    "items.date": {
+                        "ar": "13 نوفمبر 2025",
+                        "en": "13 November 2025"
+                    },
+                    "items.title": {
+                        "ar": "سر التوازن والنضارة في روتينك اليومي",
+                        "en": "The Secret to Balance and Freshness in Your Skincare Routine"
+                    },
+                    "items.excerpt": {
+                        "ar": "يُعتبر التونر من أكثر منتجات العناية بالبشرة التي يتم تجاهلها رغم أهميته الكبيرة في الحفاظ على توازن وصحة الجلد. بعد تنظ",
+                        "en": "Toner is often one of the most underrated skincare products, yet it plays a vital role in maintaining the skin’s balance"
+                    },
+                    "items.link": "/"
+                },
+                {
+                    "items.image": "https://cdn.salla.sa/lGlWoD/61ed2e74-80fa-40ff-8212-1c80dc222f68-800x1000-pHxFreNaRmOKsKJolafvNpdka6JEBVSh1raIJuNA.jpg",
+                    "items.date": {
+                        "ar": "13 نوفمبر 2025",
+                        "en": "13 November 2025"
+                    },
+                    "items.title": {
+                        "ar": "اكتشفي أسرار الجمال الطبيعي، أحدث النصائح الطبية، وروتينات العناية المناسبة لكل نوع بشرة",
+                        "en": "Discover natural beauty secrets, the latest medical advice, and skincare routines tailored to every skin type"
+                    },
+                    "items.excerpt": {
+                        "ar": "ابدئي يومك بخطوات بسيطة تمنحك إشراقة طبيعية تدوم. في هذا المقال نكشف لك أسرار الروتين الصباحي المثالي للعناية بالبشرة —",
+                        "en": "Start your day with simple steps that give you lasting natural radiance. In this article, we reveal the secrets of the p"
+                    },
+                    "items.link": "/"
+                },
+                {
+                    "items.image": "https://cdn.salla.sa/lGlWoD/ab73aeea-93ea-4578-a6d8-89a6fc795397-808.79120879121x1000-0fwz6SyE6hizy3TK7FXvIQJHempsCoCngmhRlUxM.jpg",
+                    "items.date": {
+                        "ar": "13 نوفمبر 2025",
+                        "en": "13 November 2025"
+                    },
+                    "items.title": {
+                        "ar": "روتين الصباح الذهبي لبشرة نضرة كل يوم",
+                        "en": "The golden morning routine for fresh skin every day"
+                    },
+                    "items.excerpt": {
+                        "ar": "لأن كل يوم جديد يستحق بداية مشرقة، بشرة صحية، ولمسة من العناية الذاتية",
+                        "en": "Because every new day deserves a bright start, healthy skin, and a touch of self-care"
+                    },
+                    "items.link": "/"
+                }
+            ],
+            "fields": [
+                {
+                    "id": "items.image",
+                    "type": "string",
+                    "format": "image",
+                    "label": {
+                        "ar": "الصورة",
+                        "en": "Image"
+                    },
+                    "description": {
+                        "ar": "الأفضل عمودية أو مربعة (مثلاً 800×1000)",
+                        "en": "Portrait or square works best (e.g. 800×1000)"
+                    },
+                    "required": true
+                },
+                {
+                    "id": "items.date",
+                    "type": "string",
+                    "format": "text",
+                    "label": {
+                        "ar": "التاريخ",
+                        "en": "Date"
+                    },
+                    "description": {
+                        "ar": "يظهر كما هو، مثل 13 نوفمبر 2025",
+                        "en": "Shown as written, e.g. 13 November 2025"
+                    },
+                    "multilanguage": true,
+                    "required": false,
+                    "maxLength": 40
+                },
+                {
+                    "id": "items.title",
+                    "type": "string",
+                    "format": "text",
+                    "label": {
+                        "ar": "العنوان",
+                        "en": "Title"
+                    },
+                    "multilanguage": true,
+                    "required": true,
+                    "maxLength": 150
+                },
+                {
+                    "id": "items.excerpt",
+                    "type": "string",
+                    "format": "textarea",
+                    "label": {
+                        "ar": "نص مختصر",
+                        "en": "Short text"
+                    },
+                    "multilanguage": true,
+                    "required": false,
+                    "maxLength": 300
+                },
+                {
+                    "id": "items.link",
+                    "type": "string",
+                    "format": "text",
+                    "label": {
+                        "ar": "الرابط",
+                        "en": "Link"
+                    },
+                    "required": false,
+                    "maxLength": 500
+                }
+            ]
+        },
+        {
+            "id": "read_more",
+            "type": "string",
+            "format": "text",
+            "label": {
+                "ar": "نص «اقرأ المزيد»",
+                "en": "“Read more” label"
+            },
+            "multilanguage": true,
+            "required": false,
+            "maxLength": 30,
+            "value": {
+                "ar": "اقرأ المزيد",
+                "en": "Read more"
+            }
+        }
+    ]
+}

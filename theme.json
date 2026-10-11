@@ -151,6 +151,276 @@
             ]
         },
         {
+            "group": "loader",
+            "name": {
+                "ar": "شاشة التحميل",
+                "en": "Page loader"
+            },
+            "icon": "loader-4-line",
+            "fields": [
+                {
+                    "id": "loader_enabled",
+                    "type": "boolean",
+                    "format": "switch",
+                    "label": {
+                        "ar": "إظهار شاشة التحميل",
+                        "en": "Show the page loader"
+                    },
+                    "description": {
+                        "ar": "تغطي الصفحة بنص متحرك حتى يكتمل التحميل",
+                        "en": "Covers the page with an animated text until it has finished loading"
+                    },
+                    "value": true
+                },
+                {
+                    "id": "loader_image",
+                    "type": "string",
+                    "format": "image",
+                    "label": {
+                        "ar": "شعار شاشة التحميل",
+                        "en": "Loader logo"
+                    },
+                    "description": {
+                        "ar": "يفضّل صورة بخلفية شفافة — اتركها فارغة لاستخدام شعار القالب",
+                        "en": "A transparent-background image works best — leave empty to use the theme's logo"
+                    },
+                    "required": false
+                }
+            ]
+        },
+        {
+            "group": "side_video",
+            "name": {
+                "ar": "بطاقة الفيديو الجانبية",
+                "en": "Floating video card"
+            },
+            "icon": "video-line",
+            "fields": [
+                {
+                    "id": "side_video_enabled",
+                    "type": "boolean",
+                    "format": "switch",
+                    "label": {
+                        "ar": "إظهار بطاقة الفيديو",
+                        "en": "Show the floating video card"
+                    },
+                    "description": {
+                        "ar": "تظهر على جانب الشاشة بعد تجاوز السلايدر الرئيسي، ويمكن للزائر إغلاقها",
+                        "en": "Slides in at the side of the screen once the visitor scrolls past the hero slider; visitors can close it"
+                    },
+                    "value": true
+                },
+                {
+                    "id": "side_video_url",
+                    "type": "string",
+                    "format": "text",
+                    "label": {
+                        "ar": "رابط الفيديو",
+                        "en": "Video URL"
+                    },
+                    "description": {
+                        "ar": "رابط ملف MP4 أو WebM — يعمل تلقائيًا بدون صوت. اتركه فارغًا لعرض الصورة فقط",
+                        "en": "Link to an MP4 or WebM file — plays automatically, muted. Leave it empty to show the image only"
+                    },
+                    "required": false,
+                    "maxLength": 500,
+                    "value": "https://files.catbox.moe/2tfcev.mp4"
+                },
+                {
+                    "id": "side_video_image",
+                    "type": "string",
+                    "format": "image",
+                    "label": {
+                        "ar": "الصورة",
+                        "en": "Image"
+                    },
+                    "description": {
+                        "ar": "تظهر قبل تشغيل الفيديو، أو وحدها إذا لم تضف فيديو — اتركها فارغة لاستخدام صورة القالب",
+                        "en": "Shown before the video starts, or on its own when there is no video — leave empty to use the theme's image"
+                    },
+                    "required": false
+                },
+                {
+                    "id": "side_video_link",
+                    "type": "string",
+                    "format": "text",
+                    "label": {
+                        "ar": "الرابط عند الضغط",
+                        "en": "Link on click"
+                    },
+                    "description": {
+                        "ar": "اختياري — مثل رابط منتج ‎/product/123‎",
+                        "en": "Optional — e.g. a product link /product/123"
+                    },
+                    "required": false,
+                    "maxLength": 500
+                }
+            ]
+        },
+        {
+            "group": "topbar",
+            "name": {
+                "ar": "الشريط العلوي",
+                "en": "Top bar"
+            },
+            "icon": "text-direction-l",
+            "fields": [
+                {
+                    "id": "topbar_enabled",
+                    "type": "boolean",
+                    "format": "switch",
+                    "label": {
+                        "ar": "تفعيل الشريط العلوي",
+                        "en": "Show the top bar"
+                    },
+                    "description": {
+                        "ar": "نصوص متحركة مع صور، وتحتها اللغة والعملة وبيانات التواصل",
+                        "en": "Running messages with images, and below them language, currency and contact details"
+                    },
+                    "value": true
+                },
+                {
+                    "id": "topbar_items",
+                    "type": "collection",
+                    "format": "collection",
+                    "label": {
+                        "ar": "الرسائل المتحركة",
+                        "en": "Running messages"
+                    },
+                    "item_label": {
+                        "ar": "رسالة",
+                        "en": "Message"
+                    },
+                    "required": false,
+                    "minLength": 0,
+                    "maxLength": 8,
+                    "value": [
+                        {
+                            "topbar_items.image": null,
+                            "topbar_items.code": null,
+                            "topbar_items.text": {
+                                "ar": "استمتعي بخصومات حتى 30% على منتجات الجمال المفضلة لديكِ",
+                                "en": "Enjoy discounts of up to 30% on your favorite beauty products"
+                            }
+                        },
+                        {
+                            "topbar_items.image": null,
+                            "topbar_items.code": "GLAM20",
+                            "topbar_items.text": {
+                                "ar": "خصومات حتى 30% على جميع منتجات عند تفعيل كود",
+                                "en": "Discounts of up to 30% on all products when you activate code"
+                            }
+                        },
+                        {
+                            "topbar_items.image": null,
+                            "topbar_items.code": null,
+                            "topbar_items.text": {
+                                "ar": "توصيل مجاني لجميع الطلبات داخل المملكة",
+                                "en": "Free delivery on all orders within the Kingdom"
+                            }
+                        },
+                        {
+                            "topbar_items.image": null,
+                            "topbar_items.code": null,
+                            "topbar_items.text": {
+                                "ar": "عيشي فخامة الجمال الطبيعي مع Glamour",
+                                "en": "Experience the luxury of natural beauty with Glamour"
+                            }
+                        }
+                    ],
+                    "fields": [
+                        {
+                            "id": "topbar_items.text",
+                            "type": "string",
+                            "format": "text",
+                            "label": {
+                                "ar": "النص",
+                                "en": "Text"
+                            },
+                            "multilanguage": true,
+                            "required": true,
+                            "maxLength": 120
+                        },
+                        {
+                            "id": "topbar_items.code",
+                            "type": "string",
+                            "format": "text",
+                            "label": {
+                                "ar": "كود الخصم",
+                                "en": "Discount code"
+                            },
+                            "description": {
+                                "ar": "اختياري — يظهر بخط عريض مع زر نسخ بدل الصورة",
+                                "en": "Optional — shown in bold with a copy button instead of the image"
+                            },
+                            "required": false,
+                            "maxLength": 30
+                        },
+                        {
+                            "id": "topbar_items.image",
+                            "type": "string",
+                            "format": "image",
+                            "label": {
+                                "ar": "صورة",
+                                "en": "Image"
+                            },
+                            "description": {
+                                "ar": "صورة صغيرة بعد النص (56×32)",
+                                "en": "A small image after the text (56×32)"
+                            },
+                            "required": false
+                        }
+                    ]
+                },
+                {
+                    "id": "topbar_speed",
+                    "type": "number",
+                    "format": "integer",
+                    "label": {
+                        "ar": "مدة دورة الحركة (بالثواني)",
+                        "en": "Scroll cycle (seconds)"
+                    },
+                    "description": {
+                        "ar": "رقم أصغر = حركة أسرع",
+                        "en": "Smaller number = faster movement"
+                    },
+                    "required": false,
+                    "min": 10,
+                    "max": 120,
+                    "value": 30
+                },
+                {
+                    "id": "topbar_show_contact",
+                    "type": "boolean",
+                    "format": "switch",
+                    "label": {
+                        "ar": "إظهار بيانات التواصل",
+                        "en": "Show contact details"
+                    },
+                    "description": {
+                        "ar": "الجوال والهاتف والبريد من بيانات التواصل في إعدادات المتجر",
+                        "en": "Mobile, phone and email come from the store's contact info in the dashboard settings"
+                    },
+                    "value": true
+                },
+                {
+                    "id": "topbar_bg_color",
+                    "type": "string",
+                    "format": "color",
+                    "css_var": "--color-topbar-bg",
+                    "label": {
+                        "ar": "لون خلفية الشريط العلوي",
+                        "en": "Top bar background colour"
+                    },
+                    "description": {
+                        "ar": "اتركه فارغًا لاستخدام اللون الأساسي للمتجر",
+                        "en": "Leave empty to use the store's primary colour"
+                    },
+                    "required": false
+                }
+            ]
+        },
+        {
             "group": "header",
             "name": {
                 "ar": "خيارات أعلى الصفحة",
@@ -171,6 +441,20 @@
                         "en": "Recommended off if the menu has many items"
                     },
                     "value": true
+                },
+                {
+                    "id": "mega_menu_image",
+                    "type": "string",
+                    "format": "image",
+                    "label": {
+                        "ar": "صورة القائمة",
+                        "en": "Menu banner image"
+                    },
+                    "description": {
+                        "ar": "تظهر أعلى القائمة الجانبية عند الضغط على زر القائمة — اتركها فارغة لاستخدام صورة القالب",
+                        "en": "Shown at the top of the side menu when the Menu button is pressed — leave empty to use the theme's image"
+                    },
+                    "required": false
                 },
                 {
                     "id": "topnav_is_dark",
@@ -216,7 +500,11 @@
                     },
                     "multilanguage": true,
                     "required": false,
-                    "maxLength": 200
+                    "maxLength": 200,
+                    "value": {
+                        "ar": "وجهتك الأولى للجمال الفاخر. نقدّم منتجات أصلية 100% من أشهر العلامات العالمية، مع تجربة تسوّق موثوقة وسهلة.",
+                        "en": "Your premier destination for luxury beauty. We offer 100% authentic products from the world's most renowned brands, with a reliable and easy shopping experience."
+                    }
                 },
                 {
                     "id": "footer_newsletter_enabled",
@@ -246,33 +534,111 @@
                     },
                     "multilanguage": true,
                     "required": false,
-                    "maxLength": 120
+                    "maxLength": 120,
+                    "value": {
+                        "ar": "سجّل بريدك الإلكتروني واحصل على آخر الأخبار والعروض الخاصة.",
+                        "en": "Register your email address and receive the latest news and special offers."
+                    }
                 },
                 {
-                    "id": "footer_phone",
+                    "id": "footer_gallery_title",
                     "type": "string",
                     "format": "text",
                     "label": {
-                        "ar": "رقم التواصل",
-                        "en": "Contact phone"
+                        "ar": "عنوان معرض الصور",
+                        "en": "Gallery heading"
                     },
                     "description": {
-                        "ar": "مثال: +9665xxxxxxxx — يظهر في الفوتر كرابط اتصال",
-                        "en": "Example: +9665xxxxxxxx — shown in the footer as a call link"
+                        "ar": "اتركه فارغاً لاستخدام «انستغرام»",
+                        "en": "Leave empty to use \"Instagram\""
                     },
+                    "multilanguage": true,
                     "required": false,
-                    "maxLength": 30
+                    "maxLength": 60
                 },
                 {
-                    "id": "footer_email",
+                    "id": "footer_gallery_link",
                     "type": "string",
                     "format": "text",
                     "label": {
-                        "ar": "البريد الإلكتروني للتواصل",
-                        "en": "Contact email"
+                        "ar": "رابط معرض الصور",
+                        "en": "Gallery link"
+                    },
+                    "description": {
+                        "ar": "تفتحه الصور التي ليس لها رابط — اتركه فارغاً لاستخدام حساب انستغرام",
+                        "en": "Opened by tiles without their own link — leave empty to use the Instagram account"
                     },
                     "required": false,
                     "maxLength": 255
+                },
+                {
+                    "id": "footer_gallery",
+                    "type": "collection",
+                    "format": "collection",
+                    "label": {
+                        "ar": "معرض صور الفوتر",
+                        "en": "Footer gallery"
+                    },
+                    "item_label": {
+                        "ar": "صورة",
+                        "en": "Image"
+                    },
+                    "required": false,
+                    "minLength": 0,
+                    "maxLength": 9,
+                    "value": [
+                        {
+                            "footer_gallery.image": "https://cdn.files.salla.network/homepage/2070588102/27822543-d940-452f-9a83-1494087b9c4f.webp",
+                            "footer_gallery.link": null
+                        },
+                        {
+                            "footer_gallery.image": "https://cdn.files.salla.network/homepage/2070588102/32d3a1c9-db38-4238-8539-68582fea9af7.webp",
+                            "footer_gallery.link": null
+                        },
+                        {
+                            "footer_gallery.image": "https://cdn.files.salla.network/homepage/2070588102/4837f2c8-5fe2-4431-8e24-9df5eb96de92.webp",
+                            "footer_gallery.link": null
+                        },
+                        {
+                            "footer_gallery.image": "https://cdn.files.salla.network/homepage/2070588102/39d99ae5-09d5-4d10-bb73-0ad2dff8645b.webp",
+                            "footer_gallery.link": null
+                        },
+                        {
+                            "footer_gallery.image": "https://cdn.files.salla.network/homepage/2070588102/acb4bbb9-3171-47fc-9dad-d049719fe2e3.webp",
+                            "footer_gallery.link": null
+                        }
+                    ],
+                    "fields": [
+                        {
+                            "id": "footer_gallery.image",
+                            "type": "string",
+                            "format": "image",
+                            "label": {
+                                "ar": "صورة",
+                                "en": "Image"
+                            },
+                            "description": {
+                                "ar": "مربعة — تظهر بحجم 62×62",
+                                "en": "Square — shown at 62×62"
+                            },
+                            "required": true
+                        },
+                        {
+                            "id": "footer_gallery.link",
+                            "type": "string",
+                            "format": "text",
+                            "label": {
+                                "ar": "رابط",
+                                "en": "Link"
+                            },
+                            "description": {
+                                "ar": "اختياري",
+                                "en": "Optional"
+                            },
+                            "required": false,
+                            "maxLength": 255
+                        }
+                    ]
                 }
             ]
         },
@@ -463,6 +829,20 @@
                     "label": {
                         "ar": "إظهار مسار التنقل في صفحة المنتج",
                         "en": "Show breadcrumbs on the product page"
+                    },
+                    "value": true
+                },
+                {
+                    "id": "compare_enabled",
+                    "type": "boolean",
+                    "format": "switch",
+                    "label": {
+                        "ar": "تفعيل مقارنة المنتجات",
+                        "en": "Enable product comparison"
+                    },
+                    "description": {
+                        "ar": "زر مقارنة على المنتجات وشريط جانبي لعرض المنتجات المختارة جنبًا إلى جنب",
+                        "en": "A compare button on products and a side tab that shows the picked products side by side"
                     },
                     "value": true
                 },

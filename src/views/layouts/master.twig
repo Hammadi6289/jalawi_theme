@@ -27,9 +27,13 @@
         <link rel="icon" href="{{ store.favicon }}">
     {% endif %}
 
+    {# Scroll-reveal gate (see app.js): hide [data-reveal] before first paint,
+       and give up after 3s if app.js never took over. #}
+    <script>(function(d){if(!('IntersectionObserver' in window)||window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;d.classList.add('has-reveal');setTimeout(function(){if(!d.classList.contains('reveal-ready'))d.classList.remove('has-reveal');},3000);})(document.documentElement);</script>
+
     {% block styles %}{% endblock %}
     {# ?v= busts browser caches from before the dev no-cache header; bump on asset changes #}
-    <link rel="stylesheet" href="{{ 'styles/app.css'|asset }}?v=45">
+    <link rel="stylesheet" href="{{ 'styles/app.css'|asset }}?v=77">
 
     <style>
         :root {
@@ -51,6 +55,9 @@
             {% if theme.settings.get('header_bg_color') %}
             --color-header-bg: {{ theme.settings.get('header_bg_color') }};
             {% endif %}
+            {% if theme.settings.get('topbar_bg_color') %}
+            --color-topbar-bg: {{ theme.settings.get('topbar_bg_color') }};
+            {% endif %}
             {% if theme.settings.get('footer_bg_color') %}
             --color-footer-bg: {{ theme.settings.get('footer_bg_color') }};
             {% endif %}
@@ -62,6 +69,45 @@
 </head>
 <body class="theme-falak {% hook 'body:classes' %}{{ theme.settings.get('topnav_is_dark') ? ' topnav-is-dark' : '' }}{{ theme.settings.get('footer_is_dark') ? ' footer-is-dark' : '' }}">
     {% hook 'body:start' %}
+
+    {% if theme.settings.get('loader_enabled', true) %}
+        {# Page loader — covers the page until window `load`. Inline on
+           purpose: it must run before app.js (deferred) to cover the first
+           paint; an 8s cap means a slow asset can never trap the shopper
+           behind it. The logo pops in, floats, and a shine sweeps across it
+           (the shine is masked to the logo's own shape via --loader-logo). #}
+        {% set loader_logo = theme.settings.get('loader_image')|default('images/loader-logo.webp'|asset) %}
+        <div class="page-loader" data-page-loader aria-hidden="true">
+            <div class="page-loader__inner">
+                <span class="page-loader__halo"></span>
+                <span class="page-loader__logo" style="--loader-logo: url('{{ loader_logo }}');">
+                    <img src="{{ loader_logo }}" alt="" width="274" height="360" fetchpriority="high">
+                    <span class="page-loader__shine"></span>
+                </span>
+            </div>
+        </div>
+        <noscript><style>.page-loader { display: none !important; }</style></noscript>
+        <script>
+            (function () {
+                var loader = document.querySelector('[data-page-loader]');
+                if (!loader) return;
+                var done = false;
+                var shownAt = Date.now();
+                function hide() {
+                    if (done) return;
+                    done = true;
+                    var wait = Math.max(0, 800 - (Date.now() - shownAt));
+                    window.setTimeout(function () {
+                        loader.classList.add('is-done');
+                        window.setTimeout(function () { loader.remove(); }, 700);
+                    }, wait);
+                }
+                if (document.readyState === 'complete') hide();
+                else window.addEventListener('load', hide);
+                window.setTimeout(hide, 8000);
+            })();
+        </script>
+    {% endif %}
 
     <a class="skip-link" href="#main-content">{{ trans('common.skip_to_content') }}</a>
 
@@ -90,10 +136,75 @@
        when it sees this element, so a message never shows twice. #}
     <falak-notifications position="top-end"></falak-notifications>
 
+    <div class="floating-actions">
+        {# WhatsApp — rendered by the SDK's <falak-social> limited to WhatsApp:
+           it reads the store's social accounts (Design options → Social media
+           accounts → WhatsApp). The wrapper is only the draggable shell
+           (app.js) and stays hidden until the SDK has a link to put in it. #}
+        <div class="floating-actions__btn floating-actions__whatsapp" data-draggable-float>
+            <falak-social hide-title networks='["whatsapp"]'></falak-social>
+        </div>
+
+        <button class="floating-actions__btn floating-actions__top" type="button" data-back-to-top aria-label="{{ trans('common.back_to_top') }}">
+            <svg class="floating-actions__ring" viewBox="0 0 48 48" aria-hidden="true">
+                <circle cx="24" cy="24" r="22" pathLength="100"></circle>
+                <circle class="floating-actions__progress" cx="24" cy="24" r="22" pathLength="100" data-scroll-progress></circle>
+            </svg>
+            <svg class="floating-actions__arrow" viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="m6 12 6-6 6 6M6 18l6-6 6 6"/></svg>
+        </button>
+    </div>
+
+    {# The platform blocks video files inside a theme, so the clip is always
+       an external URL; the bundled poster keeps the card showing even when
+       that URL is empty or fails to load. #}
+    {% set side_video = theme.settings.get('side_video_url') %}
+    {% set side_image = theme.settings.get('side_video_image')|default('images/side-video-poster.webp'|asset) %}
+    {% if theme.settings.get('side_video_enabled', true) %}
+        {# Floating video card — slides in once the hero slider is scrolled
+           past (700px on pages without one); closing it keeps it away for the
+           rest of the visit. app.js drives the show/hide. #}
+        {% set side_link = theme.settings.get('side_video_link') %}
+        <div class="side-video" data-side-video hidden>
+            <button class="side-video__close" type="button" data-side-video-close aria-label="{{ trans('common.close') }}">&times;</button>
+            {% if side_link %}<a class="side-video__link" href="{{ side_link }}">{% endif %}
+                {% if side_video %}
+                    <video class="side-video__media" src="{{ side_video }}"{% if side_image %} poster="{{ side_image }}"{% endif %} muted loop playsinline preload="none" aria-hidden="true"></video>
+                {% else %}
+                    <img class="side-video__media" src="{{ side_image }}" alt="" loading="lazy">
+                {% endif %}
+            {% if side_link %}</a>{% endif %}
+        </div>
+    {% endif %}
+
+    {% if theme.settings.get('compare_enabled', true) %}
+        {# Product comparison — the side tab, and the panel it opens. The list
+           lives in the browser (app.js); compare buttons on product cards are
+           added client-side because the SDK renders those cards. #}
+        <button class="compare-tab" type="button" data-compare-open aria-label="{{ trans('compare.open') }}" aria-haspopup="dialog">
+            <span class="compare-tab__count" data-compare-count>0</span>
+            <span class="compare-tab__label">{{ trans('compare.title') }}</span>
+            <svg class="compare-tab__icon" viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M7 4v10m0 0-3-3m3 3 3-3M17 20V10m0 0-3 3m3-3 3 3M4 20h6M14 4h6"/></svg>
+        </button>
+
+        <div class="compare-panel" data-compare-panel hidden>
+            <div class="compare-panel__backdrop" data-compare-close></div>
+            <div class="compare-panel__sheet" role="dialog" aria-modal="true" aria-labelledby="compare-panel-title">
+                <div class="compare-panel__head">
+                    <h2 class="compare-panel__title" id="compare-panel-title">{{ trans('compare.title') }}</h2>
+                    <button class="compare-panel__clear" type="button" data-compare-clear>{{ trans('compare.clear') }}</button>
+                    <button class="compare-panel__close" type="button" data-compare-close aria-label="{{ trans('compare.close') }}">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M6 6l12 12M18 6 6 18"/></svg>
+                    </button>
+                </div>
+                <div class="compare-panel__body" data-compare-body></div>
+            </div>
+        </div>
+    {% endif %}
+
     {# platform injection: FalakSDK script + init #}
     {% hook 'body:end' %}
 
-    <script defer src="{{ 'js/app.js'|asset }}?v=18"></script>
+    <script defer src="{{ 'js/app.js'|asset }}?v=29"></script>
     {% block scripts %}{% endblock %}
 </body>
 </html>

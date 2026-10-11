@@ -101,8 +101,170 @@
                     },
                     "required": false,
                     "maxLength": 255
+                },
+                {
+                    "id": "slides.video",
+                    "type": "string",
+                    "format": "text",
+                    "label": {
+                        "ar": "رابط فيديو الخلفية",
+                        "en": "Background video URL"
+                    },
+                    "description": {
+                        "ar": "اختياري — ملف MP4 أو WebM يعمل بدل الصورة (بدون صوت وبشكل متكرر)",
+                        "en": "Optional — an MP4 or WebM file played instead of the image (muted, looping)"
+                    },
+                    "required": false,
+                    "maxLength": 500
+                },
+                {
+                    "id": "slides.card_type",
+                    "type": "items",
+                    "format": "dropdown-list",
+                    "label": {
+                        "ar": "نوع البطاقة",
+                        "en": "Card type"
+                    },
+                    "description": {
+                        "ar": "البطاقة الزجاجية لهذه الشريحة. «تلقائي» يختار حسب الحقول المعبأة: منتج، ثم تصنيف، ثم رابط، ثم فيديو/صورة",
+                        "en": "This slide's glass card. “Auto” picks from the fields you filled: product, then category, then link, then video/image"
+                    },
+                    "value": "auto",
+                    "options": [
+                        {
+                            "label": {
+                                "ar": "تلقائي",
+                                "en": "Auto"
+                            },
+                            "value": "auto"
+                        },
+                        {
+                            "label": {
+                                "ar": "منتج",
+                                "en": "Product"
+                            },
+                            "value": "product"
+                        },
+                        {
+                            "label": {
+                                "ar": "فيديو (أيقونة تشغيل)",
+                                "en": "Video (play icon)"
+                            },
+                            "value": "video"
+                        },
+                        {
+                            "label": {
+                                "ar": "تصنيف",
+                                "en": "Category"
+                            },
+                            "value": "category"
+                        },
+                        {
+                            "label": {
+                                "ar": "رابط صفحة",
+                                "en": "Page link"
+                            },
+                            "value": "link"
+                        },
+                        {
+                            "label": {
+                                "ar": "صورة فقط",
+                                "en": "Image only"
+                            },
+                            "value": "image"
+                        }
+                    ],
+                    "required": false
+                },
+                {
+                    "id": "slides.thumb_product",
+                    "type": "string",
+                    "format": "text",
+                    "label": {
+                        "ar": "بطاقة المنتج (رقم المنتج)",
+                        "en": "Product card (product ID)"
+                    },
+                    "description": {
+                        "ar": "رقم المنتج من رابطه ‎/product/123‎ — لنوع «منتج»",
+                        "en": "The number from the product link /product/123 — for the “Product” card"
+                    },
+                    "required": false,
+                    "maxLength": 20
+                },
+                {
+                    "id": "slides.thumb_category",
+                    "type": "string",
+                    "format": "category",
+                    "label": {
+                        "ar": "بطاقة التصنيف",
+                        "en": "Category card"
+                    },
+                    "description": {
+                        "ar": "لنوع «تصنيف» — صورة التصنيف مع اسمه وزر سهم",
+                        "en": "For the “Category” card — its image, name and an arrow button"
+                    },
+                    "required": false
+                },
+                {
+                    "id": "slides.card_link",
+                    "type": "string",
+                    "format": "text",
+                    "label": {
+                        "ar": "رابط البطاقة",
+                        "en": "Card link"
+                    },
+                    "description": {
+                        "ar": "لنوع «رابط صفحة» — أي رابط: صفحة، عروض، ماركة… (يُستخدم رابط زر الشريحة إن تُرك فارغاً)",
+                        "en": "For “Page link” — any URL: a page, offers, a brand… (falls back to the slide's button link)"
+                    },
+                    "required": false,
+                    "maxLength": 500
+                },
+                {
+                    "id": "slides.card_title",
+                    "type": "string",
+                    "format": "text",
+                    "label": {
+                        "ar": "عنوان البطاقة",
+                        "en": "Card title"
+                    },
+                    "description": {
+                        "ar": "اختياري — النص على بطاقة الرابط أو التصنيف (افتراضياً عنوان الشريحة أو اسم التصنيف)",
+                        "en": "Optional — the text on a link or category card (defaults to the slide title or the category name)"
+                    },
+                    "multilanguage": true,
+                    "required": false,
+                    "maxLength": 60
+                },
+                {
+                    "id": "slides.thumb_image",
+                    "type": "string",
+                    "format": "image",
+                    "label": {
+                        "ar": "صورة البطاقة",
+                        "en": "Card image"
+                    },
+                    "description": {
+                        "ar": "اختياري — صورة بطاقة الفيديو أو الرابط أو التصنيف (افتراضياً صورة الشريحة)",
+                        "en": "Optional — image for a video, link or category card (defaults to the slide image)"
+                    },
+                    "required": false
                 }
             ]
+        },
+        {
+            "id": "show_cards",
+            "type": "boolean",
+            "format": "switch",
+            "label": {
+                "ar": "إظهار البطاقات الزجاجية أسفل السلايدر",
+                "en": "Show glass cards on the slider"
+            },
+            "description": {
+                "ar": "بطاقة لكل شريحة: منتج أو تصنيف إن اخترته، وإلا صورة الشريحة (مع أيقونة تشغيل للفيديو)",
+                "en": "One card per slide: its product or category when picked, otherwise the slide's image (with a play icon for a video)"
+            },
+            "value": true
         }
     ],
     "styleable": [

@@ -1,49 +1,91 @@
 {#
-    Main navigation — consumes the platform-resolved `menus` global.
-    Each item: title (localized), url (resolved live from typed link), is_new_tab, image, children[].
+    Mega menu — a side panel that slides in from the start edge when the
+    header's "Menu" button is pressed (Jalawi layout). Content comes from the
+    dashboard's main menu: items with children become accordions (children,
+    then a "view category" link), items without children are plain links —
+    parents first, like the reference. Items that carry an image also appear
+    in the image strip at the bottom. The banner on top is the header group's
+    `mega_menu_image` setting, falling back to the theme's bundled banner.
 
-    Server-rendered on purpose. `MenuResolver` already has these items at render
-    time, so the markup below costs nothing extra and ships in the initial HTML
-    where crawlers and no-JS visitors can see it — with no skeleton flash while
-    a request completes.
-
-    <falak-menu> wraps it rather than replacing it: the component finds the list
-    that is already here and adds only the parts that need JavaScript — dropdown
-    state, keyboard handling, the mobile drawer and viewport-edge flipping. It
-    discovers structure from the markup, so these class names stay the theme's
-    own and app.css keeps styling them.
-
-    On mobile the <nav> becomes an off-canvas drawer (see app.css + app.js).
-
-    Customizer: the platform wraps every {% component %} in draft renders, so
-    this block is selectable in the preview on its own and opens the "Header &
-    footer" panel. Its values come from theme.settings (theme.json groups),
-    which the customizer edits by group — data-falak-* addresses a component
-    blueprint's fields, so there is nothing to tag here.
+    Server-rendered so crawlers and no-JS visitors still get every link;
+    <falak-menu> (SDK) runs the accordions, app.js only opens/closes the panel.
+    Each item: title (localized), url, is_new_tab, image, children[].
 #}
-<falak-menu>
-    <nav class="main-menu" id="main-menu" aria-label="{{ trans('common.menu') }}">
-        <ul>
-            {% for item in menus.main_menu|default([]) %}
-                <li class="main-menu__item{{ item.children|length > 0 ? ' has-children' : '' }}">
-                    <a href="{{ item.url }}"{{ item.is_new_tab ? ' target="_blank" rel="noopener"' : '' }}>
-                        {% if item.image %}<img src="{{ item.image }}" alt="" width="20" height="20">{% endif %}
-                        {{ item.title }}
-                    </a>
+{% set menu_items = menus.main_menu|default([]) %}
+{% set banner = theme.settings.get('mega_menu_image')|default('images/mega-menu-banner.webp'|asset) %}
 
-                    {% if item.children|length > 0 %}
-                        <ul class="main-menu__submenu">
-                            {% for child in item.children %}
-                                <li>
-                                    <a href="{{ child.url }}"{{ child.is_new_tab ? ' target="_blank" rel="noopener"' : '' }}>
-                                        {{ child.title }}
-                                    </a>
-                                </li>
-                            {% endfor %}
-                        </ul>
-                    {% endif %}
-                </li>
-            {% endfor %}
-        </ul>
-    </nav>
-</falak-menu>
+<div class="mega-overlay" data-mega-close></div>
+
+<aside class="mega-menu" id="mega-menu" data-mega-menu aria-label="{{ trans('common.menu') }}" aria-hidden="true" inert>
+    <button class="mega-menu__close" type="button" data-mega-close aria-label="{{ trans('common.close') }}">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M6 6l12 12M18 6 6 18"/></svg>
+    </button>
+
+    <div class="mega-menu__content">
+        {% if banner %}
+            <div class="mega-menu__banner">
+                <img src="{{ banner }}" alt="" loading="lazy">
+            </div>
+        {% endif %}
+
+        {# <falak-menu> hydrates this server-rendered list (links stay in the
+           HTML for crawlers): every <li> holding a nested <ul> becomes an
+           accordion the SDK opens and closes (`mobile` = open on click, the
+           item gets .is-open). Parents first, like the reference; each sub
+           list ends with a "view category" link, since the parent's own
+           link now toggles its list. #}
+        <falak-menu class="mega-menu__nav" mobile label="{{ trans('common.menu') }}">
+            <ul class="mega-menu__grid">
+                {% for pass in ['parents', 'links'] %}
+                    {% for item in menu_items %}
+                        {% set has_children = item.children|default([])|length > 0 %}
+                        {% if (pass == 'parents' and has_children) or (pass == 'links' and not has_children) %}
+                            <li class="mega-menu__card">
+                                <a class="mega-menu__parent" href="{{ item.url }}"{{ item.is_new_tab ? ' target="_blank" rel="noopener"' : '' }}>
+                                    <span>{{ item.title }}</span>
+                                    {% if has_children %}
+                                        <svg class="mega-menu__arrow" viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="m6 9 6 6 6-6"/></svg>
+                                    {% endif %}
+                                </a>
+                                {% if has_children %}
+                                    <ul class="mega-menu__subs">
+                                        {% for child in item.children %}
+                                            <li class="mega-menu__sub">
+                                                <a href="{{ child.url }}"{{ child.is_new_tab ? ' target="_blank" rel="noopener"' : '' }}>{{ child.title }}</a>
+                                            </li>
+                                        {% endfor %}
+                                        <li class="mega-menu__sub mega-menu__sub--all">
+                                            <a href="{{ item.url }}"{{ item.is_new_tab ? ' target="_blank" rel="noopener"' : '' }}>{{ trans('common.view_category') }}</a>
+                                            <svg class="mega-menu__go" viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M19 12H5m6-6-6 6 6 6"/></svg>
+                                        </li>
+                                    </ul>
+                                {% endif %}
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+                {% endfor %}
+            </ul>
+        </falak-menu>
+
+        {% set has_images = false %}
+        {% for item in menu_items %}{% if item.image %}{% set has_images = true %}{% endif %}{% endfor %}
+        {% if has_images %}
+            <div class="mega-menu__strip">
+                {% for pass in ['parents', 'links'] %}
+                    {% for item in menu_items %}
+                        {% set has_children = item.children|default([])|length > 0 %}
+                        {% if item.image and ((pass == 'parents' and has_children) or (pass == 'links' and not has_children)) %}
+                            <a class="mega-menu__tile" href="{{ item.url }}"{{ item.is_new_tab ? ' target="_blank" rel="noopener"' : '' }}>
+                                <span class="mega-menu__tile-media"><img src="{{ item.image }}" alt="" loading="lazy"></span>
+                                <span class="mega-menu__tile-title">
+                                    <span>{{ item.title }}</span>
+                                    <svg class="mega-menu__go" viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M19 12H5m6-6-6 6 6 6"/></svg>
+                                </span>
+                            </a>
+                        {% endif %}
+                    {% endfor %}
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+</aside>

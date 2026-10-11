@@ -24,3 +24,9 @@
         </div>
     {% endif %}
 {% endblock %}
+
+{% block scripts %}
+    {% if page.type == 'builder' %}
+        <script defer src="{{ 'js/home.js'|asset }}?v=17"></script>
+    {% endif %}
+{% endblock %}

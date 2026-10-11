@@ -5,40 +5,92 @@
     handled here — they're delegated entirely to the `<falak-*>` SDK web
     components (see falak-add-product-button.js and friends), so a page keeps
     working even if this file fails to load. What's left here is markup-only
-    behavior the SDK doesn't own: the mobile menu drawer, language-switch link
+    behavior the SDK doesn't own: the mega menu panel, language-switch link
     rewriting, and small per-page glue (e.g. the listing sort + filters drawer below).
 */
 (function () {
     'use strict';
 
-    /* ------------------------------------------------ mobile menu drawer */
+    /* ---------------------------------------------------- scroll reveal */
+    // Elements marked data-reveal="fade|slide-left|slide-up" (Jalawi's entrance
+    // animations) start hidden: master.twig's head sets `has-reveal`, and drops
+    // it again if this script hasn't claimed it (`reveal-ready`) within 3s, so
+    // a failed load never leaves content hidden. Each one
+    // animates in the first time it scrolls into view, after its
+    // --reveal-delay. New ones (customizer re-renders, built cards) are
+    // picked up too.
 
-    var toggle = document.querySelector('[data-menu-toggle]');
-    var backdrop = document.querySelector('[data-menu-backdrop]');
+    if (document.documentElement.classList.contains('has-reveal')) {
+        document.documentElement.classList.add('reveal-ready');
 
-    function closeMenu() {
-        document.body.classList.remove('menu-is-open');
-        if (toggle) toggle.setAttribute('aria-expanded', 'false');
-        if (backdrop) backdrop.hidden = true;
+        var revealObserver = new IntersectionObserver(function (entries) {
+            entries.forEach(function (entry) {
+                if (!entry.isIntersecting) return;
+                entry.target.classList.add('is-revealed');
+                revealObserver.unobserve(entry.target);
+            });
+        }, { threshold: 0.1, rootMargin: '0px 0px -5% 0px' });
+
+        function watchReveals() {
+            document.querySelectorAll('[data-reveal]:not(.is-revealed):not([data-reveal-watched])').forEach(function (el) {
+                el.setAttribute('data-reveal-watched', '');
+                revealObserver.observe(el);
+            });
+        }
+
+        var revealPending = false;
+        new MutationObserver(function () {
+            if (revealPending) return;
+            revealPending = true;
+            requestAnimationFrame(function () { revealPending = false; watchReveals(); });
+        }).observe(document.body, { childList: true, subtree: true });
+        watchReveals();
     }
 
-    if (toggle) {
-        toggle.addEventListener('click', function () {
-            var open = document.body.classList.toggle('menu-is-open');
-            toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
-            if (backdrop) backdrop.hidden = !open;
+    /* ------------------------------------------------------- mega menu */
+    // The panel slides in from the start edge; CSS owns the motion, this only
+    // flips .is-open, inert and focus. The accordions inside are <falak-menu>'s.
+
+    var megaMenu = document.querySelector('[data-mega-menu]');
+    var megaTrigger = document.querySelector('[data-mega-open]');
+
+    if (megaMenu && megaTrigger) {
+        var megaReturnFocus = null;
+
+        function openMega() {
+            megaReturnFocus = document.activeElement;
+            megaMenu.removeAttribute('inert');
+            megaMenu.setAttribute('aria-hidden', 'false');
+            document.body.classList.add('mega-is-open');
+            megaTrigger.setAttribute('aria-expanded', 'true');
+            var close = megaMenu.querySelector('.mega-menu__close');
+            if (close) close.focus({ preventScroll: true });
+        }
+
+        function closeMega() {
+            if (!document.body.classList.contains('mega-is-open')) return;
+            document.body.classList.remove('mega-is-open');
+            megaMenu.setAttribute('aria-hidden', 'true');
+            megaMenu.setAttribute('inert', '');
+            megaTrigger.setAttribute('aria-expanded', 'false');
+            if (megaReturnFocus && megaReturnFocus.focus) megaReturnFocus.focus({ preventScroll: true });
+        }
+
+        megaTrigger.addEventListener('click', openMega);
+        document.querySelectorAll('[data-mega-close]').forEach(function (el) {
+            el.addEventListener('click', closeMega);
+        });
+        document.addEventListener('keydown', function (event) {
+            if (event.key === 'Escape') closeMega();
+        });
+
+        // Following a link closes the panel. A parent's link is the accordion
+        // toggle <falak-menu> already handled (it prevents the navigation).
+        megaMenu.addEventListener('click', function (event) {
+            if (event.defaultPrevented) return;
+            if (event.target.closest('a[href]')) closeMega();
         });
     }
-
-    if (backdrop) backdrop.addEventListener('click', closeMenu);
-
-    // Dropdown submenus, keyboard handling and viewport-edge flipping are
-    // handled by <falak-menu> (see menu.twig's own comment) — kept out of
-    // this file entirely to avoid double-toggling.
-
-    document.addEventListener('keydown', function (event) {
-        if (event.key === 'Escape') closeMenu();
-    });
 
     /* ----------------------------------------------- language switching */
     // The storefront reads ?lang= per request, so the choice must ride on
@@ -66,6 +118,472 @@
             url.searchParams.set('lang', currentLang);
             link.setAttribute('href', url.pathname + url.search + url.hash);
         });
+    }
+
+    /* --------------------------------------------- back to top + progress */
+
+    var toTop = document.querySelector('[data-back-to-top]');
+    var progress = document.querySelector('[data-scroll-progress]');
+
+    if (toTop) {
+        var ticking = false;
+
+        function updateProgress() {
+            var max = document.documentElement.scrollHeight - window.innerHeight;
+            var ratio = max > 0 ? Math.min(window.scrollY / max, 1) : 0;
+            if (progress) progress.style.strokeDashoffset = String(100 - ratio * 100);
+            toTop.classList.toggle('is-visible', window.scrollY > 200);
+            ticking = false;
+        }
+
+        window.addEventListener('scroll', function () {
+            if (ticking) return;
+            ticking = true;
+            requestAnimationFrame(updateProgress);
+        }, { passive: true });
+        window.addEventListener('resize', updateProgress);
+        updateProgress();
+
+        toTop.addEventListener('click', function () {
+            var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            window.scrollTo({ top: 0, behavior: reduce ? 'auto' : 'smooth' });
+        });
+    }
+
+    /* ---------------------------------------------- floating video card */
+    // Shown below the hero slider (or 700px down on pages without one),
+    // hidden again above it. Closing it keeps it away for this visit.
+
+    var sideVideo = document.querySelector('[data-side-video]');
+
+    if (sideVideo) {
+        var SIDE_KEY = 'jalawi:side-video-closed';
+        var closedForVisit = false;
+        try { closedForVisit = window.sessionStorage.getItem(SIDE_KEY) === '1'; } catch (e) { /* storage blocked */ }
+
+        if (closedForVisit) {
+            sideVideo.remove();
+        } else {
+            var sideMedia = sideVideo.querySelector('video');
+            var hero = document.querySelector('.block--hero-slider');
+            var sideShown = false;
+            var sideTicking = false;
+            sideVideo.hidden = false;
+
+            function sideThreshold() {
+                if (!hero) return 700;
+                var rect = hero.getBoundingClientRect();
+                return Math.max(0, rect.bottom + window.scrollY - window.innerHeight * 0.4);
+            }
+
+            function setSideShown(show) {
+                if (show === sideShown) return;
+                sideShown = show;
+                sideVideo.classList.toggle('is-shown', show);
+                if (!sideMedia) return;
+                if (show) sideMedia.play().catch(function () { /* autoplay refused — poster stays */ });
+                else sideMedia.pause();
+            }
+
+            var siteHeader = document.querySelector('.site-header');
+
+            // Park the card just under the header — a sticky header would
+            // otherwise sit on top of it and cut its top off.
+            function placeSide() {
+                var headerBottom = siteHeader ? siteHeader.getBoundingClientRect().bottom : 0;
+                sideVideo.style.setProperty('--side-video-top', Math.max(12, headerBottom + 12) + 'px');
+            }
+
+            function checkSide() {
+                sideTicking = false;
+                placeSide();
+                setSideShown(window.scrollY > sideThreshold());
+            }
+
+            window.addEventListener('scroll', function () {
+                if (sideTicking) return;
+                sideTicking = true;
+                requestAnimationFrame(checkSide);
+            }, { passive: true });
+            window.addEventListener('resize', checkSide);
+            checkSide();
+
+            sideVideo.querySelector('[data-side-video-close]').addEventListener('click', function (event) {
+                event.preventDefault();
+                event.stopPropagation();
+                try { window.sessionStorage.setItem(SIDE_KEY, '1'); } catch (e) { /* not remembered */ }
+                setSideShown(false);
+                window.setTimeout(function () { sideVideo.remove(); }, 500);
+            });
+        }
+    }
+
+    /* ------------------------------------------------- sticky glass header */
+
+    // Jalawi behaviour: the strips above the main bar (maintenance, top bar)
+    // scroll away and only the main bar stays pinned — done with a negative
+    // sticky `top` equal to their height. Past 200px the bar turns to frosted
+    // glass (`is-scrolled`).
+    var stickyHeader = document.querySelector('.site-header--sticky');
+    if (stickyHeader) {
+        var mainBar = stickyHeader.querySelector('.site-header__topbar');
+        var headerTicking = false;
+
+        function setStickOffset() {
+            var offset = mainBar ? mainBar.offsetTop : 0;
+            stickyHeader.style.setProperty('--header-stick-top', -offset + 'px');
+        }
+
+        function checkHeader() {
+            headerTicking = false;
+            stickyHeader.classList.toggle('is-scrolled', window.scrollY > 200);
+        }
+
+        setStickOffset();
+        checkHeader();
+        window.addEventListener('load', setStickOffset);
+        window.addEventListener('resize', setStickOffset);
+        // Announcement / maintenance components render after this runs.
+        if ('ResizeObserver' in window) new ResizeObserver(setStickOffset).observe(stickyHeader);
+        window.addEventListener('scroll', function () {
+            if (headerTicking) return;
+            headerTicking = true;
+            requestAnimationFrame(checkHeader);
+        }, { passive: true });
+    }
+
+    /* ------------------------------------------------- copy discount code */
+
+    function copyText(text) {
+        if (navigator.clipboard && window.isSecureContext) return navigator.clipboard.writeText(text);
+        return new Promise(function (resolve, reject) {
+            var area = document.createElement('textarea');
+            area.value = text;
+            area.setAttribute('readonly', '');
+            area.style.position = 'fixed';
+            area.style.opacity = '0';
+            document.body.appendChild(area);
+            area.select();
+            var ok = false;
+            try { ok = document.execCommand('copy'); } catch (e) { ok = false; }
+            area.remove();
+            ok ? resolve() : reject();
+        });
+    }
+
+    document.addEventListener('click', function (event) {
+        var btn = event.target.closest('[data-copy-code]');
+        if (!btn) return;
+        var label = btn.querySelector('[data-copy-label]');
+        copyText(btn.getAttribute('data-copy-code')).then(function () {
+            if (!label) return;
+            if (!label.dataset.original) label.dataset.original = label.textContent;
+            label.textContent = label.getAttribute('data-copied') || label.dataset.original;
+            btn.classList.add('is-copied');
+            window.clearTimeout(btn._copyTimer);
+            btn._copyTimer = window.setTimeout(function () {
+                label.textContent = label.dataset.original;
+                btn.classList.remove('is-copied');
+            }, 2000);
+        }).catch(function () { /* clipboard blocked — nothing to show */ });
+    });
+
+    /* ------------------------------------------ draggable floating button */
+    // Drag anywhere, snap to the nearest side on release, remember the spot.
+    // A drag must not also follow the link, so the click after one is eaten.
+
+    var floatBtn = document.querySelector('[data-draggable-float]');
+
+    if (floatBtn) {
+        var STORE_KEY = 'jalawi:float-pos';
+        var EDGE = 12;
+        var drag = null;
+        var suppressClick = false;
+
+        function clampTop(top) {
+            return Math.min(Math.max(top, EDGE), window.innerHeight - floatBtn.offsetHeight - EDGE);
+        }
+
+        function place(side, top) {
+            var left = side === 'left' ? EDGE : window.innerWidth - floatBtn.offsetWidth - EDGE;
+            floatBtn.classList.add('is-placed');
+            floatBtn.style.left = left + 'px';
+            floatBtn.style.top = clampTop(top) + 'px';
+            floatBtn.dataset.side = side;
+        }
+
+        try {
+            var saved = JSON.parse(window.localStorage.getItem(STORE_KEY) || 'null');
+            if (saved && (saved.side === 'left' || saved.side === 'right') && typeof saved.top === 'number') {
+                place(saved.side, saved.top);
+            }
+        } catch (e) { /* storage unavailable — keep the default spot */ }
+
+        floatBtn.addEventListener('pointerdown', function (event) {
+            if (event.button !== 0) return;
+            var rect = floatBtn.getBoundingClientRect();
+            drag = { x: event.clientX, y: event.clientY, dx: event.clientX - rect.left, dy: event.clientY - rect.top, moved: false };
+            floatBtn.setPointerCapture(event.pointerId);
+        });
+
+        floatBtn.addEventListener('pointermove', function (event) {
+            if (!drag) return;
+            if (!drag.moved && Math.abs(event.clientX - drag.x) + Math.abs(event.clientY - drag.y) < 6) return;
+
+            drag.moved = true;
+            floatBtn.classList.add('is-placed', 'is-dragging');
+            floatBtn.style.left = (event.clientX - drag.dx) + 'px';
+            floatBtn.style.top = (event.clientY - drag.dy) + 'px';
+        });
+
+        function endDrag(event) {
+            if (!drag) return;
+            var moved = drag.moved;
+            drag = null;
+            if (floatBtn.hasPointerCapture(event.pointerId)) floatBtn.releasePointerCapture(event.pointerId);
+            if (!moved) return;
+
+            suppressClick = true;
+            floatBtn.classList.remove('is-dragging');
+            var rect = floatBtn.getBoundingClientRect();
+            var side = rect.left + rect.width / 2 < window.innerWidth / 2 ? 'left' : 'right';
+            place(side, rect.top);
+
+            try {
+                window.localStorage.setItem(STORE_KEY, JSON.stringify({ side: side, top: parseFloat(floatBtn.style.top) }));
+            } catch (e) { /* not persisted — fine */ }
+        }
+
+        floatBtn.addEventListener('pointerup', endDrag);
+        floatBtn.addEventListener('pointercancel', endDrag);
+
+        floatBtn.addEventListener('click', function (event) {
+            if (!suppressClick) return;
+            suppressClick = false;
+            event.preventDefault();
+        });
+
+        floatBtn.addEventListener('dragstart', function (event) { event.preventDefault(); });
+
+        window.addEventListener('resize', function () {
+            if (floatBtn.classList.contains('is-placed')) place(floatBtn.dataset.side || 'right', parseFloat(floatBtn.style.top) || 0);
+        });
+    }
+
+    /* ------------------------------------------------ product comparison */
+
+    var compareTab = document.querySelector('[data-compare-open]');
+
+    if (compareTab) {
+        var COMPARE_KEY = 'jalawi:compare';
+        var COMPARE_MAX = 4;
+        var comparePanel = document.querySelector('[data-compare-panel]');
+        var compareBody = document.querySelector('[data-compare-body]');
+        var compareCache = new Map();
+        var compareReturnFocus = null;
+        var isArabic = (document.documentElement.lang || '').indexOf('ar') === 0;
+        var compareIcon = '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M7 4v10m0 0-3-3m3 3 3-3M17 20V10m0 0-3 3m3-3 3 3M4 20h6M14 4h6"/></svg>';
+
+        function t(key, vars) {
+            var text = (window.falak && window.falak.lang && window.falak.lang.get(key)) || key;
+            Object.keys(vars || {}).forEach(function (name) { text = text.replace('{' + name + '}', vars[name]); });
+            return text;
+        }
+
+        function esc(value) {
+            var div = document.createElement('div');
+            div.textContent = value === null || value === undefined ? '' : String(value);
+            return div.innerHTML;
+        }
+
+        function readCompare() {
+            try {
+                var list = JSON.parse(window.localStorage.getItem(COMPARE_KEY) || '[]');
+                return Array.isArray(list) ? list.map(String).slice(0, COMPARE_MAX) : [];
+            } catch (e) { return []; }
+        }
+
+        var compareIds = readCompare();
+
+        function saveCompare() {
+            try { window.localStorage.setItem(COMPARE_KEY, JSON.stringify(compareIds)); } catch (e) { /* not persisted */ }
+        }
+
+        function syncCompareUi() {
+            var count = document.querySelector('[data-compare-count]');
+            if (count) count.textContent = String(compareIds.length);
+            document.querySelectorAll('[data-compare-toggle]').forEach(function (btn) {
+                var on = compareIds.indexOf(btn.getAttribute('data-compare-toggle')) !== -1;
+                btn.classList.toggle('is-active', on);
+                btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+                btn.setAttribute('aria-label', on ? t('compare.remove') : t('compare.add'));
+            });
+        }
+
+        function toggleCompare(id) {
+            var at = compareIds.indexOf(id);
+            if (at !== -1) {
+                compareIds.splice(at, 1);
+                showToast(t('compare.removed'));
+            } else if (compareIds.length >= COMPARE_MAX) {
+                showToast(t('compare.full', { max: COMPARE_MAX }), 'error');
+                return;
+            } else {
+                compareIds.push(id);
+                showToast(t('compare.added'), 'success');
+            }
+            saveCompare();
+            syncCompareUi();
+            if (comparePanel && !comparePanel.hidden) renderCompare();
+        }
+
+        // Product cards are drawn by the SDK and redrawn at will, so the
+        // compare button is (re)attached whenever a card's actions appear.
+        function decorateCards() {
+            document.querySelectorAll('.f-card__actions').forEach(function (actions) {
+                if (actions.closest('.hero-thumb')) return; // hero glass cards stay Jalawi's two buttons
+                if (actions.querySelector('[data-compare-toggle]')) return;
+                var source = actions.querySelector('[product-id]');
+                if (!source) return;
+                var btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = 'f-card__compare';
+                btn.setAttribute('data-compare-toggle', source.getAttribute('product-id'));
+                btn.innerHTML = compareIcon;
+                actions.appendChild(btn);
+            });
+            syncCompareUi();
+        }
+
+        var decoratePending = false;
+        new MutationObserver(function () {
+            if (decoratePending) return;
+            decoratePending = true;
+            requestAnimationFrame(function () { decoratePending = false; decorateCards(); });
+        }).observe(document.body, { childList: true, subtree: true });
+        decorateCards();
+
+        document.addEventListener('click', function (event) {
+            var toggleBtn = event.target.closest('[data-compare-toggle]');
+            if (!toggleBtn) return;
+            event.preventDefault();
+            event.stopPropagation();
+            toggleCompare(toggleBtn.getAttribute('data-compare-toggle'));
+        }, true);
+
+        function loadProduct(id) {
+            if (compareCache.has(id)) return Promise.resolve(compareCache.get(id));
+            if (!window.falak || !window.falak.product) return Promise.resolve(null);
+            return window.falak.product.show(id).then(function (res) {
+                var p = res && res.data ? res.data : res;
+                compareCache.set(id, p);
+                return p;
+            }).catch(function () { return null; });
+        }
+
+        function money(amount, currency) {
+            return window.falak && window.falak.money ? window.falak.money(amount, currency) : String(amount);
+        }
+
+        function productCell(p, id) {
+            var name = (isArabic && p.name_ar) || p.name || '';
+            var image = p.images && p.images[0] ? p.images[0].url : '';
+            return '<div class="compare-panel__product">' +
+                '<button class="compare-panel__remove" type="button" data-compare-toggle="' + esc(id) + '" aria-label="' + esc(t('compare.remove')) + '">&times;</button>' +
+                '<a href="/product/' + encodeURIComponent(id) + '" class="compare-panel__media">' +
+                (image ? '<img src="' + esc(image) + '" alt="" loading="lazy">' : '<span class="compare-panel__placeholder"></span>') +
+                '</a>' +
+                '<a href="/product/' + encodeURIComponent(id) + '" class="compare-panel__name">' + esc(name) + '</a>' +
+                '</div>';
+        }
+
+        function priceCell(p) {
+            var price = Number(p.price_cents);
+            var sale = Number(p.discount_price_cents);
+            if (p.discount_price_cents !== null && Number.isFinite(sale) && sale < price) {
+                return '<strong>' + esc(money(sale, p.currency)) + '</strong> <del>' + esc(money(price, p.currency)) + '</del>';
+            }
+            return '<strong>' + esc(money(price, p.currency)) + '</strong>';
+        }
+
+        function renderCompare() {
+            if (!compareIds.length) {
+                compareBody.innerHTML = '<p class="compare-panel__empty">' + esc(t('compare.empty')) + '</p>';
+                return;
+            }
+
+            compareBody.setAttribute('aria-busy', 'true');
+            var ids = compareIds.slice();
+
+            Promise.all(ids.map(loadProduct)).then(function (products) {
+                var rows = [];
+                var items = ids.map(function (id, i) { return { id: id, p: products[i] }; }).filter(function (x) { return x.p; });
+
+                function row(label, cell) {
+                    rows.push('<tr><th scope="row">' + esc(label) + '</th>' + items.map(function (x) { return '<td>' + cell(x.p) + '</td>'; }).join('') + '</tr>');
+                }
+
+                row(t('compare.price'), priceCell);
+                row(t('compare.availability'), function (p) {
+                    var inStock = Number(p.quantity) > 0 || p.allow_backorders;
+                    return '<span class="compare-panel__stock' + (inStock ? '' : ' is-out') + '">' + esc(t(inStock ? 'product.in_stock' : 'product.out_of_stock')) + '</span>';
+                });
+                row(t('product.rating'), function (p) {
+                    return p.reviews_avg_rating ? esc(Number(p.reviews_avg_rating).toFixed(1)) + ' ★ <small>(' + esc(p.reviews_count || 0) + ')</small>' : '—';
+                });
+                row(t('compare.category'), function (p) {
+                    var c = p.categories && p.categories[0];
+                    return c ? esc((isArabic && c.name_ar) || c.name) : '—';
+                });
+                row(t('compare.weight'), function (p) { return p.weight ? esc(p.weight) : '—'; });
+
+                compareBody.innerHTML =
+                    '<div class="compare-panel__scroll"><table class="compare-panel__table">' +
+                    '<thead><tr><td></td>' + items.map(function (x) { return '<th scope="col">' + productCell(x.p, x.id) + '</th>'; }).join('') + '</tr></thead>' +
+                    '<tbody>' + rows.join('') + '</tbody>' +
+                    '<tfoot><tr><td></td>' + items.map(function (x) {
+                        return '<td><a class="btn btn--primary compare-panel__view" href="/product/' + encodeURIComponent(x.id) + '">' + esc(t('compare.view')) + '</a></td>';
+                    }).join('') + '</tr></tfoot>' +
+                    '</table></div>';
+                compareBody.removeAttribute('aria-busy');
+            });
+        }
+
+        function openCompare() {
+            compareReturnFocus = document.activeElement;
+            comparePanel.hidden = false;
+            document.body.classList.add('compare-is-open');
+            renderCompare();
+            var close = comparePanel.querySelector('.compare-panel__close');
+            if (close) close.focus();
+        }
+
+        function closeCompare() {
+            if (comparePanel.hidden) return;
+            comparePanel.hidden = true;
+            document.body.classList.remove('compare-is-open');
+            if (compareReturnFocus && compareReturnFocus.focus) compareReturnFocus.focus();
+        }
+
+        compareTab.addEventListener('click', openCompare);
+        comparePanel.querySelectorAll('[data-compare-close]').forEach(function (el) { el.addEventListener('click', closeCompare); });
+        comparePanel.querySelector('[data-compare-clear]').addEventListener('click', function () {
+            compareIds = [];
+            saveCompare();
+            syncCompareUi();
+            renderCompare();
+        });
+        document.addEventListener('keydown', function (event) {
+            if (event.key === 'Escape') closeCompare();
+        });
+
+        window.addEventListener('storage', function (event) {
+            if (event.key !== COMPARE_KEY) return;
+            compareIds = readCompare();
+            syncCompareUi();
+        });
+
+        syncCompareUi();
     }
 
     /* --------------------------------------------------- announcement bar */

@@ -43,6 +43,8 @@ data-guarded and render empty states until the platform wires their data.
 | Image with text | home, pages |
 | Photo grid | home, pages |
 | Video | home, pages |
+| FAQ | home, pages |
+| Blog articles | home, pages |
 
 ## Customizer annotations
 

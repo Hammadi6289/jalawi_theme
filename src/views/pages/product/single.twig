@@ -114,6 +114,13 @@
 
                     {# Save for later — the platform heart, works signed out too. #}
                     <falak-wishlist-button product-id="{{ product.id }}" button-class="btn btn--outline btn--wishlist f-card__wishlist"></falak-wishlist-button>
+
+                    {% if theme.settings.get('compare_enabled', true) %}
+                        <button class="btn btn--outline btn--compare" type="button" data-compare-toggle="{{ product.id }}" aria-pressed="false">
+                            <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M7 4v10m0 0-3-3m3 3 3-3M17 20V10m0 0-3 3m3-3 3 3M4 20h6M14 4h6"/></svg>
+                            <span>{{ trans('compare.add') }}</span>
+                        </button>
+                    {% endif %}
                 </div>
 
                 {# Sold out (product or chosen variant): "notify me when it's back". #}

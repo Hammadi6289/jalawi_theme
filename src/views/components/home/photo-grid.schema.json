@@ -20,6 +20,13 @@
             }
         },
         {
+            "id": "subtitle",
+            "label": {
+                "ar": "نص القسم",
+                "en": "Section text"
+            }
+        },
+        {
             "id": "items",
             "label": {
                 "ar": "البلاطة",
@@ -52,7 +59,27 @@
             },
             "multilanguage": true,
             "required": false,
-            "maxLength": 100
+            "maxLength": 100,
+            "value": {
+                "ar": "تسوق حسب الفئات",
+                "en": "Shop by category"
+            }
+        },
+        {
+            "id": "subtitle",
+            "type": "string",
+            "format": "textarea",
+            "label": {
+                "ar": "نص تحت العنوان",
+                "en": "Text under the title"
+            },
+            "multilanguage": true,
+            "required": false,
+            "maxLength": 255,
+            "value": {
+                "ar": "تألقي كل يوم مع تشكيلتنا المختارة من منتجات المكياج والعناية التي تُبرز أسلوبك وجمالك الفريد",
+                "en": "Shine every day with our curated selection of makeup and skincare products that highlight your unique style and beauty"
+            }
         },
         {
             "id": "items",
@@ -66,42 +93,99 @@
                 "ar": "صورة",
                 "en": "Photo"
             },
-            "required": true,
-            "minLength": 2,
-            "maxLength": 8,
-            "value": [],
+            "description": {
+                "ar": "لكل صورة: اختر فئة (يُستخدم اسمها ورابطها وفئاتها الفرعية) أو اكتب اسمًا ورابطًا. اترك القائمة فارغة لعرض كل الفئات الرئيسية في متجرك.",
+                "en": "For each photo pick a category (its name, link and sub-categories are used) or type a caption and link. Leave the list empty to show all your store's main categories."
+            },
+            "required": false,
+            "minLength": 0,
+            "maxLength": 12,
+            "value": [
+                {
+                    "items.category": null,
+                    "items.image": "https://cdn.salla.sa/lGlWoD/categories/OA1Qilz0FcWTB9YFqLLATnILGS0CV1fWv5jXcYoY.png",
+                    "items.title": {
+                        "ar": "العناية بالشعر",
+                        "en": "Hair care"
+                    },
+                    "items.url": "/"
+                },
+                {
+                    "items.category": null,
+                    "items.image": "https://cdn.salla.sa/lGlWoD/categories/zt4Vc7qQvEPGnjBPENxSu8aMZneIz8RiRIkHCTxm.png",
+                    "items.title": {
+                        "ar": "العناية بالبشرة",
+                        "en": "Skincare"
+                    },
+                    "items.url": "/"
+                },
+                {
+                    "items.category": null,
+                    "items.image": "https://cdn.salla.sa/lGlWoD/categories/PdS5ronRbtq7pYWJDUlLUFAnVoSJmyr1Wpx5rFdg.png",
+                    "items.title": {
+                        "ar": "مكياج",
+                        "en": "Makeup"
+                    },
+                    "items.url": "/",
+                    "items.subs": {
+                        "ar": "أدوات المكياج | /\nمكياج الشفاه | /\nمكياج العيون | /",
+                        "en": "Makeup Tools | /\nLip Makeup | /\nEye Makeup | /"
+                    }
+                },
+                {
+                    "items.category": null,
+                    "items.image": "https://cdn.salla.sa/lGlWoD/categories/XwXQOsfJRK64cdNJvdo9kwuscdAQ52nrhXqQcANo.png",
+                    "items.title": {
+                        "ar": "العطور",
+                        "en": "perfumes"
+                    },
+                    "items.url": "/"
+                }
+            ],
             "fields": [
+                {
+                    "id": "items.category",
+                    "type": "string",
+                    "format": "category",
+                    "label": {
+                        "ar": "الفئة",
+                        "en": "Category"
+                    },
+                    "description": {
+                        "ar": "يُستخدم اسمها ورابطها وفئاتها الفرعية",
+                        "en": "Its name, link and sub-categories are used"
+                    },
+                    "required": false
+                },
                 {
                     "id": "items.image",
                     "type": "string",
                     "format": "image",
                     "label": {
                         "ar": "الصورة",
-                        "en": "Image"
+                        "en": "Photo"
                     },
                     "description": {
-                        "ar": "المقاس المناسب 600×600 بكسل",
-                        "en": "Recommended size 600x600 px"
+                        "ar": "الأفضل مربعة، مثل 600×600",
+                        "en": "Square works best, e.g. 600×600"
                     },
-                    "required": true
+                    "required": false
                 },
                 {
                     "id": "items.title",
                     "type": "string",
                     "format": "text",
                     "label": {
-                        "ar": "العنوان",
+                        "ar": "الاسم",
                         "en": "Caption"
+                    },
+                    "description": {
+                        "ar": "اختياري — يحل محل اسم الفئة",
+                        "en": "Optional — replaces the category's own name"
                     },
                     "multilanguage": true,
                     "required": false,
-                    "maxLength": 60,
-                    "conditions": [
-                        {
-                            "id": "items.image",
-                            "operation": "not_empty"
-                        }
-                    ]
+                    "maxLength": 60
                 },
                 {
                     "id": "items.url",
@@ -111,16 +195,40 @@
                         "ar": "الرابط",
                         "en": "Link"
                     },
+                    "description": {
+                        "ar": "فقط إذا لم تختر فئة",
+                        "en": "Only when no category is picked"
+                    },
                     "required": false,
-                    "maxLength": 255,
-                    "conditions": [
-                        {
-                            "id": "items.image",
-                            "operation": "not_empty"
-                        }
-                    ]
+                    "maxLength": 500
+                },
+                {
+                    "id": "items.subs",
+                    "type": "string",
+                    "format": "textarea",
+                    "label": {
+                        "ar": "الفئات الفرعية",
+                        "en": "Sub-categories"
+                    },
+                    "description": {
+                        "ar": "تظهر خلف البطاقة. سطر لكل فئة: الاسم | الرابط. اتركه فارغًا لعرض الفئات الفرعية للفئة المختارة.",
+                        "en": "Shown on the back of the card. One per line: Name | link. Leave empty to use the picked category's own sub-categories."
+                    },
+                    "multilanguage": true,
+                    "required": false,
+                    "maxLength": 1000
                 }
             ]
+        },
+        {
+            "id": "autoplay",
+            "type": "boolean",
+            "format": "switch",
+            "label": {
+                "ar": "تحريك تلقائي",
+                "en": "Move automatically"
+            },
+            "value": true
         }
     ]
 }

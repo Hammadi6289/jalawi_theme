@@ -1,24 +1,63 @@
 {#
-    Blog article.
-    | Variable | Type   | Description                                          |
-    | article  | ?array | title, content (sanitized HTML), image, created_at   |
+    Blog article — Jalawi layout: breadcrumb, then centred date | author,
+    title and excerpt, a wide cover image, the article body, and share links.
+
+    | Variable | Type   | Description                                                   |
+    | article  | ?array | title, excerpt, content (sanitized HTML), image, created_at, author |
+
+    SDK parts: <falak-breadcrumb>, <falak-social mode="share">. (Jalawi also
+    shows likes and comments on articles; the SDK's comments are product
+    reviews only, so there is nothing to put there yet.)
 #}
 {% extends "layouts.master" %}
 
 {% block title %}{{ article.title|default(trans('blog.title')) }} — {{ store.name }}{% endblock %}
 
 {% block content %}
-    <div class="container content-page">
+    <div class="container blog-page blog-article">
         {% if article|default(null) %}
+            {% set crumbs = [
+                { title: trans('common.home'), url: store.url },
+                { title: trans('blog.title'), url: '/blog' },
+                { title: article.title }
+            ] %}
+            <nav class="blog-page__crumbs">
+                <falak-breadcrumb items="{{ crumbs|json_encode }}"></falak-breadcrumb>
+            </nav>
+
             <article>
-                <h1>{{ article.title }}</h1>
-                <time class="article-date">{{ article.created_at|date('Y/m/d') }}</time>
-                {% if article.image %}
-                    <img class="article-cover" src="{{ article.image }}" alt="{{ article.title }}">
+                <header class="blog-article__head">
+                    {% set author = article.author.name|default(null) %}
+                    <div class="blog-meta blog-meta--center">
+                        {% if article.created_at|default(null) %}
+                            <span class="blog-meta__item">
+                                <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" d="M4 6.5A1.5 1.5 0 0 1 5.5 5h13A1.5 1.5 0 0 1 20 6.5v12a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 18.5v-12ZM4 10h16M8 3v4M16 3v4"/></svg>
+                                <time datetime="{{ article.created_at|date('Y-m-d') }}">{{ article.created_at|date('j F Y') }}</time>
+                            </span>
+                        {% endif %}
+                        {% if article.created_at|default(null) and author %}<span class="blog-meta__sep" aria-hidden="true">|</span>{% endif %}
+                        {% if author %}
+                            <span class="blog-meta__item">
+                                <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm-7 8a7 7 0 0 1 14 0"/></svg>
+                                <span>{{ author }}</span>
+                            </span>
+                        {% endif %}
+                    </div>
+                    <h1 class="blog-article__title">{{ article.title }}</h1>
+                    {% if article.excerpt|default(null) %}<p class="blog-article__excerpt">{{ article.excerpt }}</p>{% endif %}
+                </header>
+
+                {% if article.image|default(null) %}
+                    <div class="blog-article__cover">
+                        <img src="{{ article.image }}" alt="{{ article.title }}">
+                    </div>
                 {% endif %}
-                <div class="content-page__body">
-                    {{ article.content|raw }}
+
+                <div class="blog-article__body">
+                    {{ article.content|default('')|raw }}
                 </div>
+
+                <falak-social mode="share" class="blog-article__share" share-text="{{ article.title }}"></falak-social>
             </article>
         {% else %}
             <div class="empty-state">
