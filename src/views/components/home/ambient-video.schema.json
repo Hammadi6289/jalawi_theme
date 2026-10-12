@@ -1,0 +1,123 @@
+{
+    "key": "jalawi-ambient-video",
+    "path": "home.ambient-video",
+    "title": {
+        "ar": "فيديو متحرك (بدون أزرار)",
+        "en": "Looping video (clean)"
+    },
+    "icon": "video-line",
+    "is_default": false,
+    "areas": [
+        "home",
+        "pages"
+    ],
+    "styleable": [
+        {
+            "id": "video_url",
+            "label": {
+                "ar": "إطار الفيديو",
+                "en": "Video frame"
+            },
+            "properties": [
+                "max_width",
+                "align_self",
+                "border_radius",
+                "border_width",
+                "border_color"
+            ]
+        }
+    ],
+    "fields": [
+        {
+            "id": "source",
+            "type": "items",
+            "format": "dropdown-list",
+            "label": {
+                "ar": "مصدر الفيديو",
+                "en": "Video source"
+            },
+            "value": "upload",
+            "required": true,
+            "options": [
+                { "label": { "ar": "رفع من جهازي", "en": "Upload from my device" }, "value": "upload" },
+                { "label": { "ar": "رابط مباشر", "en": "Direct link (URL)" }, "value": "url" }
+            ]
+        },
+        {
+            "id": "video_file",
+            "type": "string",
+            "format": "video",
+            "label": {
+                "ar": "ملف الفيديو",
+                "en": "Video file"
+            },
+            "description": {
+                "ar": "MP4 أو WebM — يُفضّل فيديو قصير وخفيف",
+                "en": "MP4 or WebM — a short, light clip works best"
+            },
+            "required": true,
+            "conditions": [
+                { "id": "source", "value": "upload" }
+            ]
+        },
+        {
+            "id": "video_url",
+            "type": "string",
+            "format": "text",
+            "label": {
+                "ar": "رابط ملف الفيديو (MP4)",
+                "en": "Video file URL (MP4)"
+            },
+            "description": {
+                "ar": "رابط مباشر لملف MP4 أو WebM",
+                "en": "Direct link to an MP4 or WebM file"
+            },
+            "required": true,
+            "maxLength": 500,
+            "conditions": [
+                { "id": "source", "value": "url" }
+            ]
+        },
+        {
+            "id": "poster",
+            "type": "string",
+            "format": "image",
+            "label": {
+                "ar": "صورة الغلاف",
+                "en": "Poster image"
+            },
+            "description": {
+                "ar": "مطلوبة — تظهر حتى يبدأ الفيديو",
+                "en": "Required — shown until the video starts"
+            },
+            "required": true
+        },
+        {
+            "id": "ratio",
+            "type": "items",
+            "format": "dropdown-list",
+            "label": {
+                "ar": "نسبة العرض للارتفاع",
+                "en": "Aspect ratio"
+            },
+            "value": "16/9",
+            "options": [
+                { "label": { "ar": "عريض 21:9", "en": "Wide 21:9" }, "value": "21/9" },
+                { "label": { "ar": "16:9", "en": "16:9" }, "value": "16/9" },
+                { "label": { "ar": "4:3", "en": "4:3" }, "value": "4/3" },
+                { "label": { "ar": "مربع 1:1", "en": "Square 1:1" }, "value": "1/1" },
+                { "label": { "ar": "طولي 9:16", "en": "Portrait 9:16" }, "value": "9/16" }
+            ]
+        },
+        {
+            "id": "full_width",
+            "type": "boolean",
+            "format": "switch",
+            "label": {
+                "ar": "بعرض الشاشة كاملًا",
+                "en": "Full screen width"
+            },
+            "value": false
+        }
+    ]
+}

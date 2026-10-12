@@ -9053,7 +9053,7 @@ falak-add-product-button button.is-clicked svg path,
     .site-topbar__mask { -webkit-mask-image: none; mask-image: none; }
 }
 
-/* ------------------------------------------------------ product comparison */
+/*  product comparison */
 
 .compare-tab {
     position: fixed;
@@ -9686,3 +9686,25 @@ body.mega-is-open { overflow: hidden; }
 @media (prefers-reduced-motion: reduce) {
     .side-video, .side-video.is-shown { transition: opacity 0.2s ease, visibility 0s linear 0.2s; transform: none; }
 }
+
+/* ---------------------------------------------- ambient (clean loop) video */
+.ambient-video {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    border-radius: var(--radius, 12px);
+    background: #000;
+}
+.block--ambient-video.is-full .ambient-video { border-radius: 0; }
+.ambient-video__media {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    pointer-events: none;
+}
+.ambient-video__media::-webkit-media-controls,
+.ambient-video__media::-webkit-media-controls-enclosure,
+.ambient-video__media::-webkit-media-controls-start-playback-button { display: none !important; -webkit-appearance: none; }

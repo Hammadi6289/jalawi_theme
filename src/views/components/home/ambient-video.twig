@@ -1,0 +1,42 @@
+{#
+    Looping video — no controls, no links, no branding.
+    | Variable             | Type    | Description                          |
+    | component.source     | string  | "upload" or "url"                    |
+    | component.video_file | ?string | uploaded video (source = upload)     |
+    | component.video_url  | ?string | direct MP4/WebM URL (source = url)   |
+    | component.poster     | string  | required poster image                |
+    | component.ratio      | ?string | CSS aspect-ratio, e.g. "16/9"        |
+    | component.full_width | ?bool   | span the full viewport width         |
+    | position             | int     |                                      |
+
+    muted + playsinline are required for browsers (iOS included) to autoplay.
+    No `controls` attribute, and pointer-events are disabled so the native
+    overlay / right-click menu never appears. Nothing renders unless both a
+    video and a poster are set.
+#}
+{% set ratio = component.ratio|default('16/9') %}
+{% if ratio is iterable %}{% set ratio = ratio|first %}{% endif %}
+{% set source = component.source|default('upload') %}
+{% if source is iterable %}{% set source = source|first %}{% endif %}
+{% set video_field = source == 'url' ? 'video_url' : 'video_file' %}
+{% set video_src = source == 'url' ? component.video_url : component.video_file %}
+<section class="block block--ambient-video{{ component.full_width ? ' is-full' : '' }}" id="ambient-video-{{ position }}" {{ falak_section() }}>
+    <div class="{{ component.full_width ? '' : 'container' }}">
+        <div class="ambient-video" style="aspect-ratio: {{ ratio }};"
+             data-falak-field="{{ video_field }}" data-falak-label="{{ trans('editor.field.video') }}" data-falak-bind="none">
+            {% if video_src and component.poster %}
+                <video class="ambient-video__media"
+                       src="{{ video_src }}"
+                       data-falak-bind-src="{{ video_field }}"
+                       poster="{{ component.poster }}"
+                       autoplay muted loop playsinline
+                       preload="auto"
+                       disablepictureinpicture
+                       disableremoteplayback
+                       controlslist="nodownload nofullscreen noremoteplayback"
+                       aria-hidden="true"
+                       tabindex="-1"></video>
+            {% endif %}
+        </div>
+    </div>
+</section>
