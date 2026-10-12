@@ -9288,6 +9288,8 @@ body.compare-is-open { overflow: hidden; }
 .site-header__actions .f-wishlist-drawer__trigger:hover,
 .site-header__actions .f-user__trigger:hover,
 .site-header__actions .f-cart-summary__link:hover { color: var(--color-primary); background: transparent; }
+.site-header__actions .f-wishlist-drawer:not([hidden]),
+.site-header__actions .f-search:not([hidden]) { display: flex; align-items: center; }
 
 .cart-link { padding: 0; border: 0; border-radius: 0; }
 .cart-link .f-cart-summary__link { position: relative; }
