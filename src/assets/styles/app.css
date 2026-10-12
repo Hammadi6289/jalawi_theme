@@ -5542,7 +5542,7 @@ falak-announcement:not(.f-announce--scroll) .f-announce__inner { padding-inline:
     color: #4b5563;
 }
 
-/* ------------------------------------------------------------ brands block */
+/* brands block */
 .block--brands {
     padding-block: clamp(1.75rem, 3.5vw, 3rem);
     background: transparent;
