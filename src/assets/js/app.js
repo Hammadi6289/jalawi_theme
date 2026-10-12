@@ -438,19 +438,86 @@
         }
 
         // Product cards are drawn by the SDK and redrawn at will, so the
-        // compare button is (re)attached whenever a card's actions appear.
+        // action buttons (quick view, wishlist, compare, share) and category
+        // are decorated whenever card actions appear.
         function decorateCards() {
             document.querySelectorAll('.f-card__actions').forEach(function (actions) {
                 if (actions.closest('.hero-thumb')) return; // hero glass cards stay Jalawi's two buttons
-                if (actions.querySelector('[data-compare-toggle]')) return;
+
+                var card = actions.closest('.f-card__inner') || actions.closest('.f-card');
+                if (!card) return;
+
                 var source = actions.querySelector('[product-id]');
-                if (!source) return;
-                var btn = document.createElement('button');
-                btn.type = 'button';
-                btn.className = 'f-card__compare';
-                btn.setAttribute('data-compare-toggle', source.getAttribute('product-id'));
-                btn.innerHTML = compareIcon;
-                actions.appendChild(btn);
+                var productId = source ? source.getAttribute('product-id') : null;
+                var productUrl = null;
+                var linkEl = card.querySelector('a.f-card__link') || card.querySelector('a.f-card__media');
+                if (linkEl) productUrl = linkEl.getAttribute('href');
+
+                // Quick actions column at top-end corner of card
+                var quickActions = actions.querySelector('.f-card__quick-actions');
+                if (!quickActions) {
+                    quickActions = document.createElement('div');
+                    quickActions.className = 'f-card__quick-actions';
+                    actions.appendChild(quickActions);
+                }
+
+                // 1. Quick view (Eye icon)
+                if (!quickActions.querySelector('.f-card__quickview') && productUrl) {
+                    var qvBtn = document.createElement('a');
+                    qvBtn.className = 'f-card__quickview f-card__icon-btn';
+                    qvBtn.href = productUrl;
+                    qvBtn.setAttribute('aria-label', isArabic ? 'عرض سريع' : 'Quick view');
+                    qvBtn.innerHTML = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>';
+                    quickActions.appendChild(qvBtn);
+                }
+
+                // 2. Wishlist button (move inside quickActions)
+                var wishlistHost = actions.querySelector('falak-wishlist-button') || actions.querySelector('.f-card__wishlist');
+                if (wishlistHost && wishlistHost.parentElement !== quickActions) {
+                    quickActions.appendChild(wishlistHost);
+                }
+
+                // 3. Compare button (Arrows icon)
+                var compBtn = actions.querySelector('[data-compare-toggle]');
+                if (!compBtn && productId) {
+                    compBtn = document.createElement('button');
+                    compBtn.type = 'button';
+                    compBtn.className = 'f-card__compare f-card__icon-btn';
+                    compBtn.setAttribute('data-compare-toggle', productId);
+                    compBtn.setAttribute('aria-label', isArabic ? 'مقارنة' : 'Compare');
+                    compBtn.innerHTML = compareIcon;
+                    quickActions.appendChild(compBtn);
+                } else if (compBtn && compBtn.parentElement !== quickActions) {
+                    quickActions.appendChild(compBtn);
+                }
+
+                // 4. Share / Copy Link button
+                if (!quickActions.querySelector('.f-card__share') && (productId || productUrl)) {
+                    var shareBtn = document.createElement('button');
+                    shareBtn.type = 'button';
+                    shareBtn.className = 'f-card__share f-card__icon-btn';
+                    if (productUrl) shareBtn.setAttribute('data-share-url', productUrl);
+                    shareBtn.setAttribute('aria-label', isArabic ? 'نسخ الرابط' : 'Copy link');
+                    shareBtn.innerHTML = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>';
+                    quickActions.appendChild(shareBtn);
+                }
+
+                // Category line above title
+                var cardHost = card.closest('falak-product-card');
+                if (cardHost && cardHost.product && !card.querySelector('.f-card__category')) {
+                    var p = cardHost.product;
+                    var catName = (isArabic && (p.category_name_ar || (p.category && p.category.name_ar))) ||
+                                  p.category_name || (p.category && p.category.name) || p.subtitle_ar || p.subtitle;
+                    if (catName) {
+                        var body = card.querySelector('.f-card__body');
+                        if (body) {
+                            var catEl = document.createElement('span');
+                            catEl.className = 'f-card__category';
+                            catEl.textContent = catName;
+                            body.insertBefore(catEl, body.firstChild);
+                        }
+                    }
+                }
             });
             syncCompareUi();
         }
@@ -470,6 +537,69 @@
             event.stopPropagation();
             toggleCompare(toggleBtn.getAttribute('data-compare-toggle'));
         }, true);
+
+        // Copy / share product link handler
+        document.addEventListener('click', function (event) {
+            var shareBtn = event.target.closest('.f-card__share, [data-share-url]');
+            if (!shareBtn) return;
+            event.preventDefault();
+            event.stopPropagation();
+            var url = shareBtn.getAttribute('data-share-url') || window.location.href;
+            if (url.indexOf('http') !== 0) url = window.location.origin + url;
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(url).then(function () {
+                    showToast(isArabic ? 'تم نسخ رابط المنتج بنجاح' : 'Product link copied to clipboard', 'success');
+                }).catch(function () {
+                    showToast(isArabic ? 'تم نسخ رابط المنتج' : 'Product link copied', 'info');
+                });
+            } else {
+                showToast(isArabic ? 'تم نسخ رابط المنتج' : 'Product link copied', 'info');
+            }
+        });
+
+        // Card hover & Button hover helper for desktop (guarantees hover state across all devices)
+        document.addEventListener('mouseover', function (event) {
+            var card = event.target.closest('falak-product-card, .f-slider__slide, .f-card, .f-card__inner, .product-card');
+            if (card && !card.classList.contains('is-card-hovered')) {
+                card.classList.add('is-card-hovered');
+            }
+            var btn = event.target.closest('.f-card__quick-actions a, .f-card__quick-actions button, .f-card__quick-actions .f-card__icon-btn, .f-card__add, .f-add-product__button, falak-add-product-button button, .btn--card, .btn--card-icon');
+            if (btn && !btn.classList.contains('is-btn-hovered')) {
+                btn.classList.add('is-btn-hovered');
+            }
+        });
+
+        document.addEventListener('mouseout', function (event) {
+            var card = event.target.closest('falak-product-card, .f-slider__slide, .f-card, .f-card__inner, .product-card');
+            if (card) {
+                var related = event.relatedTarget ? event.relatedTarget.closest('falak-product-card, .f-slider__slide, .f-card, .f-card__inner, .product-card') : null;
+                if (related !== card) {
+                    card.classList.remove('is-card-hovered');
+                }
+            }
+            var btn = event.target.closest('.f-card__quick-actions a, .f-card__quick-actions button, .f-card__quick-actions .f-card__icon-btn, .f-card__add, .f-add-product__button, falak-add-product-button button, .btn--card, .btn--card-icon');
+            if (btn) {
+                btn.classList.remove('is-btn-hovered');
+            }
+        });
+
+        // Instant click color scheme reversal feedback for all card buttons
+        var cardBtnSelector = '.f-card__add, .f-card__wishlist, .f-wishlist__button, falak-wishlist-button button, .f-card__compare, .f-card__quickview, .f-card__share, .f-add-product__button, falak-add-product-button button, .btn--card, .btn--card-icon, .f-card__quick-actions a, .f-card__quick-actions button';
+        document.addEventListener('pointerdown', function (event) {
+            var btn = event.target.closest(cardBtnSelector);
+            if (!btn) return;
+            btn.classList.add('is-clicked');
+        });
+        document.addEventListener('pointerup', function (event) {
+            var btn = event.target.closest(cardBtnSelector);
+            if (btn) {
+                setTimeout(function () { btn.classList.remove('is-clicked'); }, 400);
+            }
+        });
+        document.addEventListener('pointercancel', function (event) {
+            var btn = event.target.closest(cardBtnSelector);
+            if (btn) btn.classList.remove('is-clicked');
+        });
 
         function loadProduct(id) {
             if (compareCache.has(id)) return Promise.resolve(compareCache.get(id));

@@ -7055,99 +7055,685 @@ falak-announcement:not(.f-announce--scroll) .f-announce__inner { padding-inline:
     .product-grid { grid-template-columns: repeat(2, 1fr); gap: 0.9rem; }
 }
 
+/* ------------------------------------------------ product cards (luxury cosmetic styling) */
+
+.product-card,
+.f-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    block-size: 100%;
+    color: inherit;
+    text-decoration: none;
+    background: transparent;
+}
+
+.f-card__inner,
 .product-card {
     position: relative;
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
-    color: inherit;
-    text-decoration: none;
+    block-size: 100%;
+    background: transparent !important;
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    transform: none !important;
+    overflow: visible !important;
+    transition: none !important;
 }
 
-/* The name link stretches over the whole card; interactive children sit above. */
-.product-card__link {
-    color: inherit;
-    text-decoration: none;
+.f-card:hover .f-card__inner,
+.f-card__inner:hover,
+.product-card:hover {
+    box-shadow: none !important;
+    transform: none !important;
 }
 
-.product-card__link::after {
-    content: '';
-    position: absolute;
-    inset: 0;
+/* Media Wrap & Image Container */
+.product-card__media-wrap {
+    position: relative;
+    width: 100%;
 }
 
-.product-card .btn--card { position: relative; z-index: 1; }
-
-.btn--card {
-    padding: 0.55rem 1rem;
-    font-size: 0.9rem;
-    background: transparent;
-    border-color: var(--color-border);
-    color: var(--color-text);
-}
-
-.btn--card:hover {
-    background: var(--color-primary);
-    border-color: var(--color-primary);
-    color: var(--color-on-primary);
-}
-
-.btn--card.is-added {
-    background: var(--color-primary);
-    border-color: var(--color-primary);
-    color: var(--color-on-primary);
-}
-
+.f-card__media,
 .product-card__media {
     position: relative;
-    border-radius: var(--radius);
-    overflow: hidden;
-    background: var(--color-surface);
-    border: 1px solid var(--color-border);
-    transition: border-color var(--transition), box-shadow var(--transition);
-}
-
-/* The image zoom reads as elevation once the frame lifts with it. */
-.product-card:hover .product-card__media {
-    border-color: color-mix(in srgb, var(--color-primary) 25%, var(--color-border));
-    box-shadow: var(--shadow);
-}
-
-.product-card__media img {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    aspect-ratio: 1 / 1;
     width: 100%;
-    aspect-ratio: 1;
-    object-fit: cover;
-    display: block;
-    transition: transform 300ms ease;
+    background: #f6f7f9;
+    border-radius: 0.75rem;
+    overflow: hidden;
+    border: 1px solid rgba(0, 0, 0, 0.04);
+    box-sizing: border-box;
+    text-decoration: none;
 }
 
-.product-card:hover .product-card__media img { transform: scale(1.04); }
+[data-theme="dark"] .f-card__media,
+.theme-dark .f-card__media,
+[data-theme="dark"] .product-card__media,
+.theme-dark .product-card__media {
+    background: #1f2937;
+    border-color: rgba(255, 255, 255, 0.08);
+}
 
-.product-card__placeholder {
+.f-card__media img,
+.product-card__media img {
+    inline-size: 100%;
+    block-size: 100%;
+    object-fit: contain;
+    padding: 0.85rem;
+    box-sizing: border-box;
+    transition: transform 0.85s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.f-card:hover .f-card__media img,
+.f-card__inner:hover .f-card__media img,
+falak-product-card:hover .f-card__media img,
+.product-card:hover .product-card__media img {
+    transform: scale(1.10);
+}
+
+.product-card__placeholder,
+.f-card__placeholder {
     width: 100%;
     aspect-ratio: 1;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: var(--color-text-faint);
-    font-size: 2rem;
+    color: var(--color-text-faint, #9ca3af);
+    font-size: 2.25rem;
+    background: #f6f7f9;
 }
 
-.product-card h3 {
-    font-size: 0.98rem;
-    font-weight: 600;
+/* Content below Image */
+.f-card__body,
+.product-card__content {
+    display: flex;
+    flex-direction: column;
+    padding: 0.75rem 0.25rem 0.25rem;
+    gap: 0.25rem;
+    flex-grow: 1;
+    background: transparent;
+    text-align: start;
+}
+
+.f-card__category,
+.product-card__category {
+    font-size: 0.78rem;
+    font-weight: 500;
+    color: var(--color-text-soft, #737373);
+    text-transform: capitalize;
     margin: 0;
-    overflow: hidden;
+    line-height: 1.3;
+}
+
+.f-card__title,
+.product-card h3 {
+    margin: 0;
+    font-size: 0.92rem;
+    font-weight: 700;
+    line-height: 1.35;
+    color: var(--color-text, #111827);
     display: -webkit-box;
     line-clamp: 2;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
+    overflow: hidden;
 }
 
+.f-card__link,
+.product-card__link {
+    color: var(--color-text, #111827);
+    text-decoration: none;
+    transition: color 0.15s ease;
+}
+
+.f-card__link:hover,
+.product-card__link:hover {
+    color: var(--color-primary);
+}
+
+.f-card__price,
 .product-card__price {
-    margin: 0;
+    display: flex;
+    align-items: baseline;
+    gap: 0.4rem;
+    margin: 0.15rem 0 0;
+    font-size: 0.95rem;
     font-weight: 700;
-    color: var(--color-primary-dark);
+    color: var(--color-text, #111827);
+}
+
+.f-card__price-now {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--color-text, #111827);
+}
+
+.f-card__price-was {
+    font-size: 0.8rem;
+    color: var(--color-text-faint, #9ca3af);
+    text-decoration: line-through;
+}
+
+/* Actions Overlay (Square matching media area) */
+.f-card__actions,
+.product-card__actions {
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline: 0;
+    aspect-ratio: 1 / 1;
+    width: 100%;
+    pointer-events: none;
+    z-index: 10;
+    padding: 0.75rem;
+    box-sizing: border-box;
+    display: block;
+}
+
+.product-card falak-add-product-button,
+.product-card falak-wishlist-button,
+.f-card falak-add-product-button,
+.f-card falak-wishlist-button {
+    display: contents;
+}
+
+/* Quick Actions Column (Top-End Corner) */
+.f-card__quick-actions,
+.product-card__quick-actions {
+    position: absolute;
+    inset-block-start: 0.75rem;
+    inset-inline-end: 0.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    z-index: 12;
+    pointer-events: auto;
+}
+
+/* Action Icon Buttons */
+.f-card__quick-actions a,
+.f-card__quick-actions button,
+.f-card__quick-actions .f-card__icon-btn,
+.f-card__quick-actions .f-card__wishlist,
+.f-card__quick-actions .f-wishlist__button,
+.f-card__quick-actions falak-wishlist-button button,
+.f-card__quick-actions .f-card__compare,
+.f-card__quick-actions .f-card__quickview,
+.f-card__quick-actions .f-card__share,
+.product-card__quick-actions a,
+.product-card__quick-actions button,
+.product-card .btn--card-icon {
+    inline-size: 2.15rem;
+    block-size: 2.15rem;
+    min-inline-size: 2.15rem;
+    min-block-size: 2.15rem;
+    padding: 0;
+    margin: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-primary) !important;
+    color: #ffffff !important;
+    border: 1.5px solid transparent !important;
+    border-radius: 0.35rem;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.14);
+    pointer-events: auto;
+    text-decoration: none;
+    transition: background-color 0.18s ease, color 0.18s ease, border-color 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+/* Action Icons (Default state: white on pink button) */
+.f-card__quick-actions svg,
+.product-card__quick-actions svg,
+.f-card__quick-actions .f-wishlist__icon,
+.product-card .btn--card-icon svg {
+    width: 1rem;
+    height: 1rem;
+    stroke: #ffffff !important;
+    fill: none !important;
+    color: #ffffff !important;
+}
+
+.f-card__quick-actions svg path,
+.product-card__quick-actions svg path,
+.f-card__quick-actions .f-wishlist__icon path,
+.product-card .btn--card-icon svg path {
+    stroke: #ffffff !important;
+    color: #ffffff !important;
+}
+
+/* Wishlist icon when item is NOT added: outline white heart */
+.f-card__quick-actions .f-card__wishlist:not(.is-added) svg,
+.f-card__quick-actions .f-wishlist__button:not(.is-added) svg,
+.f-card__quick-actions falak-wishlist-button button:not(.is-added) svg,
+.product-card .btn--card-icon:not(.is-added) svg,
+.f-card__quick-actions .f-card__wishlist:not(.is-added) svg path,
+.f-card__quick-actions .f-wishlist__button:not(.is-added) svg path,
+.f-card__quick-actions falak-wishlist-button button:not(.is-added) svg path,
+.product-card .btn--card-icon:not(.is-added) svg path {
+    stroke: #ffffff !important;
+    fill: none !important;
+    color: #ffffff !important;
+}
+
+/* Wishlist icon when item IS ADDED / SELECTED: SOLID FILLED WHITE HEART */
+.f-card__quick-actions .f-card__wishlist.is-added,
+.f-card__quick-actions .f-wishlist__button.is-added,
+.f-card__quick-actions falak-wishlist-button button.is-added,
+.product-card .btn--card-icon.is-added {
+    color: #ffffff !important;
+}
+
+.f-card__quick-actions .f-card__wishlist.is-added svg,
+.f-card__quick-actions .f-wishlist__button.is-added svg,
+.f-card__quick-actions falak-wishlist-button button.is-added svg,
+.f-card__quick-actions .f-card__wishlist.is-added .f-wishlist__icon,
+.f-card__quick-actions .f-wishlist__button.is-added .f-wishlist__icon,
+.product-card .btn--card-icon.is-added svg,
+.product-card .btn--card-icon.is-added .f-wishlist__icon,
+.f-card__quick-actions .f-card__wishlist.is-added svg path,
+.f-card__quick-actions .f-wishlist__button.is-added svg path,
+.f-card__quick-actions falak-wishlist-button button.is-added svg path,
+.product-card .btn--card-icon.is-added svg path {
+    stroke: #ffffff !important;
+    fill: #ffffff !important;
+    color: #ffffff !important;
+}
+
+/* Add to Cart Button (Bottom of Media Area) */
+.f-card__add,
+.f-add-product__button,
+falak-add-product-button button,
+.product-card .btn--card {
+    position: absolute;
+    inset-block-end: 0.75rem;
+    inset-inline: 0.75rem;
+    width: calc(100% - 1.5rem);
+    min-block-size: 2.35rem;
+    padding: 0.45rem 0.85rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.45rem;
+    background: var(--color-primary) !important;
+    color: #ffffff !important;
+    border: 1.5px solid transparent !important;
+    border-radius: 0.35rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.14);
+    pointer-events: auto;
+    z-index: 12;
+    white-space: nowrap;
+    text-decoration: none;
+    transition: background-color 0.18s ease, color 0.18s ease, border-color 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.f-card__add svg,
+.f-add-product__button svg,
+falak-add-product-button button svg,
+.product-card .btn--card svg {
+    width: 1.05rem;
+    height: 1.05rem;
+    stroke: #ffffff !important;
+    color: #ffffff !important;
+    fill: none !important;
+    flex-shrink: 0;
+}
+
+/* Desktop: Hide buttons initially, reveal smoothly on card hover */
+@media (min-width: 769px) {
+    .f-card__quick-actions,
+    .product-card__quick-actions {
+        opacity: 0;
+        pointer-events: none;
+        transform: translateX(25px);
+        transition: opacity 0.55s cubic-bezier(0.16, 1, 0.3, 1), transform 0.55s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .f-card__add,
+    .f-add-product__button,
+    falak-add-product-button button,
+    .product-card .btn--card {
+        opacity: 0;
+        pointer-events: none;
+        transform: translateY(25px);
+        transition: opacity 0.55s cubic-bezier(0.16, 1, 0.3, 1), transform 0.55s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    falak-product-card:hover .f-card__quick-actions,
+    falak-product-card.is-card-hovered .f-card__quick-actions,
+    .f-slider__slide:hover .f-card__quick-actions,
+    .f-slider__slide.is-card-hovered .f-card__quick-actions,
+    .f-card:hover .f-card__quick-actions,
+    .f-card.is-card-hovered .f-card__quick-actions,
+    .f-card__inner:hover .f-card__quick-actions,
+    .f-card__inner.is-card-hovered .f-card__quick-actions,
+    .product-card:hover .product-card__quick-actions,
+    .product-card.is-card-hovered .product-card__quick-actions {
+        opacity: 1 !important;
+        pointer-events: auto !important;
+        transform: none !important;
+    }
+
+    falak-product-card:hover .f-card__add,
+    falak-product-card.is-card-hovered .f-card__add,
+    falak-product-card:hover .f-add-product__button,
+    falak-product-card.is-card-hovered .f-add-product__button,
+    falak-product-card:hover falak-add-product-button button,
+    falak-product-card.is-card-hovered falak-add-product-button button,
+    .f-slider__slide:hover .f-card__add,
+    .f-slider__slide.is-card-hovered .f-card__add,
+    .f-slider__slide:hover .f-add-product__button,
+    .f-slider__slide.is-card-hovered .f-add-product__button,
+    .f-card:hover .f-card__add,
+    .f-card.is-card-hovered .f-card__add,
+    .f-card:hover .f-add-product__button,
+    .f-card.is-card-hovered .f-add-product__button,
+    .f-card:hover falak-add-product-button button,
+    .f-card.is-card-hovered falak-add-product-button button,
+    .f-card__inner:hover .f-card__add,
+    .f-card__inner.is-card-hovered .f-card__add,
+    .f-card__inner:hover .f-add-product__button,
+    .f-card__inner.is-card-hovered .f-add-product__button,
+    .f-card__inner:hover falak-add-product-button button,
+    .f-card__inner.is-card-hovered falak-add-product-button button,
+    .product-card:hover .btn--card,
+    .product-card.is-card-hovered .btn--card {
+        opacity: 1 !important;
+        pointer-events: auto !important;
+        transform: none !important;
+    }
+}
+
+/* Button Hover State: Reverses button to White Background with Pink Text/Icons */
+.f-card__quick-actions a:hover,
+.f-card__quick-actions a.is-btn-hovered,
+.f-card__quick-actions button:hover,
+.f-card__quick-actions button.is-btn-hovered,
+.f-card__quick-actions .f-card__icon-btn:hover,
+.f-card__quick-actions .f-card__icon-btn.is-btn-hovered,
+.f-card__quick-actions .f-card__wishlist:hover,
+.f-card__quick-actions .f-card__wishlist.is-btn-hovered,
+.f-card__quick-actions .f-wishlist__button:hover,
+.f-card__quick-actions .f-wishlist__button.is-btn-hovered,
+.f-card__quick-actions falak-wishlist-button button:hover,
+.f-card__quick-actions falak-wishlist-button button.is-btn-hovered,
+.f-card__quick-actions .f-card__compare:hover,
+.f-card__quick-actions .f-card__compare.is-btn-hovered,
+.f-card__quick-actions .f-card__quickview:hover,
+.f-card__quick-actions .f-card__quickview.is-btn-hovered,
+.f-card__quick-actions .f-card__share:hover,
+.f-card__quick-actions .f-card__share.is-btn-hovered,
+.product-card__quick-actions a:hover,
+.product-card__quick-actions a.is-btn-hovered,
+.product-card__quick-actions button:hover,
+.product-card__quick-actions button.is-btn-hovered,
+.product-card .btn--card-icon:hover,
+.product-card .btn--card-icon.is-btn-hovered,
+.f-card__add:hover,
+.f-card__add.is-btn-hovered,
+.f-add-product__button:hover,
+.f-add-product__button.is-btn-hovered,
+falak-add-product-button button:hover,
+falak-add-product-button button.is-btn-hovered,
+.product-card .btn--card:hover,
+.product-card .btn--card.is-btn-hovered {
+    background: #ffffff !important;
+    color: var(--color-primary) !important;
+    border-color: var(--color-primary) !important;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18) !important;
+    transform: scale(1.05);
+}
+
+.f-card__quick-actions a:hover svg,
+.f-card__quick-actions a.is-btn-hovered svg,
+.f-card__quick-actions button:hover svg,
+.f-card__quick-actions button.is-btn-hovered svg,
+.f-card__quick-actions .f-card__icon-btn:hover svg,
+.f-card__quick-actions .f-card__icon-btn.is-btn-hovered svg,
+.f-card__quick-actions .f-card__compare:hover svg,
+.f-card__quick-actions .f-card__compare.is-btn-hovered svg,
+.f-card__quick-actions .f-card__quickview:hover svg,
+.f-card__quick-actions .f-card__quickview.is-btn-hovered svg,
+.f-card__quick-actions .f-card__share:hover svg,
+.f-card__quick-actions .f-card__share.is-btn-hovered svg,
+.product-card__quick-actions a:hover svg,
+.product-card__quick-actions a.is-btn-hovered svg,
+.product-card__quick-actions button:hover svg,
+.product-card__quick-actions button.is-btn-hovered svg,
+.product-card .btn--card-icon:hover svg,
+.product-card .btn--card-icon.is-btn-hovered svg,
+.f-card__add:hover svg,
+.f-card__add.is-btn-hovered svg,
+.f-add-product__button:hover svg,
+.f-add-product__button.is-btn-hovered svg,
+falak-add-product-button button:hover svg,
+falak-add-product-button button.is-btn-hovered svg,
+.product-card .btn--card:hover svg,
+.product-card .btn--card.is-btn-hovered svg {
+    color: var(--color-primary) !important;
+    stroke: var(--color-primary) !important;
+    fill: none !important;
+}
+
+.f-card__quick-actions a:hover svg path,
+.f-card__quick-actions a.is-btn-hovered svg path,
+.f-card__quick-actions button:hover svg path,
+.f-card__quick-actions button.is-btn-hovered svg path,
+.f-card__quick-actions .f-card__icon-btn:hover svg path,
+.f-card__quick-actions .f-card__icon-btn.is-btn-hovered svg path,
+.product-card__quick-actions svg path,
+.product-card .btn--card-icon:hover svg path,
+.product-card .btn--card-icon.is-btn-hovered svg path,
+.f-card__add:hover svg path,
+.f-card__add.is-btn-hovered svg path,
+.f-add-product__button:hover svg path,
+.f-add-product__button.is-btn-hovered svg path,
+falak-add-product-button button:hover svg path,
+falak-add-product-button button.is-btn-hovered svg path,
+.product-card .btn--card:hover svg path,
+.product-card .btn--card.is-btn-hovered svg path {
+    color: var(--color-primary) !important;
+    stroke: var(--color-primary) !important;
+}
+
+/* Wishlist Button Hover on White Background */
+.f-card__quick-actions .f-card__wishlist:not(.is-added):hover svg,
+.f-card__quick-actions .f-card__wishlist:not(.is-added).is-btn-hovered svg,
+.f-card__quick-actions .f-wishlist__button:not(.is-added):hover svg,
+.f-card__quick-actions .f-wishlist__button:not(.is-added).is-btn-hovered svg,
+.f-card__quick-actions falak-wishlist-button button:not(.is-added):hover svg,
+.f-card__quick-actions falak-wishlist-button button:not(.is-added).is-btn-hovered svg,
+.product-card .btn--card-icon:not(.is-added):hover svg,
+.product-card .btn--card-icon:not(.is-added).is-btn-hovered svg,
+.f-card__quick-actions .f-card__wishlist:not(.is-added):hover svg path,
+.f-card__quick-actions .f-card__wishlist:not(.is-added).is-btn-hovered svg path,
+.f-card__quick-actions .f-wishlist__button:not(.is-added):hover svg path,
+.f-card__quick-actions .f-wishlist__button:not(.is-added).is-btn-hovered svg path,
+.f-card__quick-actions falak-wishlist-button button:not(.is-added):hover svg path,
+.f-card__quick-actions falak-wishlist-button button:not(.is-added).is-btn-hovered svg path,
+.product-card .btn--card-icon:not(.is-added):hover svg path,
+.product-card .btn--card-icon:not(.is-added).is-btn-hovered svg path {
+    color: var(--color-primary) !important;
+    stroke: var(--color-primary) !important;
+    fill: none !important;
+}
+
+.f-card__quick-actions .f-card__wishlist.is-added:hover svg,
+.f-card__quick-actions .f-card__wishlist.is-added.is-btn-hovered svg,
+.f-card__quick-actions .f-wishlist__button.is-added:hover svg,
+.f-card__quick-actions .f-wishlist__button.is-added.is-btn-hovered svg,
+.f-card__quick-actions falak-wishlist-button button.is-added:hover svg,
+.f-card__quick-actions falak-wishlist-button button.is-added.is-btn-hovered svg,
+.product-card .btn--card-icon.is-added:hover svg,
+.product-card .btn--card-icon.is-added.is-btn-hovered svg,
+.f-card__quick-actions .f-card__wishlist.is-added:hover svg path,
+.f-card__quick-actions .f-card__wishlist.is-added.is-btn-hovered svg path,
+.f-card__quick-actions .f-wishlist__button.is-added:hover svg path,
+.f-card__quick-actions .f-wishlist__button.is-added.is-btn-hovered svg path,
+.f-card__quick-actions falak-wishlist-button button.is-added:hover svg path,
+.f-card__quick-actions falak-wishlist-button button.is-added.is-btn-hovered svg path,
+.product-card .btn--card-icon.is-added:hover svg path,
+.product-card .btn--card-icon.is-added.is-btn-hovered svg path {
+    color: var(--color-primary) !important;
+    stroke: var(--color-primary) !important;
+    fill: var(--color-primary) !important;
+}
+
+/* Button Click / Active State: Reverse to White Background with Pink Text/Icons */
+.f-card__quick-actions a:active,
+.f-card__quick-actions a.is-clicked,
+.f-card__quick-actions button:active,
+.f-card__quick-actions button.is-clicked,
+.f-card__quick-actions .f-card__wishlist:active,
+.f-card__quick-actions .f-card__wishlist.is-clicked,
+.f-card__quick-actions .f-wishlist__button:active,
+.f-card__quick-actions .f-wishlist__button.is-clicked,
+.f-card__quick-actions falak-wishlist-button button:active,
+.f-card__quick-actions falak-wishlist-button button.is-clicked,
+.f-card__add:active,
+.f-card__add.is-clicked,
+.f-add-product__button:active,
+.f-add-product__button.is-clicked,
+falak-add-product-button button:active,
+falak-add-product-button button.is-clicked,
+.product-card .btn--card:active,
+.product-card .btn--card.is-clicked,
+.product-card .btn--card-icon:active,
+.product-card .btn--card-icon.is-clicked {
+    background: #ffffff !important;
+    color: var(--color-primary) !important;
+    border-color: var(--color-primary) !important;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18) !important;
+    transform: scale(0.97) !important;
+}
+
+.f-card__quick-actions a:active svg,
+.f-card__quick-actions a.is-clicked svg,
+.f-card__quick-actions button:active svg,
+.f-card__quick-actions button.is-clicked svg,
+.f-card__add:active svg,
+.f-card__add.is-clicked svg,
+.f-add-product__button:active svg,
+.f-add-product__button.is-clicked svg,
+falak-add-product-button button:active svg,
+falak-add-product-button button.is-clicked svg,
+.product-card .btn--card:active svg,
+.product-card .btn--card.is-clicked svg,
+.product-card .btn--card-icon:active svg,
+.product-card .btn--card-icon.is-clicked svg {
+    color: var(--color-primary) !important;
+    stroke: var(--color-primary) !important;
+    fill: none !important;
+}
+
+.f-card__quick-actions a:active svg path,
+.f-card__quick-actions a.is-clicked svg path,
+.f-card__quick-actions button:active svg path,
+.f-card__quick-actions button.is-clicked svg path,
+.f-card__add:active svg path,
+.f-card__add.is-clicked svg path,
+.f-add-product__button:active svg path,
+.f-add-product__button.is-clicked svg path,
+falak-add-product-button button:active svg path,
+falak-add-product-button button.is-clicked svg path,
+.product-card .btn--card:active svg path,
+.product-card .btn--card.is-clicked svg path,
+.product-card .btn--card-icon:active svg path,
+.product-card .btn--card-icon.is-clicked svg path {
+    color: var(--color-primary) !important;
+    stroke: var(--color-primary) !important;
+}
+
+.f-card__quick-actions .f-card__wishlist.is-added:active svg,
+.f-card__quick-actions .f-card__wishlist.is-added.is-clicked svg,
+.f-card__quick-actions .f-wishlist__button.is-added:active svg,
+.f-card__quick-actions .f-wishlist__button.is-added.is-clicked svg,
+.f-card__quick-actions falak-wishlist-button button.is-added:active svg,
+.f-card__quick-actions falak-wishlist-button button.is-added.is-clicked svg,
+.product-card .btn--card-icon.is-added:active svg,
+.product-card .btn--card-icon.is-added.is-clicked svg,
+.f-card__quick-actions .f-card__wishlist.is-added:active svg path,
+.f-card__quick-actions .f-card__wishlist.is-added.is-clicked svg path,
+.f-card__quick-actions .f-wishlist__button.is-added:active svg path,
+.f-card__quick-actions .f-wishlist__button.is-added.is-clicked svg path,
+.f-card__quick-actions falak-wishlist-button button.is-added:active svg path,
+.f-card__quick-actions falak-wishlist-button button.is-added.is-clicked svg path,
+.product-card .btn--card-icon.is-added:active svg path,
+.product-card .btn--card-icon.is-added.is-clicked svg path {
+    fill: var(--color-primary) !important;
+    stroke: var(--color-primary) !important;
+    color: var(--color-primary) !important;
+}
+
+/* Mobile Screens: No card hover effect, buttons always visible with pink bg, reverse on click */
+@media (max-width: 768px) {
+    .f-card__media img,
+    .product-card__media img {
+        transition: none !important;
+        transform: none !important;
+    }
+    .f-card:hover .f-card__media img,
+    .f-card__inner:hover .f-card__media img,
+    falak-product-card:hover .f-card__media img,
+    .product-card:hover .product-card__media img {
+        transform: none !important;
+    }
+
+    .f-card__quick-actions,
+    .product-card__quick-actions {
+        opacity: 1 !important;
+        pointer-events: auto !important;
+        transform: none !important;
+        transition: none !important;
+        inset-block-start: 0.5rem;
+        inset-inline-end: 0.5rem;
+        gap: 0.25rem;
+    }
+
+    .f-card__quick-actions a,
+    .f-card__quick-actions button,
+    .f-card__quick-actions .f-card__icon-btn,
+    .f-card__quick-actions .f-card__wishlist,
+    .f-card__quick-actions .f-wishlist__button,
+    .f-card__quick-actions falak-wishlist-button button,
+    .f-card__quick-actions .f-card__compare,
+    .product-card .btn--card-icon {
+        inline-size: 1.85rem;
+        block-size: 1.85rem;
+        min-inline-size: 1.85rem;
+        min-block-size: 1.85rem;
+    }
+
+    .f-card__quick-actions svg,
+    .product-card__quick-actions svg {
+        width: 0.85rem;
+        height: 0.85rem;
+    }
+
+    .f-card__add,
+    .f-add-product__button,
+    falak-add-product-button button,
+    .product-card .btn--card {
+        opacity: 1 !important;
+        pointer-events: auto !important;
+        transform: none !important;
+        transition: none !important;
+        inset-block-end: 0.5rem;
+        inset-inline: 0.5rem;
+        width: calc(100% - 1rem);
+        min-block-size: 2rem;
+        font-size: 0.78rem;
+        padding: 0.35rem 0.5rem;
+    }
 }
 
 /* ------------------------------------------------------- product single */
@@ -8045,21 +8631,6 @@ falak-announcement:not(.f-announce--scroll) .f-announce__inner { padding-inline:
 /* The card row: buy button + heart square side by side. */
 .product-card falak-add-product-button,
 .product-card falak-wishlist-button { display: contents; }
-.product-card .btn--card-icon {
-    position: absolute;
-    inset-inline-end: 0.75rem;
-    inset-block-start: 0.75rem;
-    z-index: 2;
-    width: 2.25rem;
-    height: 2.25rem;
-    padding: 0;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.92);
-    color: var(--color-text-soft);
-}
-.product-card .btn--card-icon:hover,
-.product-card .btn--card-icon.is-added { color: var(--color-danger); border-color: var(--color-danger); background: #fff; }
-.product-card .btn--card-icon.is-added .f-wishlist__icon { fill: currentColor; }
 
 .buy-box .btn--wishlist {
     flex: none;
@@ -8537,10 +9108,6 @@ falak-announcement:not(.f-announce--scroll) .f-announce__inner { padding-inline:
 .f-card__compare svg { inline-size: 1.1rem; block-size: 1.1rem; }
 .f-card__compare:hover { border-color: var(--color-primary); color: var(--color-primary); }
 .f-card__compare.is-active { background: var(--color-primary); border-color: var(--color-primary); color: var(--color-on-primary, #ffffff); }
-
-.product-card .btn--card-compare { inset-block-start: 3.25rem; }
-.product-card .btn--card-compare:hover { color: var(--color-primary); border-color: var(--color-primary); }
-.product-card .btn--card-compare.is-active { background: var(--color-primary); border-color: var(--color-primary); color: var(--color-on-primary, #ffffff); }
 
 .btn--compare { display: inline-flex; align-items: center; gap: 0.4rem; }
 .btn--compare svg { inline-size: 1.1rem; block-size: 1.1rem; }
