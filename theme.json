@@ -487,6 +487,138 @@
                     "value": false
                 },
                 {
+                    "id": "footer_links_color",
+                    "type": "string",
+                    "format": "color",
+                    "css_var": "--color-footer-link",
+                    "label": {
+                        "ar": "لون روابط الفوتر",
+                        "en": "Footer links color"
+                    },
+                    "description": {
+                        "ar": "اتركه فارغًا لاستخدام اللون الافتراضي",
+                        "en": "Leave empty to use the theme default"
+                    },
+                    "required": false
+                },
+                {
+                    "id": "footer_links_hover_color",
+                    "type": "string",
+                    "format": "color",
+                    "css_var": "--color-footer-link-hover",
+                    "label": {
+                        "ar": "لون روابط الفوتر عند التمرير",
+                        "en": "Footer links hover color"
+                    },
+                    "description": {
+                        "ar": "اتركه فارغًا لاستخدام اللون الأساسي للقالب",
+                        "en": "Leave empty to use the theme primary color"
+                    },
+                    "required": false
+                },
+                {
+                    "id": "footer_links_weight",
+                    "type": "items",
+                    "format": "dropdown-list",
+                    "label": {
+                        "ar": "سماكة خط روابط الفوتر",
+                        "en": "Footer links font weight"
+                    },
+                    "value": "400",
+                    "options": [
+                        {
+                            "label": {
+                                "ar": "خفيف (300)",
+                                "en": "Light (300)"
+                            },
+                            "value": "300"
+                        },
+                        {
+                            "label": {
+                                "ar": "عادي (400)",
+                                "en": "Regular (400)"
+                            },
+                            "value": "400"
+                        },
+                        {
+                            "label": {
+                                "ar": "متوسط (500)",
+                                "en": "Medium (500)"
+                            },
+                            "value": "500"
+                        },
+                        {
+                            "label": {
+                                "ar": "شبه عريض (600)",
+                                "en": "Semi-Bold (600)"
+                            },
+                            "value": "600"
+                        },
+                        {
+                            "label": {
+                                "ar": "عريض (700)",
+                                "en": "Bold (700)"
+                            },
+                            "value": "700"
+                        }
+                    ]
+                },
+                {
+                    "id": "footer_title_color",
+                    "type": "string",
+                    "format": "color",
+                    "css_var": "--color-footer-title",
+                    "label": {
+                        "ar": "لون عناوين الفوتر",
+                        "en": "Footer headings color"
+                    },
+                    "description": {
+                        "ar": "اتركه فارغًا لاستخدام لون النص الافتراضي",
+                        "en": "Leave empty to use the default text color"
+                    },
+                    "required": false
+                },
+                {
+                    "id": "footer_title_weight",
+                    "type": "items",
+                    "format": "dropdown-list",
+                    "label": {
+                        "ar": "سماكة عناوين الفوتر",
+                        "en": "Footer headings font weight"
+                    },
+                    "value": "500",
+                    "options": [
+                        {
+                            "label": {
+                                "ar": "عادي (400)",
+                                "en": "Regular (400)"
+                            },
+                            "value": "400"
+                        },
+                        {
+                            "label": {
+                                "ar": "متوسط (500)",
+                                "en": "Medium (500)"
+                            },
+                            "value": "500"
+                        },
+                        {
+                            "label": {
+                                "ar": "شبه عريض (600)",
+                                "en": "Semi-Bold (600)"
+                            },
+                            "value": "600"
+                        },
+                        {
+                            "label": {
+                                "ar": "عريض (700)",
+                                "en": "Bold (700)"
+                            },
+                            "value": "700"
+                        }
+                    ]
+                },
+                {
                     "id": "footer_about",
                     "type": "string",
                     "format": "textarea",

@@ -4632,9 +4632,9 @@ falak-announcement:not(.f-announce--scroll) .f-announce__inner { padding-inline:
 .site-footer .f-apps__title {
     margin: 0 0 1.25rem;
     font-size: clamp(1rem, 0.9617rem + 0.1633vw, 1.125rem);
-    font-weight: 500;
+    font-weight: var(--footer-title-weight, 500);
     line-height: 25px;
-    color: inherit;
+    color: var(--color-footer-title, inherit);
 }
 
 /* brand column */
@@ -4686,15 +4686,15 @@ falak-announcement:not(.f-announce--scroll) .f-announce__inner { padding-inline:
 
 .site-footer__menu a,
 .site-footer__contact .f-contact-links__chip {
-    color: color-mix(in srgb, var(--color-text) 50%, transparent);
+    color: var(--color-footer-link, color-mix(in srgb, var(--color-text) 65%, transparent));
     font-size: 1rem;
-    font-weight: 300;
+    font-weight: var(--footer-links-weight, 400);
     line-height: 25px;
     text-decoration: none;
-    transition: color 0.5s ease-in-out;
+    transition: color 0.3s ease;
 }
 .site-footer__menu a:hover,
-.site-footer__contact .f-contact-links__chip:hover { color: var(--color-primary); }
+.site-footer__contact .f-contact-links__chip:hover { color: var(--color-footer-link-hover, var(--color-primary)); }
 
 /* <falak-contact-links>: a vertical list of icon circle + the value itself
    (kept by the SDK in the chip's title) instead of the channel name. */
@@ -4922,7 +4922,9 @@ falak-announcement:not(.f-announce--scroll) .f-announce__inner { padding-inline:
 .footer-is-dark .site-footer__menu a,
 .footer-is-dark .site-footer__contact .f-contact-links__chip,
 .site-footer--dark .site-footer__menu a,
-.site-footer--dark .site-footer__contact .f-contact-links__chip,
+.site-footer--dark .site-footer__contact .f-contact-links__chip {
+    color: var(--color-footer-link, #9aa1ad);
+}
 .footer-is-dark .site-footer__about,
 .site-footer--dark .site-footer__about { color: #9aa1ad; }
 .footer-is-dark .site-footer__contact .f-contact-links__icon,

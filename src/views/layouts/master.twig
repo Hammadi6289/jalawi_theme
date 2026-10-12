@@ -61,6 +61,21 @@
             {% if theme.settings.get('footer_bg_color') %}
             --color-footer-bg: {{ theme.settings.get('footer_bg_color') }};
             {% endif %}
+            {% if theme.settings.get('footer_links_color') %}
+            --color-footer-link: {{ theme.settings.get('footer_links_color') }};
+            {% endif %}
+            {% if theme.settings.get('footer_links_hover_color') %}
+            --color-footer-link-hover: {{ theme.settings.get('footer_links_hover_color') }};
+            {% endif %}
+            {% if theme.settings.get('footer_links_weight') %}
+            --footer-links-weight: {{ theme.settings.get('footer_links_weight') }};
+            {% endif %}
+            {% if theme.settings.get('footer_title_color') %}
+            --color-footer-title: {{ theme.settings.get('footer_title_color') }};
+            {% endif %}
+            {% if theme.settings.get('footer_title_weight') %}
+            --footer-title-weight: {{ theme.settings.get('footer_title_weight') }};
+            {% endif %}
         }
     </style>
 
