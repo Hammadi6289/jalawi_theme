@@ -103,8 +103,11 @@
                 "en": "2000 means moving every 2 seconds"
             },
             "value": 2000,
-            "minimum": 1000,
-            "maximum": 10000,
+            "min": 0,
+            "max": 20000,
+            "step": 500,
+            "minimum": 0,
+            "maximum": 20000,
             "conditions": [
                 {
                     "id": "autoplay",
