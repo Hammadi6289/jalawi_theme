@@ -827,4 +827,36 @@
     document.addEventListener('keydown', function (event) {
         if (event.key === 'Escape') setFilters(false);
     });
+
+    /*  store branches */
+    document.addEventListener('click', function (e) {
+        var tab = e.target.closest('[data-branch-tab]');
+        if (!tab) return;
+        var block = tab.closest('.block--branches');
+        if (!block) return;
+        var targetIndex = tab.getAttribute('data-branch-tab');
+
+        block.querySelectorAll('[data-branch-tab]').forEach(function (btn) {
+            var active = btn.getAttribute('data-branch-tab') === targetIndex;
+            btn.classList.toggle('is-active', active);
+            btn.setAttribute('aria-selected', active ? 'true' : 'false');
+        });
+
+        block.querySelectorAll('[data-branch-panel]').forEach(function (panel) {
+            var active = panel.getAttribute('data-branch-panel') === targetIndex;
+            panel.classList.toggle('is-active', active);
+            panel.hidden = !active;
+        });
+
+        var activePanel = block.querySelector('[data-branch-panel="' + targetIndex + '"]');
+        if (activePanel) {
+            var embedUrl = activePanel.getAttribute('data-map-embed');
+            var linkUrl = activePanel.getAttribute('data-map-link');
+            var iframe = block.querySelector('[data-branch-map-iframe]');
+            var openLink = block.querySelector('[data-branch-map-link]');
+
+            if (iframe && embedUrl) iframe.src = embedUrl;
+            if (openLink && linkUrl) openLink.href = linkUrl;
+        }
+    });
 })();

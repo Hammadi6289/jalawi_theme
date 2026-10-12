@@ -77,8 +77,8 @@
             "required": false,
             "maxLength": 255,
             "value": {
-                "ar": "تألقي كل يوم مع تشكيلتنا المختارة من منتجات المكياج والعناية التي تُبرز أسلوبك وجمالك الفريد",
-                "en": "Shine every day with our curated selection of makeup and skincare products that highlight your unique style and beauty"
+                "ar": "اكتشف تشكيلتنا المختارة من أفضل المنتجات المصممة لتلبية احتياجاتك بأعلى جودة",
+                "en": "Discover our curated collection of quality products tailored to your everyday needs"
             }
         },
         {

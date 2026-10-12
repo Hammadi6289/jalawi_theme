@@ -368,5 +368,12 @@
     "footer.newsletter_sending": "جارٍ الإرسال…",
     "footer.rights": "جميع الحقوق محفوظة",
     "footer.instagram": "انستغرام",
-    "blog.read_more": "اقرأ المزيد"
+    "blog.read_more": "اقرأ المزيد",
+    "branches.title": "اكتشف أقرب نقطة إليك",
+    "branches.address": "العنوان",
+    "branches.hours": "ساعات العمل",
+    "branches.phone": "رقم الهاتف",
+    "branches.view_map": "رؤية موقعنا علي الخريطة",
+    "branches.open_google_maps": "الفتح في \"خرائط Google\"",
+    "branches.map_title": "خريطة موقع الفرع"
 }

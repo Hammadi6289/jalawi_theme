@@ -54,8 +54,8 @@
             "required": false,
             "maxLength": 100,
             "value": {
-                "ar": "جمالك يبدأ بالمعرفة",
-                "en": "Your beauty begins with knowledge"
+                "ar": "أحدث المقالات والأخبار",
+                "en": "Latest Articles & News"
             }
         },
         {
@@ -70,8 +70,8 @@
             "required": false,
             "maxLength": 255,
             "value": {
-                "ar": "نقدّم لكِ نصائح وخبرات من عالم الجمال والعناية لتستمتعي بإطلالة فخمة وثقة تدوم كل يوم",
-                "en": "We offer you tips and expertise from the world of beauty and care so you can enjoy a luxurious look and confidence that lasts every day"
+                "ar": "نقدم لك مقالات ونصائح مفيدة لمساعدتك في اتخاذ قرارات تسوق أفضل والاستفادة من أفضل التجارب",
+                "en": "Explore insightful articles and tips to help you make informed choices and get the best shopping experience"
             }
         },
         {
@@ -133,8 +133,8 @@
                         "en": "13 November 2025"
                     },
                     "items.title": {
-                        "ar": "اكتشفي أسرار الجمال الطبيعي، أحدث النصائح الطبية، وروتينات العناية المناسبة لكل نوع بشرة",
-                        "en": "Discover natural beauty secrets, the latest medical advice, and skincare routines tailored to every skin type"
+                        "ar": "دليلك الشامل لاختيار أفضل المنتجات المناسبة لاحتياجاتك اليومية",
+                        "en": "Your comprehensive guide to choosing the best products for your daily needs"
                     },
                     "items.excerpt": {
                         "ar": "ابدئي يومك بخطوات بسيطة تمنحك إشراقة طبيعية تدوم. في هذا المقال نكشف لك أسرار الروتين الصباحي المثالي للعناية بالبشرة —",

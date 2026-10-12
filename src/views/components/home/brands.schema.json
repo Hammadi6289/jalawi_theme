@@ -1,0 +1,202 @@
+{
+    "key": "falak-brands",
+    "path": "home.brands",
+    "title": {
+        "ar": "العلامات التجارية",
+        "en": "Brands"
+    },
+    "icon": "store-2-line",
+    "is_default": true,
+    "default_sort": 35,
+    "areas": [
+        "home",
+        "pages"
+    ],
+    "styleable": [
+        {
+            "id": "title",
+            "label": {
+                "ar": "عنوان القسم",
+                "en": "Section title"
+            }
+        },
+        {
+            "id": "items",
+            "label": {
+                "ar": "العلامة التجارية",
+                "en": "Brand card"
+            },
+            "properties": [
+                "padding_block",
+                "padding_inline",
+                "background_color",
+                "border_radius"
+            ]
+        },
+        {
+            "id": "brand_logo",
+            "label": {
+                "ar": "شعار العلامة",
+                "en": "Brand logo"
+            },
+            "properties": [
+                "max_width"
+            ]
+        },
+        {
+            "id": "brand_name",
+            "label": {
+                "ar": "اسم العلامة",
+                "en": "Brand name"
+            },
+            "properties": [
+                "font_size",
+                "color"
+            ]
+        }
+    ],
+    "fields": [
+        {
+            "id": "title",
+            "type": "string",
+            "format": "text",
+            "label": {
+                "ar": "عنوان القسم",
+                "en": "Section title"
+            },
+            "description": {
+                "ar": "اتركه فارغًا لعرض شريط الشعارات فقط دون عنوان كما في التصميم",
+                "en": "Leave blank to display the logo slider without a heading"
+            },
+            "multilanguage": true,
+            "required": false,
+            "maxLength": 100,
+            "value": {
+                "ar": "",
+                "en": ""
+            }
+        },
+        {
+            "id": "autoplay",
+            "type": "boolean",
+            "format": "switch",
+            "label": {
+                "ar": "تحريك تلقائي",
+                "en": "Autoplay"
+            },
+            "description": {
+                "ar": "تمرير الشعارات تلقائياً كل ثانيتين",
+                "en": "Automatically advances logos every 2 seconds"
+            },
+            "value": true
+        },
+        {
+            "id": "autoplay_speed",
+            "type": "number",
+            "format": "integer",
+            "label": {
+                "ar": "سرعة التمرير (مللي ثانية)",
+                "en": "Autoplay interval (ms)"
+            },
+            "description": {
+                "ar": "2000 تعني التحرك كل ثانيتين",
+                "en": "2000 means moving every 2 seconds"
+            },
+            "value": 2000,
+            "minimum": 1000,
+            "maximum": 10000,
+            "conditions": [
+                {
+                    "id": "autoplay",
+                    "value": true
+                }
+            ]
+        },
+        {
+            "id": "items",
+            "type": "collection",
+            "format": "collection",
+            "label": {
+                "ar": "الشعارات",
+                "en": "Brands"
+            },
+            "item_label": {
+                "ar": "علامة تجارية",
+                "en": "Brand"
+            },
+            "required": true,
+            "minLength": 2,
+            "maxLength": 30,
+            "value": [
+                {
+                    "items.name": "Glimmré",
+                    "items.logo": null,
+                    "items.url": "#"
+                },
+                {
+                    "items.name": "Glazelle",
+                    "items.logo": null,
+                    "items.url": "#"
+                },
+                {
+                    "items.name": "blushy.",
+                    "items.logo": null,
+                    "items.url": "#"
+                },
+                {
+                    "items.name": "her",
+                    "items.logo": null,
+                    "items.url": "#"
+                },
+                {
+                    "items.name": "L'Éclat",
+                    "items.logo": null,
+                    "items.url": "#"
+                },
+                {
+                    "items.name": "Aura",
+                    "items.logo": null,
+                    "items.url": "#"
+                }
+            ],
+            "fields": [
+                {
+                    "id": "items.name",
+                    "type": "string",
+                    "format": "text",
+                    "label": {
+                        "ar": "اسم العلامة التجارية",
+                        "en": "Brand name"
+                    },
+                    "required": true,
+                    "maxLength": 80
+                },
+                {
+                    "id": "items.logo",
+                    "type": "string",
+                    "format": "image",
+                    "label": {
+                        "ar": "شعار العلامة (صورة)",
+                        "en": "Brand logo image"
+                    },
+                    "description": {
+                        "ar": "صورة الشعار بخلفية شفافة PNG أو SVG أو WebP",
+                        "en": "Transparent PNG, SVG, or WebP logo"
+                    },
+                    "required": false
+                },
+                {
+                    "id": "items.url",
+                    "type": "string",
+                    "format": "text",
+                    "label": {
+                        "ar": "رابط العلامة التجارية",
+                        "en": "Brand link URL"
+                    },
+                    "required": false,
+                    "maxLength": 500
+                }
+            ]
+        }
+    ]
+}

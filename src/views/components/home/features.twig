@@ -1,5 +1,5 @@
 {#
-    Store features row (shipping, support, returns…) — merchant-placeable.
+    Store features row (shipping, support, genuine products…) — merchant-placeable.
     | Variable                 | Type    | Description                 |
     | component.title          | ?string | section title               |
     | component.items[].icon   | ?string | small image URL             |
@@ -8,8 +8,8 @@
     | position                 | int     |                             |
 
     Customizer bindings — full rules in README, "Customizer annotations".
-    | Element         | Tag                                            |
-    | h2.block__title | data-falak-field="title"                       |
+    | Element         | Tag                                             |
+    | h2.block__title | data-falak-field="title"                        |
     | .feature-card   | data-falak-field="items" data-falak-bind="none" |
 
     `items` is a collection — see bind="none" in the README.
@@ -27,10 +27,65 @@
             {% for item in component.items %}
                 <div class="feature-card" data-falak-field="items" data-falak-label="{{ trans('editor.field.items') }}" data-falak-bind="none">
                     <div class="feature-card__icon" data-falak-part="card_icon" aria-hidden="true">
-                        {% if item.icon %}<img src="{{ item.icon }}" alt="">{% else %}✦{% endif %}
+                        {% if item.icon %}
+                            <img src="{{ item.icon }}" alt="{{ item.title|default('') }}" loading="lazy">
+                        {% elseif loop.index == 1 %}
+                            {# 100% genuine products - quality badge over box #}
+                            <svg class="feature-icon-svg" viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="22" cy="11.5" r="5.5"/>
+                                <path d="M19.8 11.5l1.6 1.6 3-3"/>
+                                <path d="M22 4.2l1.3 1.7 2.1-.3.8 2 2.1.5.2 2.1 1.8 1.1-.5 2.1 1.5 1.6-1.2 1.8.9 2-1.7 1.3.2 2.2-2 .8-1.2 1.8-2.1-.3-1.5 1.5-1.8-1.1-1.9.7-1.3-1.7-2.1.3-.8-2-2.1-.5-.2-2.1-1.8-1.1.5-2.1-1.5-1.6 1.2-1.8-.9-2 1.7-1.3-.2-2.2 2-.8 1.2-1.8 2.1.3 1.5-1.5 1.8 1.1 1.9-.7z"/>
+                                <path d="M9.5 21.5l-4.5-4 5.5-1"/>
+                                <path d="M34.5 21.5l4.5-4-5.5-1"/>
+                                <path d="M9.5 21.5v14c0 1.7 1.3 3 3 3h19c1.7 0 3-1.3 3-3v-14"/>
+                                <path d="M9.5 24.5l12.5 3.5 12.5-3.5"/>
+                                <path d="M22 28v10.5"/>
+                                <path d="M19.5 33.5l2.5 2.5 2.5-2.5"/>
+                            </svg>
+                        {% elseif loop.index == 2 %}
+                            {# Easy and fast shopping experience - shopping bag with checkmark #}
+                            <svg class="feature-icon-svg" viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M9.5 14h25l-2.2 23c-.1 1.7-1.5 3-3.2 3H14.9c-1.7 0-3.1-1.3-3.2-3L9.5 14z"/>
+                                <path d="M16 14V9.5C16 6.5 18.5 4 21.5 4h1c3 0 5.5 2.5 5.5 5.5V14"/>
+                                <path d="M19 14V10.5c0-1.7 1.3-3 3-3s3 1.3 3 3V14"/>
+                                <circle cx="22" cy="27" r="6"/>
+                                <path d="M19.5 27.2l1.8 1.8 3.5-3.5"/>
+                            </svg>
+                        {% elseif loop.index == 3 %}
+                            {# Fast and secure shipping - truck with clock and speed lines #}
+                            <svg class="feature-icon-svg feature-icon-svg--truck" viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M2 19h5M3 24h3M1 29h5"/>
+                                <circle cx="15.5" cy="11.5" r="5.5"/>
+                                <path d="M15.5 8.5v3l2 1"/>
+                                <path d="M9 19h13v13H9z"/>
+                                <path d="M22 22h7l4 4.5V32H22V22z"/>
+                                <path d="M25 24.5h3.2l2.3 2.5H25v-2.5z"/>
+                                <circle cx="15" cy="35" r="3"/>
+                                <circle cx="28.5" cy="35" r="3"/>
+                                <path d="M9 32h3M18 32h7.5M31.5 32h3.5"/>
+                            </svg>
+                        {% elseif loop.index == 4 %}
+                            {# Excellent customer support - 24/7 telephone #}
+                            <svg class="feature-icon-svg" viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M7.5 14c.7-1.5 2.2-2.2 3.7-1.6l2 .9c1.1.5 1.6 1.8 1.2 2.9l-.8 1.8c-.3.7-.1 1.5.4 2.1 2.2 2.4 4.3 4.5 6.7 6.7.6.5 1.4.7 2.1.4l1.8-.8c1.1-.4 2.4.1 2.9 1.2l.9 2c.6 1.5-.1 3-1.6 3.7-3.9 1.4-9-.8-13.5-5.3C8.8 23 6.6 17.9 7.5 14z"/>
+                                <path d="M21 7.5c7.8.3 14 6.7 14 14.5 0 5.4-3 10.1-7.5 12.5" stroke-dasharray="2 2.5"/>
+                                <path d="M21.5 17.8c0-1.4 1.1-2.4 2.4-2.4s2.4 1 2.4 2.3c0 1.6-1.8 2.8-3.4 4h3.6" stroke-width="1.8"/>
+                                <path d="M30.5 15.5v5.2h2M30.5 20.7v2.3M30.5 18.2l-2.6 2.5h2.6" stroke-width="1.8"/>
+                                <path d="M22.5 28.5l2-4h3.5l-2.2 5" stroke-width="1.5"/>
+                            </svg>
+                        {% else %}
+                            {# Versatile Quality Guarantee Badge #}
+                            <svg class="feature-icon-svg" viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="22" cy="20" r="13"/>
+                                <path d="M17.5 20l3 3 6-6"/>
+                                <path d="M15 31l-3 9 10-4 10 4-3-9"/>
+                            </svg>
+                        {% endif %}
                     </div>
-                    <h3 data-falak-part="card_title">{{ item.title }}</h3>
-                    {% if item.text %}<p data-falak-part="card_text">{{ item.text }}</p>{% endif %}
+                    <div class="feature-card__content">
+                        <h3 data-falak-part="card_title">{{ item.title }}</h3>
+                        {% if item.text %}<p data-falak-part="card_text">{{ item.text }}</p>{% endif %}
+                    </div>
                 </div>
             {% endfor %}
         </div>

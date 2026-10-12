@@ -1,0 +1,88 @@
+{#
+    Brands / Partners logo slider — merchant-placeable component (home + builder pages).
+    | Variable                 | Type    | Description                          |
+    | component.title          | ?string | section title, localized server-side |
+    | component.autoplay       | ?bool   | advance automatically every 2s       |
+    | component.autoplay_speed | ?int    | milliseconds between slides (2000)   |
+    | component.items[].name   | string  | brand name                           |
+    | component.items[].logo   | ?string | brand logo image URL                 |
+    | component.items[].url    | ?string | optional brand link                  |
+    | position                 | int     |                                      |
+
+    Customizer bindings — full rules in README, "Customizer annotations".
+    | Element                  | Tag                                             |
+    | h2.block__title          | data-falak-field="title"                        |
+    | .brand-slide             | data-falak-field="items" data-falak-bind="none" |
+
+    `items` is a collection — takes bind="none".
+    Styleable parts: `brand_logo`, `brand_name`.
+#}
+<section class="block block--brands" id="brands-{{ position }}" {{ falak_section() }}>
+    <div class="container">
+        {% if component.title %}
+            <h2 class="block__title" data-falak-field="title" data-falak-label="{{ trans('editor.field.title') }}">{{ component.title }}</h2>
+        {% endif %}
+
+        {% set autoplay = component.autoplay is defined ? component.autoplay : true %}
+        {% set autoplay_speed = component.autoplay_speed|default(2000) %}
+        {% set items = component.items|default([]) %}
+
+        {% if items|length %}
+            <div class="brands-slider-wrap">
+                <falak-slider class="brands-slider"
+                              slides-per-view="4"
+                              gap="2.5rem"
+                              show-controls
+                              loop
+                              {{ autoplay ? 'auto-play' : '' }}
+                              auto-play-delay="{{ autoplay_speed }}"
+                              data-falak-field="items"
+                              data-falak-label="{{ trans('editor.field.items') }}"
+                              data-falak-bind="none">
+                    <div slot="items" class="brands-track">
+                        {% for item in items %}
+                            <div class="brand-slide" data-falak-field="items" data-falak-label="{{ trans('editor.field.items') }}" data-falak-bind="none">
+                                {% set tag = item.url ? 'a' : 'div' %}
+                                <{{ tag }} class="brand-item" {% if item.url %}href="{{ item.url }}" target="_blank" rel="noopener"{% endif %} aria-label="{{ item.name }}">
+                                    {% if item.logo %}
+                                        <img class="brand-item__logo" src="{{ item.logo }}" alt="{{ item.name }}" loading="lazy" data-falak-part="brand_logo">
+                                    {% elseif item.name|lower == 'glimmré' or loop.index == 1 %}
+                                        <svg class="brand-item__svg" viewBox="0 0 180 54" fill="currentColor" aria-hidden="true" data-falak-part="brand_logo">
+                                            <path d="M96 2 Q96 9 89 9 Q96 9 96 16 Q96 9 103 9 Q96 9 96 2 Z" fill="currentColor"/>
+                                            <text x="90" y="42" text-anchor="middle" font-family="'Playfair Display', 'Bodoni MT', 'Didot', Georgia, serif" font-size="36" font-weight="400" letter-spacing="1">Glimmré</text>
+                                        </svg>
+                                    {% elseif item.name|lower == 'glazelle' or loop.index == 2 %}
+                                        <svg class="brand-item__svg" viewBox="0 0 180 54" fill="currentColor" aria-hidden="true" data-falak-part="brand_logo">
+                                            <path d="M72 3 Q72 12 63 12 Q72 12 72 21 Q72 12 81 12 Q72 12 72 3 Z" fill="currentColor"/>
+                                            <path d="M136 10 Q136 15 131 15 Q136 15 136 20 Q136 15 141 15 Q136 15 136 10 Z" fill="currentColor"/>
+                                            <text x="90" y="42" text-anchor="middle" font-family="'Playfair Display', 'Bodoni MT', 'Didot', Georgia, serif" font-size="36" font-weight="400" letter-spacing="0.5">Glazelle</text>
+                                        </svg>
+                                    {% elseif item.name|lower == 'blushy.' or loop.index == 3 %}
+                                        <svg class="brand-item__svg" viewBox="0 0 180 54" fill="currentColor" aria-hidden="true" data-falak-part="brand_logo">
+                                            <text x="90" y="38" text-anchor="middle" font-family="'Italianno', 'Playfair Display', 'Brush Script MT', cursive, serif" font-size="44" font-style="italic" font-weight="400" letter-spacing="0.5">blushy.</text>
+                                        </svg>
+                                    {% elseif item.name|lower == 'her' or loop.index == 4 %}
+                                        <svg class="brand-item__svg" viewBox="0 0 180 54" fill="currentColor" aria-hidden="true" data-falak-part="brand_logo">
+                                            <text x="90" y="36" text-anchor="middle" font-family="'Bodoni MT', 'Didot', 'Playfair Display', Georgia, serif" font-size="38" font-weight="400" letter-spacing="3">her</text>
+                                            <text x="90" y="49" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-size="8" font-weight="600" letter-spacing="3" opacity="0.75">STUDIO</text>
+                                        </svg>
+                                    {% elseif item.name|lower == "l'éclat" or loop.index == 5 %}
+                                        <svg class="brand-item__svg" viewBox="0 0 180 54" fill="currentColor" aria-hidden="true" data-falak-part="brand_logo">
+                                            <text x="90" y="38" text-anchor="middle" font-family="'Cinzel', 'Playfair Display', 'Didot', serif" font-size="30" font-weight="500" letter-spacing="3">L'ÉCLAT</text>
+                                        </svg>
+                                    {% elseif item.name|lower == 'aura' or loop.index == 6 %}
+                                        <svg class="brand-item__svg" viewBox="0 0 180 54" fill="currentColor" aria-hidden="true" data-falak-part="brand_logo">
+                                            <text x="90" y="38" text-anchor="middle" font-family="'Montserrat', 'Outfit', sans-serif" font-size="30" font-weight="300" letter-spacing="5">A U R A</text>
+                                        </svg>
+                                    {% else %}
+                                        <span class="brand-item__name" data-falak-part="brand_name">{{ item.name }}</span>
+                                    {% endif %}
+                                </{{ tag }}>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </falak-slider>
+            </div>
+        {% endif %}
+    </div>
+</section>

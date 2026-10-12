@@ -39,6 +39,46 @@
             ]
         },
         {
+            "id": "quote",
+            "label": {
+                "ar": "الاقتباس",
+                "en": "Quote"
+            }
+        },
+        {
+            "id": "author",
+            "label": {
+                "ar": "العميل",
+                "en": "Customer"
+            }
+        },
+        {
+            "id": "author_name",
+            "label": {
+                "ar": "اسم العميل",
+                "en": "Customer name"
+            }
+        },
+        {
+            "id": "role",
+            "label": {
+                "ar": "الوظيفة أو الصفة",
+                "en": "Role"
+            }
+        },
+        {
+            "id": "picture",
+            "label": {
+                "ar": "صورة العميل",
+                "en": "Picture"
+            },
+            "properties": [
+                "border_radius",
+                "border_width",
+                "border_color"
+            ]
+        },
+        {
             "id": "stars",
             "label": {
                 "ar": "النجوم",
@@ -49,20 +89,6 @@
                 "color",
                 "text_align"
             ]
-        },
-        {
-            "id": "quote",
-            "label": {
-                "ar": "الاقتباس",
-                "en": "Quote"
-            }
-        },
-        {
-            "id": "author",
-            "label": {
-                "ar": "الكاتب",
-                "en": "Author"
-            }
         }
     ],
     "fields": [
@@ -113,19 +139,42 @@
             "maxLength": 30,
             "value": [
                 {
-                    "items.name": "ندى الحسيني",
+                    "items.name": "Reem.A",
+                    "items.role": {
+                        "ar": "صاحبة متجر زهور",
+                        "en": "Flower shop owner"
+                    },
+                    "items.picture": null,
                     "items.stars": 5,
                     "items.text": {
-                        "ar": "تجربة تسوق رائعة وسرعة في التوصيل ❤️",
-                        "en": "Amazing shopping experience and fast delivery ❤️"
+                        "ar": "تجربة تسوق رائعة جداً! المنتجات ممتازة والتوصيل كان أسرع مما توقعت.",
+                        "en": "An amazing shopping experience! The products are excellent and the delivery was faster than expected."
                     }
                 },
                 {
-                    "items.name": "خالد الأحمد",
+                    "items.name": "Noura Al Balushi",
+                    "items.role": {
+                        "ar": "معلمة رسم",
+                        "en": "Drawing teacher"
+                    },
+                    "items.picture": null,
                     "items.stars": 5,
                     "items.text": {
-                        "ar": "منتجات عالية الجودة وتعامل راقٍ 👏",
-                        "en": "High quality products and great service 👏"
+                        "ar": "التعامل راقي جداً والمنتجات فاخرة وتستحق التجربة. سأكرر الطلب بالتأكيد.",
+                        "en": "Very classy service and the products are truly high quality. I will definitely order again."
+                    }
+                },
+                {
+                    "items.name": "Sarah Al-Zahrani",
+                    "items.role": {
+                        "ar": "موظفة",
+                        "en": "Employee"
+                    },
+                    "items.picture": null,
+                    "items.stars": 5,
+                    "items.text": {
+                        "ar": "جودة المنتجات ممتازة ومطابقة تماماً للوصف والصور، شكراً لكم 👏",
+                        "en": "Top-notch product quality, exactly as described. Thank you so much 👏"
                     }
                 }
             ],
@@ -140,6 +189,28 @@
                     },
                     "required": true,
                     "maxLength": 80
+                },
+                {
+                    "id": "items.role",
+                    "type": "string",
+                    "format": "text",
+                    "label": {
+                        "ar": "الوظيفة أو الصفة",
+                        "en": "Role or occupation"
+                    },
+                    "multilanguage": true,
+                    "required": false,
+                    "maxLength": 80
+                },
+                {
+                    "id": "items.picture",
+                    "type": "string",
+                    "format": "image",
+                    "label": {
+                        "ar": "صورة العميل",
+                        "en": "Customer picture"
+                    },
+                    "required": false
                 },
                 {
                     "id": "items.stars",
@@ -169,7 +240,7 @@
                     },
                     "multilanguage": true,
                     "required": true,
-                    "maxLength": 255
+                    "maxLength": 300
                 }
             ]
         }

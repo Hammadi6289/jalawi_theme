@@ -368,5 +368,12 @@
     "footer.newsletter_sending": "Sending…",
     "footer.rights": "All rights reserved",
     "footer.instagram": "Instagram",
-    "blog.read_more": "Read more"
+    "blog.read_more": "Read more",
+    "branches.title": "Discover our closest point to you",
+    "branches.address": "Address",
+    "branches.hours": "Working Hours",
+    "branches.phone": "Phone Number",
+    "branches.view_map": "View our location on the map",
+    "branches.open_google_maps": "Open in Google Maps",
+    "branches.map_title": "Branch Location Map"
 }

@@ -94,39 +94,50 @@
             },
             "required": true,
             "minLength": 1,
-            "maxLength": 6,
+            "maxLength": 8,
             "value": [
                 {
                     "items.icon": null,
                     "items.title": {
-                        "ar": "شحن سريع",
-                        "en": "Fast shipping"
+                        "ar": "منتجات أصلية 100%",
+                        "en": "100% Genuine Products"
                     },
                     "items.text": {
-                        "ar": "توصيل لجميع مدن المملكة",
-                        "en": "Delivery to every city"
+                        "ar": "منتجات أصلية ومضمونة بأعلى معايير الجودة من مصادر موثوقة",
+                        "en": "Authentic, high-quality products guaranteed from trusted global brands"
                     }
                 },
                 {
                     "items.icon": null,
                     "items.title": {
-                        "ar": "دفع آمن",
-                        "en": "Secure payment"
+                        "ar": "تجربة تسوق سهلة وسريعة",
+                        "en": "Easy & Fast Shopping"
                     },
                     "items.text": {
-                        "ar": "جميع وسائل الدفع مدعومة",
-                        "en": "All payment methods supported"
+                        "ar": "واجهة بسيطة وخطوات دفع مرنة لتجربة تسوق سلسة وممتعة",
+                        "en": "Seamless navigation and flexible checkout for an effortless shopping experience"
                     }
                 },
                 {
                     "items.icon": null,
                     "items.title": {
-                        "ar": "دعم متواصل",
-                        "en": "Always-on support"
+                        "ar": "شحن سريع وآمن",
+                        "en": "Fast & Secure Shipping"
                     },
                     "items.text": {
-                        "ar": "فريقنا جاهز لمساعدتك",
-                        "en": "Our team is ready to help"
+                        "ar": "توصيل سريع وموثوق إلى باب منزلك مع إمكانية تتبع الشحنة",
+                        "en": "Reliable and fast delivery straight to your door with real-time tracking"
+                    }
+                },
+                {
+                    "items.icon": null,
+                    "items.title": {
+                        "ar": "خدمة عملاء متميزة",
+                        "en": "Dedicated Support"
+                    },
+                    "items.text": {
+                        "ar": "فريق دعم مخصص جاهز للإجابة على استفساراتك ومساعدتك في أي وقت",
+                        "en": "Our support team is always ready to assist you whenever you need"
                     }
                 }
             ],
@@ -151,7 +162,7 @@
                     },
                     "multilanguage": true,
                     "required": true,
-                    "maxLength": 60
+                    "maxLength": 80
                 },
                 {
                     "id": "items.text",
@@ -163,7 +174,7 @@
                     },
                     "multilanguage": true,
                     "required": false,
-                    "maxLength": 160
+                    "maxLength": 200
                 }
             ]
         }

@@ -2,21 +2,23 @@
     Customer testimonials — merchant-placeable component (home + builder pages).
     | Variable                  | Type    | Description                         |
     | component.title           | ?string | section title, localized server-side |
-    | component.items[].name    | string  |                                     |
     | component.show_stars      | ?bool   | whether the star row renders at all |
+    | component.items[].name    | string  | customer name                       |
+    | component.items[].role    | ?string | customer role / job title           |
+    | component.items[].picture | ?string | customer photo URL                  |
     | component.items[].stars   | int     | 1..5                                |
-    | component.items[].text    | string  | localized server-side               |
+    | component.items[].text    | string  | review quote, localized server-side |
     | position                  | int     |                                     |
 
     Customizer bindings — full rules in README, "Customizer annotations".
-    | Element           | Tag                                             |
-    | h2.block__title   | data-falak-field="title"                        |
-    | figure.testimonial-card | data-falak-field="items" data-falak-bind="none" |
+    | Element                  | Tag                                             |
+    | h2.block__title          | data-falak-field="title"                        |
+    | figure.testimonial-card  | data-falak-field="items" data-falak-bind="none" |
 
     `items` is a collection — see bind="none" in the README.
 
-    Styleable parts: `stars`, `quote`, `author` inside each card; the card
-    itself is styled through its data-falak-field="items" tag.
+    Styleable parts: `quote`, `author`, `author_name`, `role`, `picture`, `stars`
+    inside each card; the card itself is styled through its data-falak-field="items" tag.
 #}
 <section class="block block--testimonials" id="testimonials-{{ position }}" {{ falak_section() }}>
     <div class="container">
@@ -24,30 +26,53 @@
             <h2 class="block__title" data-falak-field="title" data-falak-label="{{ trans('editor.field.title') }}">{{ component.title }}</h2>
         {% endif %}
 
-        {#
-            Absent means shown: a testimonials block placed before this switch
-            existed has no `show_stars` saved, and should keep the stars it had.
-        #}
         {% set show_stars = component.show_stars is defined ? component.show_stars : true %}
+        {% set items = component.items|default([]) %}
 
-        <div class="testimonials-grid">
-            {% for item in component.items %}
-                <figure class="testimonial-card" data-falak-field="items" data-falak-label="{{ trans('editor.field.items') }}" data-falak-bind="none">
-                    {#
-                        The switch governs the whole grid, so it is read here
-                        rather than per row. `range(1, 0)` counts DOWN to 1 and
-                        would print a star for a rating of zero, which is why
-                        the count is guarded as well as the switch.
-                    #}
-                    {% if show_stars and item.stars > 0 %}
-                        <div class="testimonial-card__stars" data-falak-part="stars" aria-label="{{ item.stars }}/5">
-                            {% for i in range(1, item.stars) %}★{% endfor %}
-                        </div>
-                    {% endif %}
-                    <blockquote data-falak-part="quote">{{ item.text }}</blockquote>
-                    <figcaption data-falak-part="author">{{ item.name }}</figcaption>
-                </figure>
-            {% endfor %}
-        </div>
+        {% if items|length %}
+            <div class="testimonials-slider-wrap">
+                <falak-slider class="testimonials-slider" slides-per-view="3" gap="1.5rem" show-controls loop
+                              data-falak-field="items" data-falak-label="{{ trans('editor.field.items') }}" data-falak-bind="none">
+                    <div slot="items" class="testimonials-grid">
+                        {% for item in items %}
+                            <figure class="testimonial-card" data-falak-field="items" data-falak-label="{{ trans('editor.field.items') }}" data-falak-bind="none">
+                                <blockquote class="testimonial-card__quote" data-falak-part="quote">{{ item.text }}</blockquote>
+
+                                <div class="testimonial-card__footer">
+                                    <div class="testimonial-card__author" data-falak-part="author">
+                                        {% set avatar_src = item.picture|default(item.avatar)|default(item.image) %}
+                                        {% if avatar_src %}
+                                            <img class="testimonial-card__avatar" src="{{ avatar_src }}" alt="{{ item.name }}" loading="lazy" data-falak-part="picture">
+                                        {% else %}
+                                            <div class="testimonial-card__avatar testimonial-card__avatar--placeholder" data-falak-part="picture" aria-hidden="true">
+                                                <svg viewBox="0 0 24 24" fill="currentColor">
+                                                    <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                                                </svg>
+                                            </div>
+                                        {% endif %}
+                                        <div class="testimonial-card__meta">
+                                            <figcaption class="testimonial-card__name" data-falak-part="author_name">{{ item.name }}</figcaption>
+                                            {% if item.role %}
+                                                <span class="testimonial-card__role" data-falak-part="role">{{ item.role }}</span>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+
+                                    {% if show_stars %}
+                                        {% set stars_count = item.stars|default(5) %}
+                                        <div class="testimonial-card__stars" data-falak-part="stars" aria-label="{{ stars_count }}/5">
+                                            {% for i in 1..5 %}
+                                                <span class="testimonial-star{{ i <= stars_count ? ' is-filled' : ' is-empty' }}">★</span>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </figure>
+                        {% endfor %}
+                    </div>
+                </falak-slider>
+            </div>
+        {% endif %}
     </div>
 </section>
+

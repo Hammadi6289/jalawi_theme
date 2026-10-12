@@ -1,0 +1,283 @@
+{
+    "key": "falak-branches",
+    "path": "home.branches",
+    "title": {
+        "ar": "فروعنا ومواقعنا",
+        "en": "Store Branches"
+    },
+    "icon": "map-pin-line",
+    "is_default": true,
+    "default_sort": 65,
+    "areas": [
+        "home",
+        "pages"
+    ],
+    "styleable": [
+        {
+            "id": "title",
+            "label": {
+                "ar": "عنوان القسم",
+                "en": "Section title"
+            }
+        },
+        {
+            "id": "tabs",
+            "label": {
+                "ar": "شريط الفروع",
+                "en": "Branches tabs"
+            },
+            "properties": [
+                "border_radius",
+                "border_color",
+                "border_width",
+                "background_color",
+                "padding_block",
+                "padding_inline"
+            ]
+        },
+        {
+            "id": "content",
+            "label": {
+                "ar": "معلومات الفرع",
+                "en": "Branch info"
+            },
+            "properties": [
+                "padding_block",
+                "padding_inline",
+                "color"
+            ]
+        },
+        {
+            "id": "button",
+            "label": {
+                "ar": "زر الخريطة",
+                "en": "Map button"
+            },
+            "properties": [
+                "background_color",
+                "border_radius",
+                "border_color",
+                "border_width",
+                "color"
+            ]
+        },
+        {
+            "id": "map",
+            "label": {
+                "ar": "صندوق الخريطة",
+                "en": "Map container"
+            },
+            "properties": [
+                "border_radius",
+                "border_color",
+                "border_width"
+            ]
+        }
+    ],
+    "fields": [
+        {
+            "id": "title",
+            "type": "string",
+            "format": "text",
+            "label": {
+                "ar": "العنوان الرئيسي",
+                "en": "Main heading"
+            },
+            "multilanguage": true,
+            "required": false,
+            "maxLength": 100,
+            "value": {
+                "ar": "اكتشف أقرب نقطة إليك",
+                "en": "Discover our closest point to you"
+            }
+        },
+        {
+            "id": "button_text",
+            "type": "string",
+            "format": "text",
+            "label": {
+                "ar": "نص زر الخريطة",
+                "en": "Map button label"
+            },
+            "multilanguage": true,
+            "required": false,
+            "maxLength": 40,
+            "value": {
+                "ar": "رؤية موقعنا علي الخريطة",
+                "en": "View our location on the map"
+            }
+        },
+        {
+            "id": "items",
+            "type": "collection",
+            "format": "collection",
+            "label": {
+                "ar": "الفروع",
+                "en": "Branches"
+            },
+            "item_label": {
+                "ar": "فرع",
+                "en": "Branch"
+            },
+            "required": true,
+            "minLength": 1,
+            "maxLength": 15,
+            "value": [
+                {
+                    "items.name": {
+                        "ar": "الرياض",
+                        "en": "Riyadh"
+                    },
+                    "items.description": {
+                        "ar": "اكتشف أقرب فرع إليك واستمتع بتجربة تسوق مميزة ومريحة",
+                        "en": "Discover your nearest branch and enjoy an exceptional shopping experience"
+                    },
+                    "items.address": {
+                        "ar": "حي الأشجار، شارع الجهراء، بجوار سوبرماركت بنده",
+                        "en": "Al-Ashjar neighborhood, Al-Jahra Street, next to Panda supermarket"
+                    },
+                    "items.hours": {
+                        "ar": "الأحد إلى الخميس: 8 صباحاً حتى 10 مساءً",
+                        "en": "Sunday to Thursday: 8 AM to 10 PM"
+                    },
+                    "items.phone": "587 54 241 960+",
+                    "items.map_link": "https://maps.google.com/?q=Riyadh",
+                    "items.map_embed_url": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d115982.9!2d46.72185!3d24.71355!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3e2f03890d48939b%3A0x60a9fba414f9b0aa!2sRiyadh!5e0!3m2!1sen!2ssa!4v1700000000000!5m2!1sen!2ssa"
+                },
+                {
+                    "items.name": {
+                        "ar": "أم القيوين",
+                        "en": "Umm Al Quwain"
+                    },
+                    "items.description": {
+                        "ar": "اكتشف أقرب فرع إليك واستمتع بتجربة تسوق مميزة ومريحة",
+                        "en": "Discover your nearest branch and enjoy an exceptional shopping experience"
+                    },
+                    "items.address": {
+                        "ar": "شارع الملك فيصل، بجوار المول الرئيسي",
+                        "en": "King Faisal Street, next to the Main Mall"
+                    },
+                    "items.hours": {
+                        "ar": "الأحد إلى الخميس: 8 صباحاً حتى 10 مساءً",
+                        "en": "Sunday to Thursday: 8 AM to 10 PM"
+                    },
+                    "items.phone": "587 54 241 961+",
+                    "items.map_link": "https://maps.google.com/?q=Umm+Al+Quwain",
+                    "items.map_embed_url": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d115160.0!2d55.55!3d25.55!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3ef5fc1f111!2sUmm%20Al%20Quwain!5e0!3m2!1sen!2sae!4v1700000000000!5m2!1sen!2sae"
+                },
+                {
+                    "items.name": {
+                        "ar": "الخرج",
+                        "en": "Al-Kharj"
+                    },
+                    "items.description": {
+                        "ar": "اكتشف أقرب فرع إليك واستمتع بتجربة تسوق مميزة ومريحة",
+                        "en": "Discover your nearest branch and enjoy an exceptional shopping experience"
+                    },
+                    "items.address": {
+                        "ar": "طريق الملك فهد، بجوار برج الخرج",
+                        "en": "King Fahd Road, next to Al-Kharj Tower"
+                    },
+                    "items.hours": {
+                        "ar": "الأحد إلى الخميس: 8 صباحاً حتى 10 مساءً",
+                        "en": "Sunday to Thursday: 8 AM to 10 PM"
+                    },
+                    "items.phone": "587 54 241 962+",
+                    "items.map_link": "https://maps.google.com/?q=Al-Kharj",
+                    "items.map_embed_url": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d116400.0!2d47.3!3d24.15!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3e25b111!2sAl-Kharj!5e0!3m2!1sen!2ssa!4v1700000000000!5m2!1sen!2ssa"
+                }
+            ],
+            "fields": [
+                {
+                    "id": "items.name",
+                    "type": "string",
+                    "format": "text",
+                    "label": {
+                        "ar": "اسم الفرع (الزر)",
+                        "en": "Branch name (tab)"
+                    },
+                    "multilanguage": true,
+                    "required": true,
+                    "maxLength": 50
+                },
+                {
+                    "id": "items.description",
+                    "type": "string",
+                    "format": "textarea",
+                    "label": {
+                        "ar": "وصف الفرع",
+                        "en": "Branch description"
+                    },
+                    "multilanguage": true,
+                    "required": false,
+                    "maxLength": 250
+                },
+                {
+                    "id": "items.address",
+                    "type": "string",
+                    "format": "text",
+                    "label": {
+                        "ar": "العنوان",
+                        "en": "Address"
+                    },
+                    "multilanguage": true,
+                    "required": false,
+                    "maxLength": 200
+                },
+                {
+                    "id": "items.hours",
+                    "type": "string",
+                    "format": "text",
+                    "label": {
+                        "ar": "ساعات العمل",
+                        "en": "Working hours"
+                    },
+                    "multilanguage": true,
+                    "required": false,
+                    "maxLength": 100
+                },
+                {
+                    "id": "items.phone",
+                    "type": "string",
+                    "format": "text",
+                    "label": {
+                        "ar": "رقم الهاتف",
+                        "en": "Phone number"
+                    },
+                    "required": false,
+                    "maxLength": 30
+                },
+                {
+                    "id": "items.map_link",
+                    "type": "string",
+                    "format": "text",
+                    "label": {
+                        "ar": "رابط خرائط Google",
+                        "en": "Google Maps link"
+                    },
+                    "description": {
+                        "ar": "الرابط المباشر للموقع في خرائط جوجل",
+                        "en": "Direct Google Maps location URL"
+                    },
+                    "required": false,
+                    "maxLength": 500
+                },
+                {
+                    "id": "items.map_embed_url",
+                    "type": "string",
+                    "format": "text",
+                    "label": {
+                        "ar": "رابط تضمين الخريطة (Embed URL)",
+                        "en": "Map embed URL"
+                    },
+                    "description": {
+                        "ar": "رابط التضمين من خرائط جوجل (يبدأ بـ https://www.google.com/maps/embed)",
+                        "en": "Google Maps embed iframe source URL"
+                    },
+                    "required": false,
+                    "maxLength": 1000
+                }
+            ]
+        }
+    ]
+}

@@ -1,0 +1,162 @@
+{#
+    Store branches / locations — merchant-placeable block (home + builder pages).
+    | Variable                        | Type    | Description                          |
+    | component.title                 | ?string | section title, localized server-side |
+    | component.button_text           | ?string | map action button label              |
+    | component.items[].name          | string  | branch name for tab                  |
+    | component.items[].description   | ?string | branch description                   |
+    | component.items[].address       | ?string | branch physical address              |
+    | component.items[].hours         | ?string | operating hours                      |
+    | component.items[].phone         | ?string | contact telephone number             |
+    | component.items[].map_link      | ?string | Google Maps external link            |
+    | component.items[].map_embed_url  | ?string | Google Maps embed iframe URL         |
+    | position                        | int     |                                      |
+
+    Customizer bindings — full rules in README, "Customizer annotations".
+    | Element                         | Tag                                             |
+    | h2.branches__title              | data-falak-field="title"                        |
+    | .branch-tab                     | data-falak-field="items" data-falak-bind="none" |
+    | .branch-panel                   | data-falak-field="items" data-falak-bind="none" |
+#}
+{% set items = component.items|default([]) %}
+{% set button_text = component.button_text|default(trans('branches.view_map')) %}
+
+<section class="block block--branches" id="branches-{{ position }}" {{ falak_section() }}>
+    <div class="container">
+        <div class="branches-layout">
+            <div class="branches-info-col">
+                {% if component.title %}
+                    <h2 class="branches__title" data-falak-field="title" data-falak-label="{{ trans('editor.field.title') }}" data-falak-part="title">
+                        {{ component.title }}
+                    </h2>
+                {% endif %}
+
+                {% if items|length > 0 %}
+                    <div class="branches-tabs-wrap">
+                        <div class="branches-tabs" role="tablist" aria-label="{{ trans('branches.title') }}" data-falak-field="items" data-falak-bind="none" data-falak-part="tabs">
+                            {% for item in items %}
+                                <button type="button"
+                                        class="branch-tab{{ loop.first ? ' is-active' : '' }}"
+                                        role="tab"
+                                        aria-selected="{{ loop.first ? 'true' : 'false' }}"
+                                        aria-controls="branch-panel-{{ position }}-{{ loop.index0 }}"
+                                        id="branch-tab-{{ position }}-{{ loop.index0 }}"
+                                        data-branch-tab="{{ loop.index0 }}">
+                                    {{ item.name }}
+                                </button>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <div class="branches-panels">
+                        {% for item in items %}
+                            <div class="branch-panel{{ loop.first ? ' is-active' : '' }}"
+                                 id="branch-panel-{{ position }}-{{ loop.index0 }}"
+                                 role="tabpanel"
+                                 aria-labelledby="branch-tab-{{ position }}-{{ loop.index0 }}"
+                                 data-branch-panel="{{ loop.index0 }}"
+                                 data-map-embed="{{ item.map_embed_url|default('') }}"
+                                 data-map-link="{{ item.map_link|default('') }}"
+                                 {% if not loop.first %}hidden{% endif %}
+                                 data-falak-field="items"
+                                 data-falak-bind="none"
+                                 data-falak-part="content">
+                                
+                                {% if item.description %}
+                                    <p class="branch-desc">{{ item.description }}</p>
+                                {% endif %}
+
+                                <ul class="branch-details" role="list">
+                                    {% if item.address %}
+                                        <li class="branch-detail">
+                                            <span class="branch-detail__icon" aria-hidden="true">
+                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                                    <path d="M12 21s-8-6.5-8-12a8 8 0 1 1 16 0c0 5.5-8 12-8 12z"/>
+                                                    <circle cx="12" cy="9" r="2.5"/>
+                                                </svg>
+                                            </span>
+                                            <div class="branch-detail__text">
+                                                <strong class="branch-detail__label">{{ trans('branches.address') }}:</strong>
+                                                <span class="branch-detail__value">{{ item.address }}</span>
+                                            </div>
+                                        </li>
+                                    {% endif %}
+
+                                    {% if item.hours %}
+                                        <li class="branch-detail">
+                                            <span class="branch-detail__icon" aria-hidden="true">
+                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                                    <circle cx="12" cy="13" r="8"/>
+                                                    <polyline points="12 9 12 13 15 15"/>
+                                                    <path d="M5 3L2 6"/>
+                                                    <path d="M19 3l3 3"/>
+                                                </svg>
+                                            </span>
+                                            <div class="branch-detail__text">
+                                                <strong class="branch-detail__label">{{ trans('branches.hours') }}:</strong>
+                                                <span class="branch-detail__value">{{ item.hours }}</span>
+                                            </div>
+                                        </li>
+                                    {% endif %}
+
+                                    {% if item.phone %}
+                                        <li class="branch-detail">
+                                            <span class="branch-detail__icon" aria-hidden="true">
+                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                                    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+                                                </svg>
+                                            </span>
+                                            <div class="branch-detail__text">
+                                                <strong class="branch-detail__label">{{ trans('branches.phone') }}:</strong>
+                                                <a href="tel:{{ item.phone }}" class="branch-detail__value branch-detail__value--phone" dir="ltr">{{ item.phone }}</a>
+                                            </div>
+                                        </li>
+                                    {% endif %}
+                                </ul>
+
+                                {% if item.map_link %}
+                                    <div class="branch-action">
+                                        <a href="{{ item.map_link }}" target="_blank" rel="noopener noreferrer" class="branch-map-btn" data-falak-part="button">
+                                            {{ button_text }}
+                                        </a>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="branches-map-col">
+                {% set first_item = items|first %}
+                {% set embed_url = first_item ? first_item.map_embed_url|default('https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d115982.9!2d46.72!3d24.71!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3e2f03890d48939b%3A0x60a9fba414f9b0aa!2sRiyadh!5e0!3m2!1sen!2ssa!4v1700000000000!5m2!1sen!2ssa') : '' %}
+                {% set link_url = first_item ? first_item.map_link|default('https://maps.google.com/?q=Riyadh') : '' %}
+                
+                <div class="branches-map-card" data-falak-part="map">
+                    {% if link_url %}
+                        <a href="{{ link_url }}" target="_blank" rel="noopener noreferrer" class="branches-map-open-btn" data-branch-map-link>
+                            <span>{{ trans('branches.open_google_maps') }}</span>
+                            <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                                <polyline points="15 3 21 3 21 9"></polyline>
+                                <line x1="10" y1="14" x2="21" y2="3"></line>
+                            </svg>
+                        </a>
+                    {% endif %}
+                    
+                    <iframe class="branches-map-iframe"
+                            data-branch-map-iframe
+                            src="{{ embed_url }}"
+                            width="100%"
+                            height="100%"
+                            style="border:0;"
+                            allowfullscreen=""
+                            loading="lazy"
+                            referrerpolicy="no-referrer-when-downgrade"
+                            title="{{ trans('branches.map_title')|default('Branch Location Map') }}">
+                    </iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
