@@ -9077,6 +9077,14 @@ falak-add-product-button button.is-clicked svg path,
 }
 .compare-tab:hover { background: var(--color-primary-dark, var(--color-primary)); }
 .compare-tab:focus-visible { outline: 2px solid var(--color-text); outline-offset: 2px; }
+
+/* English / LTR mode: position on the right side */
+html[dir="ltr"] .compare-tab,
+html[lang="en"] .compare-tab,
+[dir="ltr"] .compare-tab {
+    left: auto;
+    right: 1.25rem;
+}
 .compare-tab__count {
     display: grid;
     place-items: center;
