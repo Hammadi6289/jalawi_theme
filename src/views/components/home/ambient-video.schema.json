@@ -13,7 +13,7 @@
     ],
     "styleable": [
         {
-            "id": "video_url",
+            "id": "video_frame",
             "label": {
                 "ar": "إطار الفيديو",
                 "en": "Video frame"

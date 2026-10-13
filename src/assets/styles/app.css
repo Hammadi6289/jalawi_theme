@@ -9691,8 +9691,7 @@ body.mega-is-open { overflow: hidden; }
 .ambient-video {
     position: relative;
     width: 100%;
-    overflow: hidden;
-    border-radius: var(--radius, 12px);
+    overflow: hidden;          /* clips video to whatever border-radius the editor sets */
     background: #000;
 }
 .block--ambient-video.is-full .ambient-video { border-radius: 0; }
@@ -9708,3 +9707,20 @@ body.mega-is-open { overflow: hidden; }
 .ambient-video__media::-webkit-media-controls,
 .ambient-video__media::-webkit-media-controls-enclosure,
 .ambient-video__media::-webkit-media-controls-start-playback-button { display: none !important; -webkit-appearance: none; }
+
+/* ambient-video error notice */
+.ambient-video-notice {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 1rem 1.25rem;
+    border-radius: 8px;
+    background: #fff3cd;
+    border: 1.5px solid #f0ad4e;
+    color: #7a5900;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    margin-block: 1rem;
+}
+.ambient-video-notice__icon { font-size: 1.2rem; flex-shrink: 0; }
+.ambient-video-notice__text strong { display: block; margin-bottom: 0.2em; color: #5a3e00; }
