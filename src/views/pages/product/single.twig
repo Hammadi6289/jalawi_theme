@@ -22,6 +22,7 @@
                         <img src="{{ product.images|first }}" alt="{{ product.name }}"
                              data-gallery-main
                              class="product-image--{{ theme.settings.get('product_image_fit', 'contain') }}">
+                        <falak-wishlist-button product-id="{{ product.id }}" button-class="btn btn--gallery-wishlist" aria-label="{{ trans('product.add_to_wishlist') }}"></falak-wishlist-button>
                     </div>
 
                     {# Desktop: a vertical rail to the start side of the photo.
@@ -84,7 +85,7 @@
                 {% if product.description %}
                     {# Clamped to a few lines; app.js adds the Read more toggle only when it overflows. #}
                     <div class="product-single__description" data-readmore
-                         data-more="{{ trans('product.read_more') }}" data-less="{{ trans('product.read_less') }}">{{ product.description }}</div>
+                         data-more="{{ trans('product.read_more') }}">{{ product.description }}</div>
                 {% endif %}
 
                 {# Size guide — renders nothing unless the merchant set one. #}
@@ -139,17 +140,19 @@
 
                 </div>
 
-                {# Secondary actions stay out of the (mobile-sticky) buy box. #}
-                <div class="product-single__secondary">
-                    {# Save for later — the platform heart, works signed out too. #}
-                    <falak-wishlist-button product-id="{{ product.id }}" button-class="btn btn--outline btn--wishlist f-card__wishlist"></falak-wishlist-button>
-
+                {# Compare & Share row (directly follows buy box, matching reference theme) #}
+                <div class="product-single__actions-row">
                     {% if theme.settings.get('compare_enabled', true) %}
-                        <button class="btn btn--outline btn--compare" type="button" data-compare-toggle="{{ product.id }}" aria-pressed="false">
-                            <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M7 4v10m0 0-3-3m3 3 3-3M17 20V10m0 0-3 3m3-3 3 3M4 20h6M14 4h6"/></svg>
+                        <button class="product-single__compare" type="button" data-compare-toggle="{{ product.id }}" aria-pressed="false">
+                            <svg class="product-single__compare-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <path d="M20 6L9 17l-5-5"/>
+                            </svg>
                             <span>{{ trans('compare.add') }}</span>
                         </button>
                     {% endif %}
+
+                    <falak-social mode="share" class="product-single__share"
+                                  share-text="{{ product.name }}"></falak-social>
                 </div>
 
                 {# Sold out (product or chosen variant): "notify me when it's back". #}
@@ -165,42 +168,49 @@
                    only for offers whose product list names this product. #}
                 <falak-offers below-product product-id="{{ product.id }}" limit="3"
                               class="product-single__offers"></falak-offers>
-
-                {# Collapsible detail panels — state is data-collapsed, styling is CSS. #}
-                <div class="product-single__panels">
-                    {% if product.description %}
-                        <falak-accordion collapsible bordered name="details">
-                            <falak-accordion-head>
-                                <span slot="title">{{ trans('product.details') }}</span>
-                            </falak-accordion-head>
-                            <falak-accordion-body>{{ product.description }}</falak-accordion-body>
-                        </falak-accordion>
-                    {% endif %}
-
-                    <falak-accordion collapsible bordered name="shipping">
-                        <falak-accordion-head>
-                            <span slot="title">{{ trans('product.shipping_returns') }}</span>
-                        </falak-accordion-head>
-                        <falak-accordion-body>
-                            {{ theme.settings.get('shipping_note', '') }}
-                        </falak-accordion-body>
-                    </falak-accordion>
-                </div>
-
-                {# Share — a quiet, labelled secondary action closing the info
-                   column, after the purchase flow rather than inside it. #}
-                <falak-social mode="share" class="product-single__share"
-                              share-text="{{ product.name }}"></falak-social>
             </div>
         </div>
 
-        {# Approved reviews, plus a form for signed-in customers. Stands down
-           entirely when the merchant has reviews switched off. #}
-        <section class="product-single__reviews">
-            <h2>{{ trans('reviews.title') }}</h2>
-            {# The reviews at a glance: average, count, one bar per star. #}
-            <falak-reviews-summary product-id="{{ product.id }}" class="product-single__reviews-summary"></falak-reviews-summary>
-            <falak-comments product-id="{{ product.id }}" per-page="5"></falak-comments>
+        {# Product tabs: Description, Comments / Reviews, Shipping & Returns #}
+        <section class="product-single__tabs" data-tabs>
+            <div class="product-tabs__nav" role="tablist">
+                <button type="button" class="product-tabs__btn is-active" role="tab" aria-selected="true" data-tab-target="tab-description">
+                    <span>{{ trans('product.description') }}</span>
+                </button>
+                <button type="button" class="product-tabs__btn" role="tab" aria-selected="false" data-tab-target="tab-comments">
+                    <span>{{ trans('product.comments') }}</span>
+                </button>
+                {% if theme.settings.get('shipping_note', '') %}
+                    <button type="button" class="product-tabs__btn" role="tab" aria-selected="false" data-tab-target="tab-shipping">
+                        <span>{{ trans('product.shipping_returns') }}</span>
+                    </button>
+                {% endif %}
+            </div>
+
+            <div class="product-tabs__panels">
+                <div class="product-tabs__panel is-active" id="tab-description" role="tabpanel">
+                    {% if product.description %}
+                        <div class="product-single__full-desc">
+                            {{ product.description|raw }}
+                        </div>
+                    {% else %}
+                        <p class="product-tabs__empty">{{ trans('product.details') }}</p>
+                    {% endif %}
+                </div>
+
+                <div class="product-tabs__panel" id="tab-comments" role="tabpanel" hidden>
+                    <falak-reviews-summary product-id="{{ product.id }}" class="product-single__reviews-summary"></falak-reviews-summary>
+                    <falak-comments product-id="{{ product.id }}" per-page="5"></falak-comments>
+                </div>
+
+                {% if theme.settings.get('shipping_note', '') %}
+                    <div class="product-tabs__panel" id="tab-shipping" role="tabpanel" hidden>
+                        <div class="product-single__shipping-note">
+                            {{ theme.settings.get('shipping_note', '') }}
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
         </section>
 
         {# Fetches and renders its own <falak-product-card> children. #}

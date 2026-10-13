@@ -110,6 +110,8 @@
     "product.showing_count": "عرض {shown} من {total}",
     "product.details": "تفاصيل المنتج",
     "product.shipping_returns": "الشحن والإرجاع",
+    "product.description": "الوصف",
+    "product.comments": "التعليقات",
     "product.related": "قد يعجبك أيضاً",
     "product.original_product": "منتج أصلي 100%",
     "product.easy_returns": "إرجاع سهل",

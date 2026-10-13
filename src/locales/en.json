@@ -110,6 +110,8 @@
     "product.showing_count": "Showing {shown} of {total}",
     "product.details": "Product details",
     "product.shipping_returns": "Shipping & returns",
+    "product.description": "Description",
+    "product.comments": "Comments",
     "product.related": "You may also like",
     "product.original_product": "100% original product",
     "product.easy_returns": "Easy returns",
