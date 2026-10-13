@@ -7106,10 +7106,10 @@ falak-announcement:not(.f-announce--scroll) .f-announce__inner { padding-inline:
     justify-content: center;
     aspect-ratio: 1 / 1;
     width: 100%;
-    background: #f6f7f9;
+    background: #ffffff;
     border-radius: 0.75rem;
     overflow: hidden;
-    border: 1px solid rgba(0, 0, 0, 0.04);
+    border: 1px solid rgba(0, 0, 0, 0.08);
     box-sizing: border-box;
     text-decoration: none;
 }
@@ -7148,7 +7148,7 @@ falak-product-card:hover .f-card__media img,
     justify-content: center;
     color: var(--color-text-faint, #9ca3af);
     font-size: 2.25rem;
-    background: #f6f7f9;
+    background: #ffffff;
 }
 
 /* Content below Image */
