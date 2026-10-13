@@ -30,7 +30,7 @@
             <div class="ambient-video-notice" role="alert" aria-live="polite">
                 <span class="ambient-video-notice__icon">&#9888;&#65039;</span>
                 <span class="ambient-video-notice__text">
-                    <strong>Looping Video</strong> — required field{{ (missing_video and missing_poster) ? 's are' : ' is' }} empty:
+                    <strong>Looping Video</strong> required field{{ (missing_video and missing_poster) ? 's are' : ' is' }} empty:
                     {% if missing_video %}<em>{{ source == 'url' ? 'Video file URL' : 'Video file' }}</em>{% if missing_poster %}, {% endif %}{% endif %}{% if missing_poster %}<em>Poster image</em>{% endif %}.
                     Please fill {{ (missing_video and missing_poster) ? 'them' : 'it' }} in to display the video.
                 </span>
