@@ -6132,21 +6132,21 @@ falak-announcement:not(.f-announce--scroll) .f-announce__inner { padding-inline:
 .block--branches {
     padding-block: clamp(2rem, 4vw, 3.75rem);
 }
-
 .branches-layout {
-    display: grid;
-    grid-template-columns: 1fr;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
     gap: clamp(1.75rem, 3vw, 2.5rem);
-    align-items: center;
 }
 
 @media (min-width: 992px) {
     .branches-layout {
+        display: grid;
         grid-template-columns: minmax(0, 1.05fr) minmax(0, 1.15fr);
+        align-items: center;
         gap: clamp(2.5rem, 4.5vw, 4rem);
     }
 }
-
 @media (max-width: 991px) {
     .branches-map-col {
         order: -1;
@@ -6170,7 +6170,7 @@ falak-announcement:not(.f-announce--scroll) .f-announce__inner { padding-inline:
 }
 
 .branches-tabs {
-    display: inline-flex;
+    display: flex;
     align-items: center;
     gap: 0.35rem;
     padding: 0.35rem;
