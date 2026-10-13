@@ -9200,7 +9200,7 @@ html[lang="en"] .compare-tab,
 .compare-panel__table del { margin-inline-start: 0.3rem; color: var(--color-text-faint); font-size: 0.85em; }
 
 .compare-panel__product { position: relative; display: flex; flex-direction: column; align-items: center; gap: 0.5rem; }
-.compare-panel__media { display: block; inline-size: 100%; max-inline-size: 9rem; aspect-ratio: 1; border-radius: var(--radius); background: var(--color-surface); overflow: hidden; }
+.compare-panel__media { display: block; inline-size: 100%; max-inline-size: 9rem; aspect-ratio: 1; border-radius: var(--radius); background: var(--color-bg); overflow: hidden; }
 .compare-panel__media img { inline-size: 100%; block-size: 100%; object-fit: contain; }
 .compare-panel__placeholder { display: block; inline-size: 100%; block-size: 100%; }
 .compare-panel__name { color: var(--color-text); font-weight: 600; text-decoration: none; line-height: 1.35; }
