@@ -7797,6 +7797,30 @@ falak-add-product-button button.is-clicked svg path,
 .product-image--contain { object-fit: contain; }
 .product-image--cover { object-fit: cover; }
 
+/* Zoom lens */
+.gallery__main { position: relative; }
+.gallery__lens {
+    position: absolute;
+    inline-size: 16rem;
+    block-size: 16rem;
+    border-radius: 50%;
+    overflow: hidden;
+    background: #ffffff;
+    border: 2px solid rgba(255, 255, 255, 0.9);
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.22), 0 0 0 1px rgba(0, 0, 0, 0.08);
+    pointer-events: none;
+    opacity: 0;
+    transform: scale(0.6);
+    transition: opacity 0.18s ease, transform 0.18s ease;
+    z-index: 5;
+}
+.gallery__lens.is-on { opacity: 1; transform: scale(1); }
+.gallery__lens img {
+    position: absolute;
+    max-inline-size: none;
+    aspect-ratio: auto;
+}
+
 /* buy box */
 .product-single__info h1 { margin-bottom: 0.5rem; }
 
@@ -7812,11 +7836,134 @@ falak-add-product-button button.is-clicked svg path,
     margin-bottom: 1.75rem;
 }
 
+/* Description: clamped, with a Read more toggle added by app.js on overflow. */
+.product-single__description[data-readmore] {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 4;
+    line-clamp: 4;
+    overflow: hidden;
+    margin-bottom: 0.5rem;
+}
+.product-single__description[data-readmore].is-expanded {
+    display: block;
+    -webkit-line-clamp: unset;
+    line-clamp: unset;
+}
+.product-single__readmore {
+    margin: 0 0 1.5rem;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--color-primary);
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+/* Quantity + add to cart share a row; Buy now takes the full row below. */
 .buy-box {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 0.6rem;
+    align-items: stretch;
+}
+.buy-box falak-add-product-button,
+.buy-box falak-quick-buy { display: block; min-inline-size: 0; }
+.buy-box falak-quick-buy { grid-column: 1 / -1; }
+.buy-box falak-add-product-button .btn,
+.buy-box falak-add-product-button button,
+.buy-box falak-quick-buy .btn,
+.buy-box falak-quick-buy button { inline-size: 100%; }
+
+.product-single__secondary {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.75rem;
     align-items: center;
+    gap: 0.6rem;
+    margin-block: 0.75rem 1rem;
+}
+
+/* Gallery: thumbnails rail beside the photo (desktop), trust strip beneath. */
+.product-single__gallery {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: "main" "thumbs" "extras";
+    gap: 0.75rem;
+    align-items: start;
+}
+.product-single__gallery .gallery__main { grid-area: main; background: #ffffff; }
+.product-single__gallery .gallery__thumbs { grid-area: thumbs; margin-top: 0; }
+.product-single__gallery .product-single__extras { grid-area: extras; }
+
+@media (min-width: 821px) {
+    .product-single__gallery.has-thumbs {
+        grid-template-columns: 4.75rem minmax(0, 1fr);
+        grid-template-areas: "thumbs main" "extras extras";
+        column-gap: 0.85rem;
+    }
+    /* Zero intrinsic height + full-row min-height: the rail is exactly as tall
+       as the photo and scrolls when there are more thumbs than fit. */
+    .product-single__gallery.has-thumbs .gallery__thumbs {
+        flex-direction: column;
+        block-size: 0;
+        min-block-size: 100%;
+        overflow-x: hidden;
+        overflow-y: auto;
+        padding: 0;
+        scrollbar-width: thin;
+    }
+    .product-single__gallery.has-thumbs .gallery__thumb { flex: 0 0 auto; inline-size: 100%; }
+}
+
+.gallery__thumb { background: #ffffff; }
+.gallery__thumb img { object-fit: contain; }
+
+/* Trust strip + payments */
+.product-trust {
+    list-style: none;
+    margin: 0;
+    padding: 0.7rem 0.5rem;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    gap: 0.5rem 1rem;
+    border-radius: var(--radius-sm);
+    background: var(--color-surface);
+}
+.product-trust__item {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--color-text);
+}
+.product-trust__item svg {
+    inline-size: 1.15rem;
+    block-size: 1.15rem;
+    flex: none;
+    fill: none;
+    stroke: var(--color-primary);
+    stroke-width: 1.7;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+.product-single__payments { display: block; margin-block-start: 0.75rem; }
+
+/* Mobile: Add to cart + Buy now stay pinned to the bottom while scrolling. */
+@media (max-width: 820px) {
+    .product-single { padding-block-end: 9rem; }
+    .buy-box {
+        position: fixed;
+        inset-inline: 0;
+        inset-block-end: 0;
+        z-index: 40;
+        padding: 0.6rem 0.85rem calc(0.6rem + env(safe-area-inset-bottom, 0px));
+        background: var(--color-bg, #ffffff);
+        border-block-start: 1px solid var(--color-border);
+        box-shadow: 0 -6px 18px rgba(0, 0, 0, 0.08);
+    }
 }
 
 /* ------------------------------------------------------------------ cart */

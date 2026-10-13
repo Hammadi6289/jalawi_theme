@@ -894,6 +894,71 @@
         });
     }
 
+    /*  description read more */
+    // The description is clamped by CSS; a toggle is added only when the text
+    // actually overflows, so short descriptions show no dead button.
+
+    document.querySelectorAll('[data-readmore]').forEach(function (box) {
+        function setup() {
+            if (box.nextElementSibling && box.nextElementSibling.classList.contains('product-single__readmore')) return;
+            if (box.scrollHeight <= box.clientHeight + 1) return;
+
+            var btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'product-single__readmore';
+            btn.textContent = box.getAttribute('data-more') || 'Read more';
+            btn.setAttribute('aria-expanded', 'false');
+            btn.addEventListener('click', function () {
+                var open = box.classList.toggle('is-expanded');
+                btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+                btn.textContent = open ? (box.getAttribute('data-less') || 'Read less') : (box.getAttribute('data-more') || 'Read more');
+            });
+            box.insertAdjacentElement('afterend', btn);
+        }
+
+        setup();
+        window.addEventListener('load', setup);
+    });
+
+    /*  gallery zoom lens */
+    // A round magnifier follows the cursor over the main photo. The lens holds
+    // its own copy of the image at ZOOM x the box size, shifted so the point
+    // under the cursor sits at the lens centre — same object-fit as the
+    // original, so contain/cover both line up. Hover-capable devices only.
+
+    var zoomBox = document.querySelector('.gallery__main');
+    var zoomMain = zoomBox && zoomBox.querySelector('[data-gallery-main]');
+
+    if (zoomMain && window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+        var ZOOM = 2.5;
+        var lens = document.createElement('div');
+        lens.className = 'gallery__lens';
+        lens.setAttribute('aria-hidden', 'true');
+        var lensImg = document.createElement('img');
+        lensImg.alt = '';
+        lensImg.className = zoomMain.className;
+        lens.appendChild(lensImg);
+        zoomBox.appendChild(lens);
+
+        zoomBox.addEventListener('mousemove', function (event) {
+            var rect = zoomBox.getBoundingClientRect();
+            var x = event.clientX - rect.left;
+            var y = event.clientY - rect.top;
+            var r = lens.offsetWidth / 2;
+
+            if (lensImg.getAttribute('src') !== zoomMain.getAttribute('src')) lensImg.src = zoomMain.getAttribute('src');
+            lensImg.style.width = rect.width * ZOOM + 'px';
+            lensImg.style.height = rect.height * ZOOM + 'px';
+            lensImg.style.left = (r - x * ZOOM) + 'px';
+            lensImg.style.top = (r - y * ZOOM) + 'px';
+
+            lens.style.left = (x - r) + 'px';
+            lens.style.top = (y - r) + 'px';
+            lens.classList.add('is-on');
+        });
+        zoomBox.addEventListener('mouseleave', function () { lens.classList.remove('is-on'); });
+    }
+
     /* -------------------------------------------------- product gallery */
 
     document.addEventListener('click', function (event) {

@@ -16,7 +16,7 @@
         {% endif %}
 
         <div class="product-single__layout">
-            <div class="product-single__gallery">
+            <div class="product-single__gallery{{ product.images|length > 1 ? ' has-thumbs' : '' }}">
                 {% if product.images|length > 0 %}
                     <div class="gallery__main">
                         <img src="{{ product.images|first }}" alt="{{ product.name }}"
@@ -24,6 +24,8 @@
                              class="product-image--{{ theme.settings.get('product_image_fit', 'contain') }}">
                     </div>
 
+                    {# Desktop: a vertical rail to the start side of the photo.
+                       Mobile: a horizontal strip under it (see CSS). #}
                     {% if product.images|length > 1 %}
                         <div class="gallery__thumbs">
                             {% for image in product.images %}
@@ -41,6 +43,27 @@
                         <div class="product-card__placeholder" aria-hidden="true">🛍</div>
                     </div>
                 {% endif %}
+
+                {# Trust strip + payment methods, shown under the gallery. #}
+                <div class="product-single__extras">
+                    <ul class="product-trust">
+                        <li class="product-trust__item">
+                            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l7 3v5c0 4.5-3 8.3-7 10-4-1.7-7-5.5-7-10V6l7-3zm-3 9l2 2 4-4"/></svg>
+                            <span>{{ trans('product.original_product') }}</span>
+                        </li>
+                        <li class="product-trust__item">
+                            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h11a4 4 0 010 8H8m0 0l3-3m-3 3l3 3"/></svg>
+                            <span>{{ trans('product.easy_returns') }}</span>
+                        </li>
+                        <li class="product-trust__item">
+                            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h11v10H3zM14 9h4l3 3v4h-7M7 19a1.5 1.5 0 100-3 1.5 1.5 0 000 3zm11 0a1.5 1.5 0 100-3 1.5 1.5 0 000 3z"/></svg>
+                            <span>{{ trans('product.fast_delivery') }}</span>
+                        </li>
+                    </ul>
+
+                    {# Same component the footer uses; collapses when the store has none. #}
+                    <falak-payments hide-title class="product-single__payments"></falak-payments>
+                </div>
             </div>
 
             <div class="product-single__info">
@@ -59,7 +82,9 @@
                 </p>
 
                 {% if product.description %}
-                    <div class="product-single__description">{{ product.description }}</div>
+                    {# Clamped to a few lines; app.js adds the Read more toggle only when it overflows. #}
+                    <div class="product-single__description" data-readmore
+                         data-more="{{ trans('product.read_more') }}" data-less="{{ trans('product.read_less') }}">{{ product.description }}</div>
                 {% endif %}
 
                 {# Size guide — renders nothing unless the merchant set one. #}
@@ -112,6 +137,10 @@
                                      mini-checkout
                                      source="product"></falak-quick-buy>
 
+                </div>
+
+                {# Secondary actions stay out of the (mobile-sticky) buy box. #}
+                <div class="product-single__secondary">
                     {# Save for later — the platform heart, works signed out too. #}
                     <falak-wishlist-button product-id="{{ product.id }}" button-class="btn btn--outline btn--wishlist f-card__wishlist"></falak-wishlist-button>
 
