@@ -16924,7 +16924,7 @@ body.mega-is-open {
 
 
 
-/* ---------------------------------------------------- Pagination */
+/* Pagination */
 .blog-pagination {
     display: flex;
     justify-content: center;
@@ -17088,7 +17088,7 @@ body.mega-is-open {
     justify-content: center;
 }
 
-/* ---------------------------------------------------- Loading Spinner */
+/* Loading Spinner */
 .blog-loading {
     display: flex;
     justify-content: center;
