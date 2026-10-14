@@ -39,6 +39,13 @@
                 "ar": "رابط اقرأ المزيد",
                 "en": "Read more link"
             }
+        },
+        {
+            "id": "view_all",
+            "label": {
+                "ar": "زر عرض جميع المقالات",
+                "en": "View all articles button"
+            }
         }
     ],
     "fields": [
@@ -106,6 +113,52 @@
                 "ar": "اقرأ المزيد",
                 "en": "Read more"
             }
+        },
+        {
+            "id": "show_view_all",
+            "type": "boolean",
+            "format": "switch",
+            "label": {
+                "ar": "إظهار زر «عرض جميع المقالات»",
+                "en": "Show “View all articles” button"
+            },
+            "description": {
+                "ar": "زر اختياري أسفل المقالات ينقل الزائر إلى صفحة كل المقالات",
+                "en": "Optional button below articles that links visitors to all articles"
+            },
+            "value": true
+        },
+        {
+            "id": "view_all_text",
+            "type": "string",
+            "format": "text",
+            "label": {
+                "ar": "نص زر عرض الكل",
+                "en": "View all button text"
+            },
+            "multilanguage": true,
+            "required": false,
+            "maxLength": 50,
+            "value": {
+                "ar": "عرض جميع المقالات",
+                "en": "View All Articles"
+            }
+        },
+        {
+            "id": "view_all_url",
+            "type": "string",
+            "format": "text",
+            "label": {
+                "ar": "رابط عرض الكل",
+                "en": "View all URL"
+            },
+            "description": {
+                "ar": "رابط صفحة جميع المقالات (الافتراضي: /blogs)",
+                "en": "URL for all articles page (default: /blogs)"
+            },
+            "required": false,
+            "maxLength": 255,
+            "value": "/blogs"
         }
     ]
 }

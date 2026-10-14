@@ -54,5 +54,27 @@
                 </article>
             {% endfor %}
         </div>
+
+        {% set show_view_all = component.show_view_all is defined ? component.show_view_all : true %}
+        {% set view_all_url = component.view_all_url|default('/blogs') %}
+        {% set view_all_text = component.view_all_text %}
+        {% if view_all_text is iterable %}
+            {% set view_all_text = view_all_text[user.language.code] ?: (view_all_text.ar ?: view_all_text.en) %}
+        {% endif %}
+        {% if not view_all_text %}
+            {% set view_all_text = theme.is_rtl ? 'عرض جميع المقالات' : 'View All Articles' %}
+        {% endif %}
+
+        {% if show_view_all and view_all_url %}
+            <div class="blog__actions">
+                <a href="{{ view_all_url }}" class="btn btn--outline blog__view-all" data-falak-part="view_all">
+                    <span>{{ view_all_text }}</span>
+                    <svg class="blog__view-all-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                        <polyline points="12 5 19 12 12 19"></polyline>
+                    </svg>
+                </a>
+            </div>
+        {% endif %}
     </div>
 </section>

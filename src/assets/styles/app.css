@@ -9838,6 +9838,55 @@ falak-announcement:not(.f-announce--scroll) .f-announce__inner {
     }
 }
 
+.blog__actions {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-block-start: clamp(2rem, 3.5vw, 3rem);
+}
+
+.blog__view-all {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.65rem;
+    padding: 0.75rem 2rem;
+    border-radius: var(--radius-sm, 8px);
+    border: 1.5px solid var(--color-primary);
+    background: transparent;
+    color: var(--color-primary);
+    font-size: 0.95rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background var(--transition, 0.2s ease), color var(--transition, 0.2s ease), transform var(--transition, 0.2s ease), box-shadow var(--transition, 0.2s ease);
+}
+
+.blog__view-all:hover {
+    background: var(--color-primary);
+    color: var(--color-on-primary, #ffffff);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 14px color-mix(in srgb, var(--color-primary) 30%, transparent);
+}
+
+.blog__view-all-icon {
+    inline-size: 1.1rem;
+    block-size: 1.1rem;
+    stroke: currentColor;
+    transition: transform var(--transition, 0.2s ease);
+}
+
+[dir="rtl"] .blog__view-all-icon {
+    transform: scaleX(-1);
+}
+
+.blog__view-all:hover .blog__view-all-icon {
+    transform: translateX(3px);
+}
+
+[dir="rtl"] .blog__view-all:hover .blog__view-all-icon {
+    transform: scaleX(-1) translateX(3px);
+}
+
 /* ---- store branches (home.branches) — Jalawi store locator block ---- */
 .block--branches {
     padding-block: clamp(2rem, 4vw, 3.75rem);
@@ -16804,6 +16853,7 @@ body.mega-is-open {
     margin: 0;
     display: -webkit-box;
     -webkit-line-clamp: 3;
+    line-clamp: 3;
     -webkit-box-orient: vertical;
     overflow: hidden;
 }
@@ -16896,6 +16946,7 @@ body.mega-is-open {
     margin: 0;
     display: -webkit-box;
     -webkit-line-clamp: 2;
+    line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
 }
@@ -16917,6 +16968,7 @@ body.mega-is-open {
     margin: 0;
     display: -webkit-box;
     -webkit-line-clamp: 3;
+    line-clamp: 3;
     -webkit-box-orient: vertical;
     overflow: hidden;
     flex-grow: 1;
