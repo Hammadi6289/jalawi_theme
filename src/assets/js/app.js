@@ -1142,8 +1142,8 @@
         }
 
         // Set user-friendly placeholders
-        if (!minInput.placeholder) minInput.placeholder = '0';
-        if (!maxInput.placeholder) maxInput.placeholder = '9999';
+        minInput.placeholder = '0';
+        maxInput.placeholder = '500';
 
         // Populate from URL if present; otherwise clear default catalog 200 cap ONCE
         if (!priceRange.__valuesChecked) {

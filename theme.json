@@ -1058,6 +1058,22 @@
                     },
                     "required": false,
                     "maxLength": 500
+                },
+                {
+                    "id": "category_sidebar_image_text",
+                    "type": "string",
+                    "format": "text",
+                    "label": {
+                        "ar": "النص على الصورة",
+                        "en": "Text on image"
+                    },
+                    "description": {
+                        "ar": "نص يظهر أسفل صورة الإعلان فوق تدرج لوني (مثال: خصومات بلا حدود)",
+                        "en": "Text overlay displayed at the bottom of the banner image over a gradient"
+                    },
+                    "multilanguage": true,
+                    "required": false,
+                    "maxLength": 100
                 }
             ]
         }

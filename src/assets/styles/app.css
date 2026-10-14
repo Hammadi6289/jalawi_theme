@@ -4937,7 +4937,15 @@ body.f-modal-open {
     font-weight: 600;
     color: var(--color-text, #222);
     box-sizing: border-box;
+    -moz-appearance: textfield;
+    appearance: textfield;
     transition: border-color var(--transition, 0.2s ease), box-shadow var(--transition, 0.2s ease);
+}
+
+.f-price-range__number::-webkit-outer-spin-button,
+.f-price-range__number::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
 }
 
 .f-price-range__number:focus {
@@ -12959,38 +12967,45 @@ falak-product-card falak-add-product-button button.is-clicked svg path,
 
 .empty-state {
     text-align: center;
-    padding-block: 4rem;
+    padding-block: 4rem 3rem;
     color: var(--color-text-soft);
 }
 
 .empty-state__icon-wrap {
-    inline-size: 5.5rem;
-    block-size: 5.5rem;
-    margin: 0 auto 1.5rem;
-    border-radius: 50%;
-    background: #fdf5f5;
-    border: 2px solid var(--color-border, #f2dede);
-    display: flex;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 4px 14px rgba(206, 90, 103, 0.12);
+    margin: 0 auto 1.5rem;
+    background: transparent;
+    border: none;
+    box-shadow: none;
 }
 
-.empty-state__svg {
-    inline-size: 2.75rem;
-    block-size: 2.75rem;
-    fill: var(--color-primary, #ce5a67);
+.empty-state__illustration {
+    display: block;
+    max-inline-size: 100%;
+    inline-size: min(16.5rem, 85vw);
+    block-size: auto;
+    margin: 0 auto;
+    transition: transform var(--transition, 0.3s ease);
 }
 
-.empty-state__icon {
-    font-size: 2.5rem;
-    margin-bottom: 0.75rem;
+@media (min-width: 900px) {
+    .empty-state__illustration {
+        inline-size: 26rem;
+    }
 }
 
-.empty-state p {
-    margin-bottom: 1.5rem;
-    font-size: 1.05rem;
-    font-weight: 500;
+.empty-state__illustration:hover {
+    transform: scale(1.03);
+}
+
+.empty-state p,
+.empty-state__text {
+    margin-block: 1rem 1.75rem;
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: var(--color-text, #333333);
 }
 
 /*
@@ -13097,21 +13112,21 @@ falak-product-card falak-add-product-button button.is-clicked svg path,
     align-items: center;
     gap: 0.55rem;
     padding: 0.65rem 1.4rem;
-    background: #b08968;
-    color: #ffffff;
+    background: var(--color-primary);
+    color: var(--color-on-primary, #ffffff);
     border: none;
     border-radius: var(--radius-sm, 8px);
     font-size: 0.92rem;
     font-weight: 600;
     cursor: pointer;
-    box-shadow: 0 2px 6px rgba(176, 137, 104, 0.25);
+    box-shadow: 0 2px 8px color-mix(in srgb, var(--color-primary) 30%, transparent);
     transition: background var(--transition, 0.2s ease), transform var(--transition, 0.2s ease), box-shadow var(--transition, 0.2s ease);
 }
 
 .btn-filter-toggle:hover {
-    background: #9f7858;
+    background: var(--color-primary-dark, var(--color-primary));
     transform: translateY(-1px);
-    box-shadow: 0 4px 10px rgba(176, 137, 104, 0.35);
+    box-shadow: 0 4px 12px color-mix(in srgb, var(--color-primary) 40%, transparent);
 }
 
 .btn-filter-toggle__icon {
@@ -13197,29 +13212,59 @@ falak-filters .f-filters {
 }
 
 .product-listing__sidebar-banner {
+    position: relative;
     margin-block-start: 1.25rem;
     inline-size: 100%;
     border-radius: var(--radius-sm, 12px);
     overflow: hidden;
-    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+}
+
+.product-listing__sidebar-banner-link,
+.product-listing__sidebar-banner-media {
+    position: relative;
+    display: block;
+    text-decoration: none;
+    overflow: hidden;
+    border-radius: inherit;
 }
 
 .product-listing__sidebar-banner img {
     display: block;
     inline-size: 100%;
-    block-size: auto;
+    min-block-size: 30rem;
+    max-block-size: 36rem;
     object-fit: cover;
     border-radius: inherit;
     transition: transform var(--transition, 0.3s ease);
 }
 
-.product-listing__sidebar-banner-link {
-    display: block;
-    text-decoration: none;
+.product-listing__sidebar-banner-link:hover img {
+    transform: scale(1.03);
 }
 
-.product-listing__sidebar-banner-link:hover img {
-    transform: scale(1.02);
+.product-listing__sidebar-banner-overlay {
+    position: absolute;
+    inset-inline: 0;
+    inset-block-end: 0;
+    padding-block: 4.5rem 1.35rem;
+    padding-inline: 1.25rem;
+    background: linear-gradient(to top, color-mix(in srgb, var(--color-primary, #ce5a67) 85%, #000) 0%, color-mix(in srgb, var(--color-primary, #ce5a67) 45%, transparent) 50%, transparent 100%);
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    pointer-events: none;
+    border-radius: inherit;
+}
+
+.product-listing__sidebar-banner-text {
+    color: #ffffff;
+    font-size: 1.35rem;
+    font-weight: 700;
+    text-align: center;
+    line-height: 1.35;
+    letter-spacing: -0.01em;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.35);
 }
 
 .product-listing__toolbar-start {
