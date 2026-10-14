@@ -1113,4 +1113,38 @@
         });
         buyObserver.observe(buyBoxEl, { childList: true, subtree: true });
     }
+
+    /* Search Modal "View all results for [query]" formatting */
+    function updateSearchViewAll() {
+        var modal = document.querySelector('#falak-search') || document.querySelector('falak-search');
+        if (!modal) return;
+        var input = modal.querySelector('.f-search__input') || document.querySelector('#falak-search .f-search__input');
+        var viewAll = modal.querySelector('.f-search__view-all') || document.querySelector('#falak-search .f-search__view-all');
+        if (!viewAll) return;
+        var val = input ? input.value.trim() : '';
+        var isAr = document.documentElement.lang === 'ar' || document.documentElement.dir === 'rtl';
+        var chevron = isAr ? '‹' : '›';
+        if (val) {
+            var label = isAr ? ('عرض كل النتائج لـ "' + val + '" ' + chevron) : ('View all results for "' + val + '" ' + chevron);
+            if (viewAll.textContent !== label) {
+                viewAll.textContent = label;
+            }
+        }
+    }
+
+    document.addEventListener('input', function (e) {
+        if (e.target && (e.target.matches('#falak-search .f-search__input, .f-search__input') || (e.target.classList && e.target.classList.contains('f-search__input')))) {
+            updateSearchViewAll();
+        }
+    });
+
+    if (window.MutationObserver) {
+        var searchObserver = new MutationObserver(function () {
+            updateSearchViewAll();
+        });
+        var searchTarget = document.querySelector('#falak-search') || document.body;
+        if (searchTarget) {
+            searchObserver.observe(searchTarget, { childList: true, subtree: true });
+        }
+    }
 })();

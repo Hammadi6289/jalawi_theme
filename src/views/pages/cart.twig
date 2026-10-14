@@ -43,7 +43,12 @@
                                 {% if item.variation and item.variation.attributes is defined and item.variation.attributes %}
                                     <span class="cart-item__variation">
                                         {%- for key, value in item.variation.attributes -%}
-                                            {{ key }}: {{ value }}{{ not loop.last ? ' · ' : '' }}
+                                            {%- if key|lower in ['color', 'colors', 'colour', 'colours'] or key in ['اللون', 'ألوان', 'الوان'] or value starts with '#' -%}
+                                                {{ key }}: <span class="cart-item__color-dot" style="background-color: {{ value }};" title="{{ value }}" aria-label="{{ value }}"></span>
+                                            {%- else -%}
+                                                {{ key }}: {{ value }}
+                                            {%- endif -%}
+                                            {{ not loop.last ? ' · ' : '' }}
                                         {%- endfor -%}
                                     </span>
                                 {% endif %}
@@ -68,48 +73,66 @@
                     {% endfor %}
                 </ul>
 
-                <aside class="cart-summary" aria-label="{{ trans('cart.summary') }}">
-                    <h2>{{ trans('cart.summary') }}</h2>
-
-                    {# Coupon — the platform component: input with apply/remove,
-                       inline error, applied chip, and coupon cards when the
-                       theme passes any. app.js reloads on its coupon events so
-                       the server redraws the totals. #}
-                    <falak-cart-coupons class="cart-coupon"></falak-cart-coupons>
-
-                    <div class="cart-summary__row">
-                        <span>{{ trans('cart.subtotal') }}</span>
-                        <span>{{ falak_currency(cart_total.subtotal) }}</span>
-                    </div>
-                    {% if cart_total.product_discount > 0 %}
-                        <div class="cart-summary__row cart-summary__row--discount">
-                            <span>{{ trans('cart.product_discount') }}</span>
-                            <span>&minus; {{ falak_currency(cart_total.product_discount) }}</span>
-                        </div>
-                    {% endif %}
-                    {% if cart_total.discount > 0 %}
-                        <div class="cart-summary__row cart-summary__row--discount">
-                            <span>{{ trans('cart.discount') }}</span>
-                            <span>&minus; {{ falak_currency(cart_total.discount) }}</span>
-                        </div>
-                    {% endif %}
-                    {% if cart_total.special_offer_discount > 0 %}
-                        <div class="cart-summary__row cart-summary__row--discount">
-                            <span>{{ trans('cart.special_offer') }}</span>
-                            <span>&minus; {{ falak_currency(cart_total.special_offer_discount) }}</span>
-                        </div>
-                    {% endif %}
-                    {% if cart_total.free_shipping %}
-                        <p class="cart-summary__note">{{ trans('cart.free_shipping') }}</p>
-                    {% endif %}
-                    <div class="cart-summary__row cart-summary__row--total">
-                        <span>{{ trans('cart.total') }}</span>
-                        <span>{{ falak_currency(cart_total.total) }}</span>
+                <div class="cart-sidebar">
+                    <div class="cart-coupon-box">
+                        <falak-cart-coupons class="cart-coupon"></falak-cart-coupons>
                     </div>
 
-                    <a class="btn btn--primary btn--block" href="/checkout">{{ trans('cart.checkout') }}</a>
-                    <a class="cart-summary__continue" href="/products">{{ trans('cart.continue_shopping') }}</a>
-                </aside>
+                    <aside class="cart-summary" aria-label="{{ trans('cart.summary') }}">
+                        <h2>{{ trans('cart.summary') }}</h2>
+
+                        {% set vat_amount = cart_total.tax|default(cart_total.vat|default(cart_total.tax_amount|default(0))) %}
+                        {% if vat_amount > 0 %}
+                            <div class="cart-summary__row">
+                                <span>{{ trans('cart.subtotal_excl_vat') }}</span>
+                                <span>{{ falak_currency(cart_total.subtotal_excl_vat|default(cart_total.subtotal)) }}</span>
+                            </div>
+                            <div class="cart-summary__row">
+                                <span>{{ trans('cart.vat') }}</span>
+                                <span>{{ falak_currency(vat_amount) }}</span>
+                            </div>
+                        {% else %}
+                            <div class="cart-summary__row">
+                                <span>{{ trans('cart.subtotal') }}</span>
+                                <span>{{ falak_currency(cart_total.subtotal) }}</span>
+                            </div>
+                        {% endif %}
+
+                        {% if cart_total.product_discount > 0 %}
+                            <div class="cart-summary__row cart-summary__row--discount">
+                                <span>{{ trans('cart.product_discount') }}</span>
+                                <span>&minus; {{ falak_currency(cart_total.product_discount) }}</span>
+                            </div>
+                        {% endif %}
+                        {% if cart_total.discount > 0 %}
+                            <div class="cart-summary__row cart-summary__row--discount">
+                                <span>{{ trans('cart.discount') }}</span>
+                                <span>&minus; {{ falak_currency(cart_total.discount) }}</span>
+                            </div>
+                        {% endif %}
+                        {% if cart_total.special_offer_discount > 0 %}
+                            <div class="cart-summary__row cart-summary__row--discount">
+                                <span>{{ trans('cart.special_offer') }}</span>
+                                <span>&minus; {{ falak_currency(cart_total.special_offer_discount) }}</span>
+                            </div>
+                        {% endif %}
+                        {% if cart_total.free_shipping %}
+                            <p class="cart-summary__note">{{ trans('cart.free_shipping') }}</p>
+                        {% endif %}
+
+                        {% set items_count = cart_items|length %}
+                        <div class="cart-summary__row cart-summary__row--total">
+                            <div class="cart-summary__total-label">
+                                <span class="cart-summary__total-name">{{ trans('cart.total') }}</span>
+                                <span class="cart-summary__total-count">({{ trans('cart.items_suffix', {count: items_count})|default(items_count ~ ' items') }})</span>
+                            </div>
+                            <span class="cart-summary__total-value">{{ falak_currency(cart_total.total) }}</span>
+                        </div>
+                        <p class="cart-summary__tax-note">{{ trans('cart.prices_include_vat') }}</p>
+
+                        <a class="btn btn--primary btn--block cart-summary__checkout" href="/checkout">{{ trans('cart.checkout') }}</a>
+                    </aside>
+                </div>
             </div>
         {% else %}
             <falak-placeholder data-cart-empty icon="🛒" text="{{ trans('cart.empty') }}"
