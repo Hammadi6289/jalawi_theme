@@ -36,7 +36,7 @@
             </div>
         {% endif %}
 
-        <div class="blog__grid">
+        <div class="blog__grid" data-blog-home-feed data-read-more="{{ read_more }}" data-limit="{{ component.limit|default(4) }}">
             {% for item in items %}
                 {% set link = item.link|default(null) %}
                 <article class="blog-card" data-falak-field="items" data-falak-label="{{ trans('editor.field.items') }}" data-falak-bind="none">

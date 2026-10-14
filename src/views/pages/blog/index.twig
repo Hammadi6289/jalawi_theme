@@ -1,23 +1,21 @@
 {#
-    Blog listing — Jalawi layout: breadcrumb, a featured slider of the latest
-    articles (image beside date, author, title, excerpt), then every article
-    as a card in two columns (image beside the text on large screens).
+    Blog listing — Jalawi layout: breadcrumb, featured hero article,
+    and responsive grid of articles matching the Falak dashboard.
 
     | Variable | Type  | Description                                                    |
     | articles | array | each: title, excerpt, image, url, created_at, author — pending |
-
-    The storefront doesn't serve /blog yet; until it does this page renders
-    its empty state. SDK parts: <falak-breadcrumb>, <falak-slider>.
+    | blogs    | array | platform alternate collection                                  |
 #}
 {% extends "layouts.master" %}
 
 {% block title %}{{ trans('blog.title') }} — {{ store.name }}{% endblock %}
 
 {% block content %}
-    {% set list = articles|default([]) %}
+    {% set raw_list = articles|default(blogs|default(posts|default([]))) %}
+    {% set list = raw_list.data is defined ? raw_list.data : raw_list %}
     {% set crumbs = [
         { title: trans('common.home'), url: store.url },
-        { title: trans('blog.title'), url: '/blog' }
+        { title: trans('blog.title'), url: '/blogs' }
     ] %}
 
     <div class="container blog-page">
@@ -25,72 +23,89 @@
             <falak-breadcrumb items="{{ crumbs|json_encode }}"></falak-breadcrumb>
         </nav>
 
-        {% if list|length > 0 %}
-            {# Featured: the latest three, one at a time. #}
-            <falak-slider class="blog-feature" type="fullwidth" auto-play auto-play-delay="6000" loop pagination static-when-single show-controls="false">
-                {% for article in list %}{% if loop.index <= 3 %}
-                    <div class="blog-feature__slide">
-                        <a class="blog-feature__media" href="{{ article.url }}" tabindex="-1" aria-hidden="true">
-                            {% if article.image|default(null) %}<img src="{{ article.image }}" alt="" loading="lazy">{% endif %}
-                        </a>
-                        <div class="blog-feature__body">
-                            {% set author = article.author.name|default(null) %}
-                            <div class="blog-meta">
-                                {% if article.created_at|default(null) %}
-                                    <span class="blog-meta__item">
-                                        <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" d="M4 6.5A1.5 1.5 0 0 1 5.5 5h13A1.5 1.5 0 0 1 20 6.5v12a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 18.5v-12ZM4 10h16M8 3v4M16 3v4"/></svg>
-                                        <time datetime="{{ article.created_at|date('Y-m-d') }}">{{ article.created_at|date('j F Y') }}</time>
-                                    </span>
-                                {% endif %}
-                                {% if author %}
-                                    <span class="blog-meta__item">
-                                        <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm-7 8a7 7 0 0 1 14 0"/></svg>
-                                        <span>{{ author }}</span>
-                                    </span>
-                                {% endif %}
-                            </div>
-                            <h2 class="blog-feature__title"><a href="{{ article.url }}">{{ article.title }}</a></h2>
-                            {% if article.excerpt|default(null) %}<p class="blog-feature__excerpt">{{ article.excerpt }}</p>{% endif %}
-                            <a class="blog-read-more" href="{{ article.url }}">{{ trans('blog.read_more') }}</a>
-                        </div>
-                    </div>
-                {% endif %}{% endfor %}
-            </falak-slider>
+        <div class="blog-feed" data-blog-feed>
+            {% if list|length > 0 %}
+                {# Featured: the newest article #}
+                {% set featured = list[0] %}
+                {% set feat_url = featured.url|default('/blogs/' ~ (featured.slug|default(featured.id))) %}
+                {% set feat_img = featured.featured_image_url|default(featured.image_url|default(featured.image|default(null))) %}
+                {% set feat_author = featured.author_name|default(featured.author.name|default(null)) %}
+                {% set feat_date = featured.published_at|default(featured.created_at|default(null)) %}
 
-            <div class="blog-list">
-                {% for article in list %}
-                    <article class="blog-entry">
-                        <a class="blog-entry__media" href="{{ article.url }}" tabindex="-1" aria-hidden="true">
-                            {% if article.image|default(null) %}<img src="{{ article.image }}" alt="" loading="lazy">{% endif %}
-                        </a>
-                        <div class="blog-entry__body">
-                            {% set author = article.author.name|default(null) %}
-                            <div class="blog-meta">
-                                {% if article.created_at|default(null) %}
-                                    <span class="blog-meta__item">
-                                        <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" d="M4 6.5A1.5 1.5 0 0 1 5.5 5h13A1.5 1.5 0 0 1 20 6.5v12a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 18.5v-12ZM4 10h16M8 3v4M16 3v4"/></svg>
-                                        <time datetime="{{ article.created_at|date('Y-m-d') }}">{{ article.created_at|date('j F Y') }}</time>
-                                    </span>
-                                {% endif %}
-                                {% if author %}
-                                    <span class="blog-meta__item">
-                                        <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm-7 8a7 7 0 0 1 14 0"/></svg>
-                                        <span>{{ author }}</span>
-                                    </span>
-                                {% endif %}
-                            </div>
-                            <h3 class="blog-entry__title"><a href="{{ article.url }}">{{ article.title }}</a></h3>
-                            {% if article.excerpt|default(null) %}<p class="blog-entry__excerpt">{{ article.excerpt }}</p>{% endif %}
-                            <a class="blog-read-more" href="{{ article.url }}">{{ trans('blog.read_more') }}</a>
+                <div class="blog-feature">
+                    <a class="blog-feature__media" href="{{ feat_url }}" tabindex="-1" aria-hidden="true">
+                        {% if feat_img %}<img src="{{ feat_img }}" alt="{{ featured.title }}" loading="eager">{% else %}<div class="blog-placeholder-img"></div>{% endif %}
+                    </a>
+                    <div class="blog-feature__body">
+                        <div class="blog-meta">
+                            {% if feat_date %}
+                                <span class="blog-meta__item">
+                                    <svg class="blog-meta__icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6.5A1.5 1.5 0 0 1 5.5 5h13A1.5 1.5 0 0 1 20 6.5v12a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 18.5v-12ZM4 10h16M8 3v4M16 3v4"/></svg>
+                                    <time datetime="{{ feat_date|date('Y-m-d') }}">{{ feat_date|date('j F Y') }}</time>
+                                </span>
+                            {% endif %}
+                            {% if feat_author and (featured.show_author is not defined or featured.show_author) %}
+                                <span class="blog-meta__item">
+                                    <svg class="blog-meta__icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm-7 8a7 7 0 0 1 14 0"/></svg>
+                                    <span>{{ feat_author }}</span>
+                                </span>
+                            {% endif %}
                         </div>
-                    </article>
-                {% endfor %}
-            </div>
-        {% else %}
-            <div class="empty-state">
-                <div class="empty-state__icon" aria-hidden="true">📝</div>
-                <p>{{ trans('blog.no_articles') }}</p>
-            </div>
-        {% endif %}
+                        <h2 class="blog-feature__title"><a href="{{ feat_url }}">{{ featured.title }}</a></h2>
+                        {% if featured.excerpt|default(null) %}<p class="blog-feature__excerpt">{{ featured.excerpt }}</p>{% endif %}
+                        <a class="blog-read-more" href="{{ feat_url }}">
+                            <span>{{ trans('blog.read_more') }}</span>
+                            <svg class="blog-read-more__arrow" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg>
+                        </a>
+                    </div>
+                </div>
+
+                {% if list|length > 1 %}
+                    <div class="blog-list">
+                        {% for article in list %}
+                            {% if loop.index > 1 %}
+                                {% set art_url = article.url|default('/blogs/' ~ (article.slug|default(article.id))) %}
+                                {% set art_img = article.featured_image_url|default(article.image_url|default(article.image|default(null))) %}
+                                {% set art_author = article.author_name|default(article.author.name|default(null)) %}
+                                {% set art_date = article.published_at|default(article.created_at|default(null)) %}
+
+                                <article class="blog-entry">
+                                    <a class="blog-entry__media" href="{{ art_url }}" tabindex="-1" aria-hidden="true">
+                                        {% if art_img %}<img src="{{ art_img }}" alt="{{ article.title }}" loading="lazy">{% else %}<div class="blog-placeholder-img"></div>{% endif %}
+                                    </a>
+                                    <div class="blog-entry__body">
+                                        <div class="blog-meta">
+                                            {% if art_date %}
+                                                <span class="blog-meta__item">
+                                                    <svg class="blog-meta__icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6.5A1.5 1.5 0 0 1 5.5 5h13A1.5 1.5 0 0 1 20 6.5v12a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 18.5v-12ZM4 10h16M8 3v4M16 3v4"/></svg>
+                                                    <time datetime="{{ art_date|date('Y-m-d') }}">{{ art_date|date('j F Y') }}</time>
+                                                </span>
+                                            {% endif %}
+                                            {% if art_author and (article.show_author is not defined or article.show_author) %}
+                                                <span class="blog-meta__item">
+                                                    <svg class="blog-meta__icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm-7 8a7 7 0 0 1 14 0"/></svg>
+                                                    <span>{{ art_author }}</span>
+                                                </span>
+                                            {% endif %}
+                                        </div>
+                                        <h3 class="blog-entry__title"><a href="{{ art_url }}">{{ article.title }}</a></h3>
+                                        {% if article.excerpt|default(null) %}<p class="blog-entry__excerpt">{{ article.excerpt }}</p>{% endif %}
+                                        <a class="blog-read-more" href="{{ art_url }}">
+                                            <span>{{ trans('blog.read_more') }}</span>
+                                            <svg class="blog-read-more__arrow" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg>
+                                        </a>
+                                    </div>
+                                </article>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% else %}
+                {# Client-side hydration from /api/storefront/blogs will populate here automatically #}
+                <div class="blog-loading">
+                    <div class="blog-spinner"></div>
+                </div>
+            {% endif %}
+        </div>
     </div>
 {% endblock %}

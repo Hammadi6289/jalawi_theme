@@ -1,69 +1,73 @@
 {#
-    Blog article — Jalawi layout: breadcrumb, then centred date | author,
-    title and excerpt, a wide cover image, the article body, and share links.
+    Blog article — Jalawi layout: breadcrumb, date | author,
+    title and excerpt, wide cover image, article body (prose), and share links.
 
     | Variable | Type   | Description                                                   |
     | article  | ?array | title, excerpt, content (sanitized HTML), image, created_at, author |
-
-    SDK parts: <falak-breadcrumb>, <falak-social mode="share">. (Jalawi also
-    shows likes and comments on articles; the SDK's comments are product
-    reviews only, so there is nothing to put there yet.)
+    | blog     | ?array | platform alternate variable name                              |
 #}
 {% extends "layouts.master" %}
 
-{% block title %}{{ article.title|default(trans('blog.title')) }} — {{ store.name }}{% endblock %}
+{% set art = article|default(blog|default(post|default(null))) %}
+{% block title %}{{ art.title|default(trans('blog.title')) }} — {{ store.name }}{% endblock %}
 
 {% block content %}
-    <div class="container blog-page blog-article">
-        {% if article|default(null) %}
+    <div class="container blog-page blog-article" data-blog-single>
+        {% if art %}
             {% set crumbs = [
                 { title: trans('common.home'), url: store.url },
-                { title: trans('blog.title'), url: '/blog' },
-                { title: article.title }
+                { title: trans('blog.title'), url: '/blogs' },
+                { title: art.title }
             ] %}
             <nav class="blog-page__crumbs">
                 <falak-breadcrumb items="{{ crumbs|json_encode }}"></falak-breadcrumb>
             </nav>
 
-            <article>
+            <article class="blog-article-content">
                 <header class="blog-article__head">
-                    {% set author = article.author.name|default(null) %}
+                    {% set author = art.author_name|default(art.author.name|default(null)) %}
+                    {% set art_date = art.published_at|default(art.created_at|default(null)) %}
                     <div class="blog-meta blog-meta--center">
-                        {% if article.created_at|default(null) %}
+                        {% if art_date %}
                             <span class="blog-meta__item">
-                                <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" d="M4 6.5A1.5 1.5 0 0 1 5.5 5h13A1.5 1.5 0 0 1 20 6.5v12a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 18.5v-12ZM4 10h16M8 3v4M16 3v4"/></svg>
-                                <time datetime="{{ article.created_at|date('Y-m-d') }}">{{ article.created_at|date('j F Y') }}</time>
+                                <svg class="blog-meta__icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6.5A1.5 1.5 0 0 1 5.5 5h13A1.5 1.5 0 0 1 20 6.5v12a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 18.5v-12ZM4 10h16M8 3v4M16 3v4"/></svg>
+                                <time datetime="{{ art_date|date('Y-m-d') }}">{{ art_date|date('j F Y') }}</time>
                             </span>
                         {% endif %}
-                        {% if article.created_at|default(null) and author %}<span class="blog-meta__sep" aria-hidden="true">|</span>{% endif %}
-                        {% if author %}
+                        {% if art_date and author and (art.show_author is not defined or art.show_author) %}<span class="blog-meta__sep" aria-hidden="true">|</span>{% endif %}
+                        {% if author and (art.show_author is not defined or art.show_author) %}
                             <span class="blog-meta__item">
-                                <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm-7 8a7 7 0 0 1 14 0"/></svg>
+                                <svg class="blog-meta__icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm-7 8a7 7 0 0 1 14 0"/></svg>
                                 <span>{{ author }}</span>
                             </span>
                         {% endif %}
                     </div>
-                    <h1 class="blog-article__title">{{ article.title }}</h1>
-                    {% if article.excerpt|default(null) %}<p class="blog-article__excerpt">{{ article.excerpt }}</p>{% endif %}
+                    <h1 class="blog-article__title">{{ art.title }}</h1>
+                    {% if art.excerpt|default(null) %}<p class="blog-article__excerpt">{{ art.excerpt }}</p>{% endif %}
                 </header>
 
-                {% if article.image|default(null) %}
+                {% set cover = art.featured_image_url|default(art.image_url|default(art.image|default(null))) %}
+                {% if cover %}
                     <div class="blog-article__cover">
-                        <img src="{{ article.image }}" alt="{{ article.title }}">
+                        <img src="{{ cover }}" alt="{{ art.featured_image_alt|default(art.title) }}">
                     </div>
                 {% endif %}
 
-                <div class="blog-article__body">
-                    {{ article.content|default('')|raw }}
+                <div class="blog-article__body prose">
+                    {{ art.content|default('')|raw }}
                 </div>
 
-                <falak-social mode="share" class="blog-article__share" share-text="{{ article.title }}"></falak-social>
+                <div class="blog-article__footer">
+                    <falak-social mode="share" class="blog-article__share" share-text="{{ art.title }}"></falak-social>
+                    <div class="blog-article__back">
+                        <a class="btn btn--outline" href="/blogs">{{ trans('blog.title') }}</a>
+                    </div>
+                </div>
             </article>
         {% else %}
-            <div class="empty-state">
-                <div class="empty-state__icon" aria-hidden="true">📝</div>
-                <p>{{ trans('blog.not_found') }}</p>
-                <a class="btn btn--outline" href="/blog">{{ trans('blog.title') }}</a>
+            {# Client-side hydration from /api/storefront/blogs/{slug} will populate here #}
+            <div class="blog-loading">
+                <div class="blog-spinner"></div>
             </div>
         {% endif %}
     </div>
