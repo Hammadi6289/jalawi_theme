@@ -24,7 +24,7 @@
     {% set hasFilters = filters is defined and filters|length > 0 %}
     {% set filtered = is_filtered|default(false) %}
 
-    <div class="container product-listing{{ hasFilters ? ' product-listing--with-sidebar' : '' }}">
+    <div class="container product-listing{{ hasFilters ? ' product-listing--with-sidebar' : '' }}" data-store-currency="{{ store.currency.code|default('SAR') }}">
         {# Seeds the session trail with the category name, so a product
            reached from here shows Home / Category / Product instead of just
            Home / Product — see <falak-breadcrumb>'s own doc comment. #}
@@ -34,6 +34,28 @@
             <h1>{{ category ? category.name : trans('common.products') }}</h1>
         </header>
 
+        {# Subcategories circular avatars row #}
+        <section class="category-subcategories" data-category-subcategories {% if category %}data-current-category-id="{{ category.id }}"{% endif %} aria-label="{{ trans('common.categories') }}">
+            {% set subcats = category and category.children is defined and category.children|length > 0 ? category.children : [] %}
+            <div class="category-subcategories__list" data-subcategories-list>
+                {% for sub in subcats %}
+                    <a href="/products?category_id%5B%5D={{ sub.id }}" class="category-subcard">
+                        <span class="category-subcard__avatar">
+                            {% if sub.image or sub.image_url %}
+                                <img src="{{ sub.image_url|default(sub.image) }}" alt="{{ sub.name }}" loading="lazy">
+                            {% else %}
+                                <svg class="category-subcard__icon" version="1.1" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32" aria-hidden="true">
+                                    <title>shopping-bag</title>
+                                    <path d="M28 10.667h-4v-2.667c0-4.412-3.588-8-8-8s-8 3.588-8 8v2.667h-4c-0.736 0-1.333 0.596-1.333 1.333v13.333c0 3.676 2.991 6.667 6.667 6.667h13.333c3.676 0 6.667-2.991 6.667-6.667v-13.333c0-0.737-0.597-1.333-1.333-1.333zM10.667 8c0-2.941 2.392-5.333 5.333-5.333s5.333 2.392 5.333 5.333v2.667h-10.667zM26.667 25.333c0 2.205-1.795 4-4 4h-13.333c-2.205 0-4-1.795-4-4v-12h2.667v2.667c0 0.737 0.597 1.333 1.333 1.333s1.333-0.596 1.333-1.333v-2.667h10.667v2.667c0 0.737 0.597 1.333 1.333 1.333s1.333-0.596 1.333-1.333v-2.667h2.667z"></path>
+                                </svg>
+                            {% endif %}
+                        </span>
+                        <span class="category-subcard__name">{{ sub.name }}</span>
+                    </a>
+                {% endfor %}
+            </div>
+        </section>
+
         <div class="product-listing__layout">
             {% if hasFilters %}
                 {# The sidebar. <falak-filters> owns the widgets and writes the
@@ -42,56 +64,106 @@
                    first paint is already filtered and the URL is shareable.
                    On phones it becomes a drawer, opened by the toolbar button. #}
                 <aside class="product-listing__sidebar" data-filters-panel aria-label="{{ trans('filters.title') }}">
-                    <div class="product-listing__sidebar-head">
-                        <h2>{{ trans('filters.title') }}</h2>
+                    <div class="product-listing__sidebar-actions">
+                        <button type="button" class="btn btn-filter-toggle" data-filter-toggle
+                                data-text-hide="{{ trans('filters.hide') }}"
+                                data-text-show="{{ trans('filters.show') }}"
+                                aria-pressed="false"
+                                aria-label="{{ trans('filters.hide') }}">
+                            <svg class="btn-filter-toggle__icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <line x1="4" y1="21" x2="4" y2="14"></line>
+                                <line x1="4" y1="10" x2="4" y2="3"></line>
+                                <line x1="12" y1="21" x2="12" y2="12"></line>
+                                <line x1="12" y1="8" x2="12" y2="3"></line>
+                                <line x1="20" y1="21" x2="20" y2="16"></line>
+                                <line x1="20" y1="12" x2="20" y2="3"></line>
+                                <line x1="1" y1="14" x2="7" y2="14"></line>
+                                <line x1="9" y1="8" x2="15" y2="8"></line>
+                                <line x1="17" y1="16" x2="23" y2="16"></line>
+                            </svg>
+                            <span class="btn-filter-toggle__label">{{ trans('filters.hide') }}</span>
+                        </button>
+                        <h2 class="product-listing__drawer-title">{{ trans('filters.title') }}</h2>
                         <button type="button" class="product-listing__sidebar-close" data-filters-close aria-label="{{ trans('common.close') }}">×</button>
                     </div>
+
                     <falak-filters filters="{{ filters|json_encode }}"
                                    {% if category %}category-id="{{ category.id }}"{% endif %}></falak-filters>
+
+                    {# Sidebar ad / promo banner #}
+                    {% set sidebar_banner_img = theme.settings.get('category_sidebar_image') ?: ('images/category-sidebar-banner.png'|asset) %}
+                    {% set sidebar_banner_link = theme.settings.get('category_sidebar_image_link') %}
+                    {% if sidebar_banner_img %}
+                        <div class="product-listing__sidebar-banner">
+                            {% if sidebar_banner_link %}
+                                <a href="{{ sidebar_banner_link }}" class="product-listing__sidebar-banner-link">
+                                    <img src="{{ sidebar_banner_img }}" alt="" loading="lazy">
+                                </a>
+                            {% else %}
+                                <div class="product-listing__sidebar-banner-media">
+                                    <img src="{{ sidebar_banner_img }}" alt="" loading="lazy">
+                                </div>
+                            {% endif %}
+                        </div>
+                    {% endif %}
                 </aside>
                 <div class="product-listing__backdrop" data-filters-backdrop hidden></div>
             {% endif %}
 
             <div class="product-listing__main">
                 <div class="product-listing__toolbar">
-                    {% if hasFilters %}
-                        <button type="button" class="btn btn--outline product-listing__filters-trigger" data-filters-open>
-                            {{ trans('filters.title') }}{% if filtered %} <span class="product-listing__filters-dot" aria-hidden="true"></span>{% endif %}
-                        </button>
-                    {% endif %}
+                    <div class="product-listing__toolbar-start">
+                        <h2 class="product-listing__heading-title">
+                            {% if category %}
+                                {{ category.name }}
+                                {% if pagination.total|default(0) > 0 %}
+                                    <span class="product-listing__heading-count">- {{ pagination.total }} {{ trans('common.products_count') }}</span>
+                                {% endif %}
+                            {% else %}
+                                {{ trans('common.products') }}
+                                {% if pagination.total|default(0) > 0 %}
+                                    <span class="product-listing__heading-count">- {{ pagination.total }} {{ trans('common.products_count') }}</span>
+                                {% endif %}
+                            {% endif %}
+                        </h2>
+                    </div>
 
-                    {#
-                        The count sits at the start of the toolbar, opposite the
-                        sort — which is pushed to the end by its own auto margin,
-                        so no order/flex rules are needed here and the pair
-                        swaps sides on its own under RTL.
+                    <div class="product-listing__toolbar-controls">
+                        {% if hasFilters %}
+                            <button type="button" class="btn btn--outline product-listing__filters-trigger" data-filters-open>
+                                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <line x1="4" y1="21" x2="4" y2="14"></line>
+                                    <line x1="4" y1="10" x2="4" y2="3"></line>
+                                    <line x1="12" y1="21" x2="12" y2="12"></line>
+                                    <line x1="12" y1="8" x2="12" y2="3"></line>
+                                    <line x1="20" y1="21" x2="20" y2="16"></line>
+                                    <line x1="20" y1="12" x2="20" y2="3"></line>
+                                    <line x1="1" y1="14" x2="7" y2="14"></line>
+                                    <line x1="9" y1="8" x2="15" y2="8"></line>
+                                    <line x1="17" y1="16" x2="23" y2="16"></line>
+                                </svg>
+                                <span>{{ trans('filters.title') }}</span>
+                                {% if filtered %} <span class="product-listing__filters-dot" aria-hidden="true"></span>{% endif %}
+                            </button>
+                        {% endif %}
 
-                        `products` is ONE page, so its length stopped being the
-                        answer the moment the listing was paged — say which
-                        slice of how many is on screen instead. The bare count
-                        stays as a fallback for a render that arrives without
-                        `pagination`.
-                    #}
-                    {% if pagination.total|default(0) > 0 %}
-                        <p class="product-listing__count">
-                            {{ trans('listing.showing', {
-                                from: pagination.from,
-                                to: pagination.to,
-                                total: pagination.total
-                            }) }}
-                        </p>
-                    {% elseif products|length > 0 %}
-                        <p class="product-listing__count">{{ products|length }} {{ trans('common.products_count') }}</p>
-                    {% endif %}
+                        <label class="product-listing__sort">
+                            <span>{{ trans('common.sort') }}</span>
+                            <select class="f-input" data-sort>
+                                {% for key in sorts|default(['newest', 'price_asc', 'price_desc', 'name']) %}
+                                    <option value="{{ key }}" {{ (sort|default('newest')) == key ? 'selected' : '' }}>{{ trans('sort.' ~ key) }}</option>
+                                {% endfor %}
+                            </select>
+                        </label>
+                    </div>
+                </div>
 
-                    <label class="product-listing__sort">
-                        <span>{{ trans('common.sort') }}</span>
-                        <select class="f-input" data-sort>
-                            {% for key in sorts|default(['newest', 'price_asc', 'price_desc', 'name']) %}
-                                <option value="{{ key }}" {{ (sort|default('newest')) == key ? 'selected' : '' }}>{{ trans('sort.' ~ key) }}</option>
-                            {% endfor %}
-                        </select>
-                    </label>
+                {# Selected filter pills strip matching reference theme #}
+                <div class="product-listing__selected-strip" data-selected-filters-strip hidden>
+                    <div class="product-listing__selected-pills" data-selected-pills></div>
+                    <button type="button" class="product-listing__clear-all" data-clear-all-filters>
+                        {{ trans('filters.clear_all')|default('Clear All') }}
+                    </button>
                 </div>
 
                 {% if products|length > 0 %}
@@ -160,10 +232,18 @@
                         would drop the category along with the filters and
                         answer "no dresses under 50" with the whole catalogue.
                     #}
-                    <falak-placeholder icon="🛒" text="{{ trans('common.no_products') }}"
-                                       action-text="{{ filtered ? trans('filters.reset') : trans('common.back_home') }}"
-                                       action-href="{{ filtered ? (category ? category.url : '?') : store.url }}"
-                                       action-class="btn btn--outline"></falak-placeholder>
+                    <div class="empty-state product-listing__empty">
+                        <div class="empty-state__icon-wrap">
+                            <svg class="empty-state__svg" version="1.1" xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 32 32" aria-hidden="true">
+                                <title>shopping-bag</title>
+                                <path d="M28 10.667h-4v-2.667c0-4.412-3.588-8-8-8s-8 3.588-8 8v2.667h-4c-0.736 0-1.333 0.596-1.333 1.333v13.333c0 3.676 2.991 6.667 6.667 6.667h13.333c3.676 0 6.667-2.991 6.667-6.667v-13.333c0-0.737-0.597-1.333-1.333-1.333zM10.667 8c0-2.941 2.392-5.333 5.333-5.333s5.333 2.392 5.333 5.333v2.667h-10.667zM26.667 25.333c0 2.205-1.795 4-4 4h-13.333c-2.205 0-4-1.795-4-4v-12h2.667v2.667c0 0.737 0.597 1.333 1.333 1.333s1.333-0.596 1.333-1.333v-2.667h10.667v2.667c0 0.737 0.597 1.333 1.333 1.333s1.333-0.596 1.333-1.333v-2.667h2.667z"></path>
+                            </svg>
+                        </div>
+                        <p class="empty-state__text">{{ trans('common.no_products') }}</p>
+                        <a href="{{ filtered ? (category ? category.url : '?') : store.url }}" class="btn btn--outline">
+                            {{ filtered ? trans('filters.reset') : trans('common.back_home') }}
+                        </a>
+                    </div>
 
                     {#
                         An empty CATEGORY is not an empty store, so offer a way onward

@@ -1021,6 +1021,45 @@
                     "maxLength": 500
                 }
             ]
+        },
+        {
+            "group": "listing",
+            "name": {
+                "ar": "صفحة التصنيفات والمنتجات",
+                "en": "Category & listing page"
+            },
+            "icon": "layout-grid-line",
+            "fields": [
+                {
+                    "id": "category_sidebar_image",
+                    "type": "string",
+                    "format": "image",
+                    "label": {
+                        "ar": "صورة الإعلان أسفل الفلاتر",
+                        "en": "Sidebar banner image below filters"
+                    },
+                    "description": {
+                        "ar": "تظهر في الشريط الجانبي أسفل الفلاتر في صفحة التصنيف والمنتجات",
+                        "en": "Displays in the sidebar below filters on category and product listing pages"
+                    },
+                    "required": false
+                },
+                {
+                    "id": "category_sidebar_image_link",
+                    "type": "string",
+                    "format": "text",
+                    "label": {
+                        "ar": "رابط صورة الإعلان",
+                        "en": "Sidebar banner image link"
+                    },
+                    "description": {
+                        "ar": "رابط اختياري يفتح عند الضغط على الصورة",
+                        "en": "Optional link when the banner is clicked"
+                    },
+                    "required": false,
+                    "maxLength": 500
+                }
+            ]
         }
     ],
     "presets": [

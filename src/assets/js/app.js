@@ -524,7 +524,7 @@
                 if (cardHost && cardHost.product && !card.querySelector('.f-card__category')) {
                     var p = cardHost.product;
                     var catName = (isArabic && (p.category_name_ar || (p.category && p.category.name_ar))) ||
-                                  p.category_name || (p.category && p.category.name) || p.subtitle_ar || p.subtitle;
+                        p.category_name || (p.category && p.category.name) || p.subtitle_ar || p.subtitle;
                     if (catName) {
                         var body = card.querySelector('.f-card__body');
                         if (body) {
@@ -1044,6 +1044,417 @@
         if (event.key === 'Escape') setFilters(false);
     });
 
+    function getStoreCurrency() {
+        var fromPlatform = (window.falak && window.falak.store && window.falak.store.currency)
+            || (window.falak && window.falak.currency && window.falak.currency.code)
+            || (window.falak && window.falak.currency && window.falak.currency.display)
+            || (window.Falak && window.Falak.boot && window.Falak.boot.currency);
+        if (fromPlatform && typeof fromPlatform === 'string') return fromPlatform;
+        if (fromPlatform && fromPlatform.code) return fromPlatform.code;
+        var el = document.querySelector('[data-store-currency]');
+        if (el && el.getAttribute('data-store-currency')) {
+            return el.getAttribute('data-store-currency');
+        }
+        return 'SAR';
+    }
+
+    /* listing: filter toggle button */
+    var filterToggleBtn = document.querySelector('[data-filter-toggle]');
+    var listingContainer = document.querySelector('.product-listing');
+
+    if (filterToggleBtn && listingContainer) {
+        filterToggleBtn.addEventListener('click', function () {
+            // On mobile devices (< 900px), toggle drawer
+            if (window.innerWidth < 900) {
+                setFilters(!panel.classList.contains('is-open'));
+                return;
+            }
+
+            var isHidden = listingContainer.classList.toggle('is-filters-hidden');
+            var labelSpan = filterToggleBtn.querySelector('.btn-filter-toggle__label');
+            var hideText = filterToggleBtn.getAttribute('data-text-hide') || 'Hide Filters';
+            var showText = filterToggleBtn.getAttribute('data-text-show') || 'Show Filters';
+
+            if (labelSpan) {
+                labelSpan.textContent = isHidden ? showText : hideText;
+            }
+            filterToggleBtn.setAttribute('aria-pressed', isHidden ? 'true' : 'false');
+            filterToggleBtn.setAttribute('aria-label', isHidden ? showText : hideText);
+        });
+    }
+
+    /* listing: price filter submit & arrow */
+    function initPriceFilter() {
+        var priceRange = document.querySelector('.f-price-range');
+        if (!priceRange) return;
+
+        // Hide track if present
+        var track = priceRange.querySelector('.f-price-range__track');
+        if (track) track.style.display = 'none';
+
+        var numbersWrap = priceRange.querySelector('.f-price-range__numbers');
+        if (!numbersWrap) return;
+
+        var inputs = numbersWrap.querySelectorAll('.f-price-range__number');
+        if (inputs.length < 2) return;
+
+        var minInput = inputs[0];
+        var maxInput = inputs[1];
+
+        // Lift restrictive max attributes ONLY if not already set (prevents infinite attribute loops)
+        if (minInput.getAttribute('max') !== '9999') {
+            minInput.removeAttribute('max');
+            minInput.setAttribute('max', '9999');
+            minInput.setAttribute('min', '0');
+            minInput.setAttribute('step', 'any');
+            minInput.min = '0';
+            minInput.max = '9999';
+        }
+
+        if (maxInput.getAttribute('max') !== '9999') {
+            maxInput.removeAttribute('max');
+            maxInput.setAttribute('max', '9999');
+            maxInput.setAttribute('min', '0');
+            maxInput.setAttribute('step', 'any');
+            maxInput.min = '0';
+            maxInput.max = '9999';
+        }
+
+        // Intercept input & change in capture phase to stop SDK from clamping to 200
+        if (!minInput.__unclamped) {
+            minInput.__unclamped = true;
+            minInput.addEventListener('input', function (e) {
+                e.stopImmediatePropagation();
+            }, true);
+            minInput.addEventListener('change', function (e) {
+                e.stopImmediatePropagation();
+            }, true);
+        }
+
+        if (!maxInput.__unclamped) {
+            maxInput.__unclamped = true;
+            maxInput.addEventListener('input', function (e) {
+                e.stopImmediatePropagation();
+            }, true);
+            maxInput.addEventListener('change', function (e) {
+                e.stopImmediatePropagation();
+            }, true);
+        }
+
+        // Set user-friendly placeholders
+        if (!minInput.placeholder) minInput.placeholder = '0';
+        if (!maxInput.placeholder) maxInput.placeholder = '9999';
+
+        // Populate from URL if present; otherwise clear default catalog 200 cap ONCE
+        if (!priceRange.__valuesChecked) {
+            priceRange.__valuesChecked = true;
+            var currentParams = new URLSearchParams(window.location.search);
+            var urlMin = currentParams.get('min_price');
+            var urlMax = currentParams.get('max_price');
+
+            if (urlMin) {
+                minInput.value = urlMin;
+            } else if (minInput.value === '0') {
+                minInput.value = '';
+            }
+
+            if (urlMax) {
+                maxInput.value = urlMax;
+            } else if (maxInput.value === '200' || maxInput.value === '200.00' || maxInput.value === '200.0') {
+                maxInput.value = '';
+            }
+        }
+
+        // Add currency label directly above each input like a cutout legend
+        var currencyCode = getStoreCurrency();
+        var currencyLabelText = '-' + currencyCode + '-';
+
+        if (!numbersWrap.querySelector('.f-price-range__currency')) {
+            if (minInput.parentElement === numbersWrap && maxInput.parentElement === numbersWrap) {
+                var fieldMin = document.createElement('div');
+                fieldMin.className = 'f-price-range__field';
+                var curLabel1 = document.createElement('span');
+                curLabel1.className = 'f-price-range__currency';
+                curLabel1.textContent = currencyLabelText;
+                numbersWrap.insertBefore(fieldMin, minInput);
+                fieldMin.appendChild(curLabel1);
+                fieldMin.appendChild(minInput);
+
+                var fieldMax = document.createElement('div');
+                fieldMax.className = 'f-price-range__field';
+                var curLabel2 = document.createElement('span');
+                curLabel2.className = 'f-price-range__currency';
+                curLabel2.textContent = currencyLabelText;
+                numbersWrap.insertBefore(fieldMax, maxInput);
+                fieldMax.appendChild(curLabel2);
+                fieldMax.appendChild(maxInput);
+            }
+        } else {
+            var curLabels = numbersWrap.querySelectorAll('.f-price-range__currency');
+            curLabels.forEach(function (lbl) {
+                if (lbl.textContent !== currencyLabelText) lbl.textContent = currencyLabelText;
+            });
+        }
+
+        // Add arrow submit button if not already added
+        if (!numbersWrap.querySelector('.f-price-range__submit')) {
+            var isRtl = document.documentElement.getAttribute('dir') === 'rtl';
+            var submitBtn = document.createElement('button');
+            submitBtn.type = 'button';
+            submitBtn.className = 'f-price-range__submit';
+            submitBtn.setAttribute('aria-label', isRtl ? 'تطبيق السعر' : 'Apply Price');
+            submitBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>';
+            numbersWrap.appendChild(submitBtn);
+
+            function applyPrice() {
+                var minVal = minInput.value.trim();
+                var maxVal = maxInput.value.trim();
+                var url = new URL(window.location.href);
+
+                if (minVal !== '' && !isNaN(Number(minVal))) {
+                    url.searchParams.set('min_price', minVal);
+                } else {
+                    url.searchParams.delete('min_price');
+                }
+
+                if (maxVal !== '' && !isNaN(Number(maxVal))) {
+                    url.searchParams.set('max_price', maxVal);
+                } else {
+                    url.searchParams.delete('max_price');
+                }
+
+                url.searchParams.delete('page');
+                window.location.href = url.toString();
+            }
+
+            submitBtn.addEventListener('click', applyPrice);
+
+            minInput.addEventListener('keydown', function (e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    applyPrice();
+                }
+            });
+
+            maxInput.addEventListener('keydown', function (e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    applyPrice();
+                }
+            });
+        }
+    }
+
+    /* listing: selected filters strip */
+    function initSelectedFilters() {
+        var strip = document.querySelector('[data-selected-filters-strip]');
+        var pillsContainer = document.querySelector('[data-selected-pills]');
+        var clearAllBtn = document.querySelector('[data-clear-all-filters]');
+        if (!strip || !pillsContainer) return;
+
+        var url = new URL(window.location.href);
+        var params = url.searchParams;
+        var activePills = [];
+        var isRtl = document.documentElement.getAttribute('dir') === 'rtl';
+
+        // Category IDs: category_id[]
+        var catIds = params.getAll('category_id[]');
+        if (!catIds.length && params.has('category_id')) {
+            catIds = [params.get('category_id')];
+        }
+
+        catIds.forEach(function (catId) {
+            var label = '';
+            var cb = document.querySelector('input[type="checkbox"][id*="' + catId + '"]');
+            if (cb) {
+                var parentOpt = cb.closest('.f-filters__option');
+                if (parentOpt) {
+                    var span = parentOpt.querySelector('span');
+                    if (span) label = span.textContent.trim();
+                }
+            }
+            if (!label) {
+                var subEl = document.querySelector('.category-subcard[href*="' + catId + '"] .category-subcard__name');
+                if (subEl) label = subEl.textContent.trim();
+            }
+            if (!label) label = catId;
+
+            activePills.push({
+                type: 'category',
+                val: catId,
+                title: (isRtl ? 'التصنيف: ' : 'Categories: ') + label
+            });
+        });
+
+        // Price range
+        var minP = params.get('min_price');
+        var maxP = params.get('max_price');
+        if (minP || maxP) {
+            var priceText = '';
+            var cur = getStoreCurrency();
+            if (minP && maxP) priceText = minP + ' - ' + maxP + ' ' + cur;
+            else if (minP) priceText = '≥ ' + minP + ' ' + cur;
+            else if (maxP) priceText = '≤ ' + maxP + ' ' + cur;
+
+            activePills.push({
+                type: 'price',
+                title: (isRtl ? 'السعر: ' : 'Price: ') + priceText
+            });
+        }
+
+        // In stock
+        if (params.get('in_stock') === '1' || params.get('in_stock') === 'true') {
+            activePills.push({
+                type: 'in_stock',
+                title: (isRtl ? 'المتوفر فقط' : 'In stock only')
+            });
+        }
+
+        if (activePills.length > 0) {
+            strip.hidden = false;
+            var newHtml = activePills.map(function (pill, idx) {
+                return '<span class="product-listing__selected-pill">' +
+                    '<span>' + pill.title + '</span>' +
+                    '<button type="button" class="product-listing__selected-pill-remove" data-remove-pill="' + idx + '" aria-label="Remove filter">×</button>' +
+                    '</span>';
+            }).join('');
+
+            // Only update DOM if the rendered HTML actually changed
+            if (pillsContainer.dataset.renderedHtml !== newHtml) {
+                pillsContainer.dataset.renderedHtml = newHtml;
+                pillsContainer.innerHTML = newHtml;
+
+                pillsContainer.querySelectorAll('[data-remove-pill]').forEach(function (btn) {
+                    btn.addEventListener('click', function () {
+                        var idx = parseInt(btn.getAttribute('data-remove-pill'), 10);
+                        var pill = activePills[idx];
+                        if (!pill) return;
+
+                        var newUrl = new URL(window.location.href);
+                        if (pill.type === 'category') {
+                            var existing = newUrl.searchParams.getAll('category_id[]');
+                            newUrl.searchParams.delete('category_id[]');
+                            existing.filter(function (id) { return String(id) !== String(pill.val); }).forEach(function (id) {
+                                newUrl.searchParams.append('category_id[]', id);
+                            });
+                            newUrl.searchParams.delete('category_id');
+                        } else if (pill.type === 'price') {
+                            newUrl.searchParams.delete('min_price');
+                            newUrl.searchParams.delete('max_price');
+                        } else if (pill.type === 'in_stock') {
+                            newUrl.searchParams.delete('in_stock');
+                        }
+                        newUrl.searchParams.delete('page');
+                        window.location.href = newUrl.toString();
+                    });
+                });
+            }
+
+            if (clearAllBtn && !clearAllBtn.__bound) {
+                clearAllBtn.__bound = true;
+                clearAllBtn.onclick = function () {
+                    var cleanUrl = new URL(window.location.href);
+                    cleanUrl.searchParams.delete('category_id[]');
+                    cleanUrl.searchParams.delete('category_id');
+                    cleanUrl.searchParams.delete('min_price');
+                    cleanUrl.searchParams.delete('max_price');
+                    cleanUrl.searchParams.delete('in_stock');
+                    cleanUrl.searchParams.delete('page');
+                    window.location.href = cleanUrl.toString();
+                };
+            }
+        } else {
+            strip.hidden = true;
+            if (pillsContainer.dataset.renderedHtml !== '') {
+                pillsContainer.dataset.renderedHtml = '';
+                pillsContainer.innerHTML = '';
+            }
+        }
+    }
+
+    initPriceFilter();
+    initSelectedFilters();
+
+    var falakFiltersEl = document.querySelector('falak-filters');
+    if (falakFiltersEl) {
+        var filterDebounceTimer = null;
+        var filterAttempts = 0;
+        var priceObserver = new MutationObserver(function () {
+            if (filterDebounceTimer) return;
+            filterDebounceTimer = setTimeout(function () {
+                filterDebounceTimer = null;
+                initPriceFilter();
+                initSelectedFilters();
+                filterAttempts++;
+                // Once price filter submit button is ready or max attempts reached, disconnect
+                if (document.querySelector('.f-price-range__submit') || filterAttempts > 15) {
+                    priceObserver.disconnect();
+                }
+            }, 120);
+        });
+        priceObserver.observe(falakFiltersEl, { childList: true, subtree: true });
+    }
+
+    /* listing: subcategories hydration */
+    var subcatSection = document.querySelector('[data-category-subcategories]');
+    if (subcatSection && !subcatSection.__hasHydrated) {
+        subcatSection.__hasHydrated = true;
+        var subcatList = subcatSection.querySelector('[data-subcategories-list]');
+        var currentCatId = subcatSection.getAttribute('data-current-category-id');
+
+        if (subcatList && subcatList.children.length === 0) {
+            fetch('/api/storefront/categories')
+                .then(function (res) { return res.json(); })
+                .then(function (data) {
+                    var categories = (data && data.data) ? data.data : (Array.isArray(data) ? data : []);
+                    if (!categories || !categories.length) return;
+
+                    var itemsToRender = [];
+                    if (currentCatId) {
+                        var targetCat = null;
+                        function findCat(cats) {
+                            for (var i = 0; i < cats.length; i++) {
+                                if (String(cats[i].id) === String(currentCatId)) return cats[i];
+                                if (cats[i].children && cats[i].children.length) {
+                                    var f = findCat(cats[i].children);
+                                    if (f) return f;
+                                }
+                            }
+                            return null;
+                        }
+                        targetCat = findCat(categories);
+
+                        if (targetCat && targetCat.children && targetCat.children.length) {
+                            itemsToRender = targetCat.children;
+                        } else {
+                            itemsToRender = categories.filter(function (c) { return !c.parent_id; });
+                        }
+                    } else {
+                        itemsToRender = categories.filter(function (c) { return !c.parent_id; });
+                    }
+
+                    if (!itemsToRender.length) return;
+
+                    var isRtl = document.documentElement.getAttribute('dir') === 'rtl';
+                    var shoppingBagSvg = '<svg class="category-subcard__icon" version="1.1" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><title>shopping-bag</title><path d="M28 10.667h-4v-2.667c0-4.412-3.588-8-8-8s-8 3.588-8 8v2.667h-4c-0.736 0-1.333 0.596-1.333 1.333v13.333c0 3.676 2.991 6.667 6.667 6.667h13.333c3.676 0 6.667-2.991 6.667-6.667v-13.333c0-0.737-0.597-1.333-1.333-1.333zM10.667 8c0-2.941 2.392-5.333 5.333-5.333s5.333 2.392 5.333 5.333v2.667h-10.667zM26.667 25.333c0 2.205-1.795 4-4 4h-13.333c-2.205 0-4-1.795-4-4v-12h2.667v2.667c0 0.737 0.597 1.333 1.333 1.333s1.333-0.596 1.333-1.333v-2.667h10.667v2.667c0 0.737 0.597 1.333 1.333 1.333s1.333-0.596 1.333-1.333v-2.667h2.667z"></path></svg>';
+
+                    subcatList.innerHTML = itemsToRender.map(function (cat) {
+                        var catName = (cat.name_json && cat.name_json[isRtl ? 'ar' : 'en']) || cat.name || '';
+                        var catImg = cat.image_url || cat.image;
+                        var avatarContent = catImg
+                            ? '<img src="' + catImg + '" alt="' + catName + '" loading="lazy">'
+                            : shoppingBagSvg;
+
+                        return '<a href="/products?category_id%5B%5D=' + cat.id + '" class="category-subcard">' +
+                            '<span class="category-subcard__avatar">' + avatarContent + '</span>' +
+                            '<span class="category-subcard__name">' + catName + '</span>' +
+                            '</a>';
+                    }).join('');
+                })
+                .catch(function () { });
+        }
+    }
+
     /*  store branches */
     document.addEventListener('click', function (e) {
         var tab = e.target.closest('[data-branch-tab]');
@@ -1156,11 +1567,11 @@
     });
 
     if (window.MutationObserver) {
-        var searchObserver = new MutationObserver(function () {
-            updateSearchViewAll();
-        });
-        var searchTarget = document.querySelector('#falak-search') || document.body;
+        var searchTarget = document.querySelector('#falak-search');
         if (searchTarget) {
+            var searchObserver = new MutationObserver(function () {
+                updateSearchViewAll();
+            });
             searchObserver.observe(searchTarget, { childList: true, subtree: true });
         }
     }
