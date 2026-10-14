@@ -10946,60 +10946,304 @@ falak-announcement:not(.f-announce--scroll) .f-announce__inner {
     }
 }
 
-/* contact form — the SDK's <falak-contact-form> in this theme's frame.
-
-   The component paints its inputs as light plates on a panel it expects the
-   THEME to tint (see --f-input-bg in the SDK sheet), so .contact__form is
-   that panel: the same surface, border and radius the feature cards use. */
-.contact {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: clamp(1.5rem, 4vw, 3rem);
-    align-items: start;
+/* contact form — the SDK's <falak-contact-form> in Jalawi's luxury theme frame. */
+.block--contact {
+    padding-block: clamp(2.5rem, 4vw, 4.5rem);
 }
 
-/* No side image: the form alone, held to a readable measure rather than
-   stretched across the full container width. */
-.contact--single {
+.contact__header {
+    text-align: center;
+    max-inline-size: 720px;
+    margin-inline: auto;
+    margin-block-end: clamp(1.75rem, 3.5vw, 2.75rem);
+}
+
+.contact-badge {
+    display: inline-block;
+    padding: 0.35rem 1rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    color: var(--color-primary);
+    background: color-mix(in srgb, var(--color-primary) 10%, transparent);
+    border-radius: 999px;
+    margin-block-end: 0.85rem;
+}
+
+.contact__header .block__title {
+    margin-block-end: 0.65rem;
+}
+
+.contact__header .block__subtitle {
+    margin: 0 auto;
+    max-inline-size: 60ch;
+    color: var(--color-text-soft);
+    font-size: clamp(0.9rem, 0.85rem + 0.25vw, 1.05rem);
+    line-height: 1.6;
+}
+
+.contact {
+    display: grid;
+    gap: clamp(1.75rem, 4vw, 3rem);
+    align-items: stretch;
+}
+
+/* 1. Side by Side - Start (Default) */
+.contact--pos-start {
     grid-template-columns: 1fr;
-    max-width: 44rem;
+}
+
+@media (min-width: 860px) {
+    .contact--pos-start {
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+    }
+
+    .contact--pos-start .contact__media {
+        order: 1;
+    }
+
+    .contact--pos-start .contact__content {
+        order: 2;
+    }
+}
+
+/* 2. Side by Side - End */
+.contact--pos-end {
+    grid-template-columns: 1fr;
+}
+
+@media (min-width: 860px) {
+    .contact--pos-end {
+        grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+    }
+
+    .contact--pos-end .contact__media {
+        order: 2;
+    }
+
+    .contact--pos-end .contact__content {
+        order: 1;
+    }
+}
+
+/* 3. Top Banner (Image above form) */
+.contact--pos-top {
+    grid-template-columns: 1fr;
+    max-inline-size: 52rem;
     margin-inline: auto;
 }
 
+.contact--pos-top .contact__media {
+    order: 1;
+}
+
+.contact--pos-top .contact__content {
+    order: 2;
+}
+
+.contact--pos-top .contact__image {
+    aspect-ratio: 21 / 9;
+    max-block-size: 360px;
+}
+
+/* 4. Bottom Banner (Image below form) */
+.contact--pos-bottom {
+    grid-template-columns: 1fr;
+    max-inline-size: 52rem;
+    margin-inline: auto;
+}
+
+.contact--pos-bottom .contact__content {
+    order: 1;
+}
+
+.contact--pos-bottom .contact__media {
+    order: 2;
+}
+
+.contact--pos-bottom .contact__image {
+    aspect-ratio: 21 / 9;
+    max-block-size: 360px;
+}
+
+/* 5. Single Column (No image) */
+.contact--single {
+    grid-template-columns: 1fr;
+    max-inline-size: 48rem;
+    margin-inline: auto;
+}
+
+/* Media Image Container */
+.contact__media {
+    position: relative;
+    border-radius: var(--radius-lg, 16px);
+    overflow: hidden;
+    background: var(--color-surface, #f8f9fa);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    display: flex;
+}
+
 .contact__image {
-    width: 100%;
-    border-radius: var(--radius-lg);
+    inline-size: 100%;
+    block-size: 100%;
     object-fit: cover;
-    aspect-ratio: 4 / 5;
-    background: var(--color-surface);
+    border-radius: var(--radius-lg, 16px);
+    display: block;
+    transition: transform 0.5s ease;
+}
+
+.contact__media:hover .contact__image {
+    transform: scale(1.03);
+}
+
+@media (min-width: 860px) {
+    .contact--pos-start .contact__media,
+    .contact--pos-end .contact__media {
+        min-block-size: 480px;
+    }
+}
+
+@media (max-width: 859px) {
+    .contact__image {
+        aspect-ratio: 16 / 10;
+        max-block-size: 320px;
+    }
+}
+
+/* Form Card */
+.contact__content {
+    display: flex;
+    flex-direction: column;
+    min-inline-size: 0;
 }
 
 .contact__form {
-    padding: clamp(1.25rem, 3vw, 1.75rem);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-lg);
-    background: var(--color-surface);
+    padding: clamp(1.75rem, 4vw, 2.5rem);
+    border: 1px solid var(--color-border, #e8eaef);
+    border-radius: var(--radius-lg, 16px);
+    background: #ffffff;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
+    transition: border-color 0.25s ease, box-shadow 0.25s ease;
 }
 
-/* The plates the SDK draws inside that panel, on this theme's radius. */
+.contact__form:hover {
+    box-shadow: 0 10px 32px rgba(0, 0, 0, 0.06);
+}
+
+/* Form Internal SDK Elements */
+.contact__form .f-contact {
+    gap: 1.25rem;
+}
+
+.contact__form .f-contact__row {
+    gap: 1.15rem;
+}
+
+.contact__form .f-contact__field {
+    gap: 0.45rem;
+}
+
+.contact__form .f-contact__label {
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--color-text, #1f2430);
+    letter-spacing: -0.01em;
+}
+
+.contact__form .f-contact__label-icon {
+    color: var(--color-primary);
+}
+
 .contact__form .f-contact__input {
-    border-radius: var(--radius-sm);
+    padding: 0.85rem 1.15rem;
+    background: var(--color-surface, #f8f9fa);
+    border: 1.5px solid var(--color-border, #e2e5eb);
+    border-radius: var(--radius-sm, 10px);
+    color: var(--color-text, #1f2430);
+    font-size: 0.95rem;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+}
+
+.contact__form .f-contact__input::placeholder {
+    color: var(--color-text-faint, #9ca3af);
+    font-size: 0.9rem;
+}
+
+.contact__form .f-contact__input:hover {
+    border-color: color-mix(in srgb, var(--color-primary) 40%, var(--color-border));
+}
+
+.contact__form .f-contact__input:focus {
+    background: #ffffff;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3.5px color-mix(in srgb, var(--color-primary) 14%, transparent);
+    outline: none;
+}
+
+.contact__form .f-contact__input--area {
+    min-block-size: 8.5rem;
+    line-height: 1.65;
 }
 
 .contact__form .f-contact falak-button {
     margin-block-start: 0.5rem;
 }
 
-@media (max-width: 720px) {
-    .contact {
-        grid-template-columns: 1fr;
-    }
+.contact__form .f-contact falak-button button,
+.contact__form .f-contact falak-button .btn {
+    inline-size: 100%;
+    font-weight: 600;
+    font-size: 1rem;
+    padding-block: 0.9rem;
+    border-radius: var(--radius-sm, 10px);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
 
-    /* Stacked, the 4:5 portrait is a full screen the visitor scrolls past
-       before reaching the form the section exists for. */
-    .contact__image {
-        aspect-ratio: 16 / 9;
-    }
+.contact__form .f-contact falak-button:hover button,
+.contact__form .f-contact falak-button:hover .btn {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px color-mix(in srgb, var(--color-primary) 25%, transparent);
+}
+
+/* Direct Channels */
+.contact__channels {
+    margin-block-start: 1.5rem;
+    padding: 1.25rem 1.5rem;
+    border-radius: var(--radius-md, 12px);
+    background: var(--color-surface, #f8f9fa);
+    border: 1px solid var(--color-border, #e8eaef);
+}
+
+.contact__channels .f-contact-links__list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+}
+
+.contact__channels .f-contact-links__chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.55rem 1.15rem;
+    border-radius: 999px;
+    background: #ffffff;
+    border: 1px solid var(--color-border, #e2e5eb);
+    font-size: 0.88rem;
+    font-weight: 500;
+    color: var(--color-text, #1f2430);
+    text-decoration: none;
+    transition: border-color 0.2s ease, color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.contact__channels .f-contact-links__chip:hover {
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.contact__channels .f-contact-links__icon {
+    color: var(--color-primary);
 }
 
 /* newsletter — the SDK's <falak-newsletter> in this theme's frame.

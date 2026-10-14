@@ -61,6 +61,22 @@
     ],
     "fields": [
         {
+            "id": "badge",
+            "type": "string",
+            "format": "text",
+            "label": {
+                "ar": "شارة القسم",
+                "en": "Section badge"
+            },
+            "multilanguage": true,
+            "required": false,
+            "maxLength": 50,
+            "value": {
+                "ar": "خدمة العملاء",
+                "en": "Customer Support"
+            }
+        },
+        {
             "id": "title",
             "type": "string",
             "format": "text",
@@ -97,10 +113,58 @@
             "type": "string",
             "format": "image",
             "label": {
-                "ar": "صورة جانبية",
-                "en": "Side image"
+                "ar": "صورة النموذج",
+                "en": "Form image"
+            },
+            "description": {
+                "ar": "صورة جانبية أو بنر مع نموذج التواصل",
+                "en": "Side image or banner for the contact form"
             },
             "required": false
+        },
+        {
+            "id": "image_position",
+            "type": "items",
+            "format": "dropdown-list",
+            "label": {
+                "ar": "موقع الصورة",
+                "en": "Image position"
+            },
+            "description": {
+                "ar": "تحديد موضع الصورة بجانب النموذج أو كبنر أعلاه أو أسفله",
+                "en": "Display the image beside the form or as a top/bottom banner"
+            },
+            "value": "start",
+            "options": [
+                {
+                    "label": {
+                        "ar": "بجانب النموذج (الوضع الافتراضي)",
+                        "en": "Side by side (Default)"
+                    },
+                    "value": "start"
+                },
+                {
+                    "label": {
+                        "ar": "بجانب النموذج (الجهة المعكوسة)",
+                        "en": "Side by side (Flipped)"
+                    },
+                    "value": "end"
+                },
+                {
+                    "label": {
+                        "ar": "أعلى النموذج (بنر)",
+                        "en": "Above form (Banner)"
+                    },
+                    "value": "top"
+                },
+                {
+                    "label": {
+                        "ar": "أسفل النموذج (بنر)",
+                        "en": "Below form (Banner)"
+                    },
+                    "value": "bottom"
+                }
+            ]
         },
         {
             "id": "show_subject",
@@ -111,6 +175,20 @@
                 "en": "Show the subject field"
             },
             "value": true
+        },
+        {
+            "id": "show_channels",
+            "type": "boolean",
+            "format": "switch",
+            "label": {
+                "ar": "إظهار قنوات التواصل السريعة",
+                "en": "Show quick contact channels"
+            },
+            "description": {
+                "ar": "عرض روابط التواصل المباشر (هاتف، واتساب، بريد)",
+                "en": "Show direct links for phone, whatsapp, email"
+            },
+            "value": false
         }
     ]
 }
