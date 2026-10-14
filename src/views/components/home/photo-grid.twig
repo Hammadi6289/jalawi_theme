@@ -45,7 +45,7 @@
             <falak-slider class="cats__slider" {{ autoplay ? 'auto-play' : '' }} auto-play-delay="3000" loop show-controls="false" static-when-single>
                 {% for item in items %}
                     {% set category_id = item.category|default(null) %}
-                    {% set href = category_id ? '/category/' ~ category_id : item.url|default('#') %}
+                    {% set href = category_id ? '/products?category_id[]=' ~ category_id : item.url|default('#') %}
                     {% set image = item.image|default(null) %}
                     <div class="cat-card" data-reveal="slide-left" style="--reveal-delay: {{ 100 + loop.index0 * 80 }}ms;"
                          {% if category_id %}data-category-id="{{ category_id }}"{% endif %}

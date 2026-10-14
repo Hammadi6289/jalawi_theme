@@ -141,7 +141,7 @@
                         {# Category or page link: image, name centred, arrow pill.
                            A category's name and image come from the SDK unless
                            the merchant set their own title / image. #}
-                        {% set href = card_type == 'category' ? '/category/' ~ category_id : card_link %}
+                        {% set href = card_type == 'category' ? '/products?category_id[]=' ~ category_id : card_link %}
                         <div class="hero-thumb hero-thumb--category{{ card_type == 'link' ? ' hero-thumb--link' : '' }}"
                              {% if card_type == 'category' %}data-hero-category="{{ category_id }}"{% endif %}>
                             <a class="hero-thumb__media" href="{{ href }}" tabindex="-1" aria-hidden="true">

@@ -99,6 +99,10 @@
                 var img = card.querySelector('[data-hero-thumb-image]');
                 var catImage = match.image_url || match.image;
                 if (catImage && img && !img.hasAttribute('data-custom')) img.src = catImage;
+                var href = '/products?category_id[]=' + encodeURIComponent(match.id);
+                card.querySelectorAll('a.hero-thumb__media, a.hero-thumb__name, a.hero-thumb__pill').forEach(function (a) {
+                    a.href = href;
+                });
             });
         }).catch(function () { /* card keeps the slide's own title */ });
     }
@@ -136,12 +140,17 @@
             img.hidden = false;
         });
 
+        var href = '/products?category_id[]=' + encodeURIComponent(category.id);
+        card.querySelectorAll('a.cat-card__front, a.cat-card__cover, a.cat-card__label').forEach(function (a) {
+            a.href = href;
+        });
+
         // Sub-categories typed in the section win over the category's own.
         var subs = card.querySelector('[data-cat-subs]');
         var children = Array.isArray(category.children) ? category.children : [];
         if (subs && !subs.hasAttribute('data-subs') && children.length) {
             renderSubs(subs, children.map(function (child) {
-                return { name: categoryName(child), href: '/category/' + encodeURIComponent(child.id) };
+                return { name: categoryName(child), href: '/products?category_id[]=' + encodeURIComponent(child.id) };
             }));
         }
     }
@@ -169,7 +178,7 @@
     });
 
     function catCardHtml(category, i) {
-        var href = '/category/' + encodeURIComponent(category.id);
+        var href = '/products?category_id[]=' + encodeURIComponent(category.id);
         var image = category.image_url || category.image || '';
         var img = function (cls) {
             return '<img' + (cls ? ' class="' + cls + '"' : '') + ' src="' + escapeHtml(image) + '" alt="" loading="lazy" data-cat-image' + (image ? '' : ' hidden') + '>';

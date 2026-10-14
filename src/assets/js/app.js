@@ -108,16 +108,33 @@
         window.location.search = params.toString();
     });
 
-    if (currentLang) {
+    var currentDraft = new URLSearchParams(window.location.search).get('draft');
+
+    if (currentLang || currentDraft) {
         document.querySelectorAll('a[href]').forEach(function (link) {
             var href = link.getAttribute('href');
 
             if (!href || href.charAt(0) !== '/' || link.hasAttribute('data-set-lang')) return;
 
             var url = new URL(href, window.location.origin);
-            url.searchParams.set('lang', currentLang);
+            if (currentLang && !url.searchParams.has('lang')) url.searchParams.set('lang', currentLang);
+            if (currentDraft && !url.searchParams.has('draft')) url.searchParams.set('draft', currentDraft);
             link.setAttribute('href', url.pathname + url.search + url.hash);
         });
+
+        if (currentDraft) {
+            document.addEventListener('click', function (event) {
+                var a = event.target.closest('a[href]');
+                if (!a) return;
+                var href = a.getAttribute('href');
+                if (!href || href.charAt(0) !== '/' || href.startsWith('//')) return;
+                var url = new URL(href, window.location.origin);
+                if (!url.searchParams.has('draft')) {
+                    url.searchParams.set('draft', currentDraft);
+                    a.setAttribute('href', url.pathname + url.search + url.hash);
+                }
+            }, true);
+        }
     }
 
     /* --------------------------------------------- back to top + progress */
