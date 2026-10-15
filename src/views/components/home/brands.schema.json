@@ -18,7 +18,12 @@
             "label": {
                 "ar": "عنوان القسم",
                 "en": "Section title"
-            }
+            },
+            "properties": [
+                "font_size",
+                "font_weight",
+                "color"
+            ]
         },
         {
             "id": "items",
@@ -105,9 +110,6 @@
             "value": 2000,
             "min": 0,
             "max": 20000,
-            "step": 500,
-            "minimum": 0,
-            "maximum": 20000,
             "conditions": [
                 {
                     "id": "autoplay",
