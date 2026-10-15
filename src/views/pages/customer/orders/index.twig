@@ -30,9 +30,37 @@
                 {% endfor %}
             </ul>
         {% else %}
-            <falak-placeholder icon="📦" text="{{ trans('account.no_orders') }}"
-                               action-text="{{ trans('cart.start_shopping') }}" action-href="/products"
-                               action-class="btn btn--primary"></falak-placeholder>
+            <div class="empty-state account__empty-state">
+                <div class="empty-state__icon-wrap">
+                    <svg class="empty-state__illustration" viewBox="0 0 260 200" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <!-- Soft Theme Blob -->
+                        <path d="M85 35 C145 20, 210 40, 215 95 C220 150, 160 175, 115 170 C70 165, 45 130, 50 85 C55 45, 60 40, 85 35 Z" fill="color-mix(in srgb, var(--color-primary, #ce5a67) 14%, #ffffff)" />
+                        <circle cx="48" cy="115" r="5" stroke="color-mix(in srgb, var(--color-primary, #ce5a67) 35%, transparent)" stroke-width="2" fill="none" />
+                        <circle cx="56" cy="65" r="10" stroke="color-mix(in srgb, var(--color-primary, #ce5a67) 30%, transparent)" stroke-width="2" fill="none" />
+                        <circle cx="215" cy="48" r="8" stroke="color-mix(in srgb, var(--color-primary, #ce5a67) 30%, transparent)" stroke-width="2" fill="none" />
+                        <circle cx="68" cy="180" r="3.5" fill="#e59866" />
+                        <path d="M175 185 C190 190, 200 175, 210 180 C215 182, 222 175, 228 178" stroke="#e59866" stroke-width="1.8" stroke-dasharray="3 3" fill="none" />
+                        <circle cx="225" cy="160" r="11" fill="#e59866" />
+                        <path d="M221 156 L229 164 M229 156 L221 164" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" />
+
+                        <!-- Theme Primary Parcel Illustration -->
+                        <g class="empty-state__parcel-group">
+                            <path d="M130 50 L195 85 L130 120 L65 85 Z" fill="color-mix(in srgb, var(--color-primary, #ce5a67) 35%, #ffffff)" />
+                            <path d="M65 85 L130 120 V168 L65 133 Z" fill="color-mix(in srgb, var(--color-primary, #ce5a67) 65%, #ffffff)" />
+                            <path d="M130 120 L195 85 V133 L130 168 Z" fill="color-mix(in srgb, var(--color-primary, #ce5a67) 80%, #ffffff)" />
+                            <path d="M65 85 L130 120 L195 85 V133 L130 168 L65 133 Z" stroke="var(--color-primary, #ce5a67)" stroke-width="4" stroke-linejoin="round" />
+                            <path d="M130 120 V168" stroke="var(--color-primary, #ce5a67)" stroke-width="4" stroke-linejoin="round" />
+                            <polygon points="80,108 108,123 108,144 80,129" fill="#ffffff" />
+                            <line x1="86" y1="118" x2="102" y2="127" stroke="color-mix(in srgb, var(--color-primary, #ce5a67) 50%, #ffffff)" stroke-width="2.5" stroke-linecap="round" />
+                            <line x1="86" y1="125" x2="98" y2="132" stroke="color-mix(in srgb, var(--color-primary, #ce5a67) 50%, #ffffff)" stroke-width="2.5" stroke-linecap="round" />
+                            <path d="M97 68 L163 103" stroke="var(--color-primary, #ce5a67)" stroke-width="6" opacity="0.85" />
+                            <path d="M162 68 L98 103" stroke="var(--color-primary, #ce5a67)" stroke-width="6" opacity="0.85" />
+                        </g>
+                    </svg>
+                </div>
+                <p class="empty-state__text">{{ trans('account.no_orders') }}</p>
+                <a href="/products" class="btn btn--primary">{{ trans('cart.start_shopping') }}</a>
+            </div>
         {% endif %}
     </falak-orders>
 {% endblock %}

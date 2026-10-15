@@ -26,6 +26,36 @@
             {% endfor %}
         </ul>
     {% else %}
-        <falak-placeholder icon="🔔" text="{{ trans('account.no_notifications') }}"></falak-placeholder>
+        <div class="empty-state account__empty-state">
+            <div class="empty-state__icon-wrap">
+                <svg class="empty-state__illustration" viewBox="0 0 260 200" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    <!-- Soft Theme Blob -->
+                    <path d="M85 35 C145 20, 210 40, 215 95 C220 150, 160 175, 115 170 C70 165, 45 130, 50 85 C55 45, 60 40, 85 35 Z" fill="color-mix(in srgb, var(--color-primary, #ce5a67) 14%, #ffffff)" />
+                    <circle cx="48" cy="115" r="5" stroke="color-mix(in srgb, var(--color-primary, #ce5a67) 35%, transparent)" stroke-width="2" fill="none" />
+                    <circle cx="56" cy="65" r="10" stroke="color-mix(in srgb, var(--color-primary, #ce5a67) 30%, transparent)" stroke-width="2" fill="none" />
+                    <circle cx="215" cy="48" r="8" stroke="color-mix(in srgb, var(--color-primary, #ce5a67) 30%, transparent)" stroke-width="2" fill="none" />
+                    <circle cx="68" cy="180" r="3.5" fill="#e59866" />
+                    <path d="M175 185 C190 190, 200 175, 210 180 C215 182, 222 175, 228 178" stroke="#e59866" stroke-width="1.8" stroke-dasharray="3 3" fill="none" />
+                    <circle cx="225" cy="160" r="11" fill="#e59866" />
+                    <path d="M221 156 L229 164 M229 156 L221 164" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" />
+
+                    <!-- Theme Primary Bell Illustration -->
+                    <g class="empty-state__bell-group">
+                        <!-- Bell Body -->
+                        <path d="M130 52 C108 52 92 68 92 98 C92 122 84 135 76 142 H184 C176 135 168 122 168 98 C168 68 152 52 130 52 Z" fill="color-mix(in srgb, var(--color-primary, #ce5a67) 75%, #ffffff)" stroke="var(--color-primary, #ce5a67)" stroke-width="4.5" stroke-linejoin="round" />
+                        <!-- Bell Rim -->
+                        <rect x="72" y="140" width="116" height="10" rx="5" fill="color-mix(in srgb, var(--color-primary, #ce5a67) 45%, #ffffff)" stroke="var(--color-primary, #ce5a67)" stroke-width="3.5" />
+                        <!-- Bell Clapper -->
+                        <circle cx="130" cy="158" r="12" fill="color-mix(in srgb, var(--color-primary, #ce5a67) 85%, #ffffff)" stroke="var(--color-primary, #ce5a67)" stroke-width="3.5" />
+                        <!-- Bell Top Loop -->
+                        <path d="M124 52 V44 C124 40.7 126.7 38 130 38 C133.3 38 136 40.7 136 44 V52" stroke="var(--color-primary, #ce5a67)" stroke-width="4" stroke-linecap="round" />
+                        <!-- Sound Waves -->
+                        <path d="M72 82 C65 92 65 106 72 116" stroke="color-mix(in srgb, var(--color-primary, #ce5a67) 50%, transparent)" stroke-width="3" stroke-linecap="round" />
+                        <path d="M188 82 C195 92 195 106 188 116" stroke="color-mix(in srgb, var(--color-primary, #ce5a67) 50%, transparent)" stroke-width="3" stroke-linecap="round" />
+                    </g>
+                </svg>
+            </div>
+            <p class="empty-state__text">{{ trans('account.no_notifications') }}</p>
+        </div>
     {% endif %}
 {% endblock %}

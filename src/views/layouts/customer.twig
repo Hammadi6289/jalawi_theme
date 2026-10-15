@@ -13,12 +13,58 @@
     <div class="container account">
         <div class="account__layout">
             <aside class="account__nav" aria-label="{{ trans('account.title') }}">
+                <div class="account__nav-header">
+                    <div class="account__nav-avatar" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                            <circle cx="12" cy="7" r="4"/>
+                        </svg>
+                    </div>
+                    <div class="account__nav-meta">
+                        <span class="account__nav-title">{{ trans('account.title') }}</span>
+                        {% if customer|default(null) and customer.name %}
+                            <strong class="account__nav-user">{{ customer.name }}</strong>
+                        {% endif %}
+                    </div>
+                </div>
                 <nav>
                     <ul>
-                        <li><a href="/customer/profile"{{ account_page|default('') == 'profile' ? ' class="is-active"' : '' }}>{{ trans('account.profile') }}</a></li>
-                        <li><a href="/customer/orders"{{ account_page|default('') == 'orders' ? ' class="is-active"' : '' }}>{{ trans('account.orders') }}</a></li>
-                        <li><a href="/customer/wishlist"{{ account_page|default('') == 'wishlist' ? ' class="is-active"' : '' }}>{{ trans('account.wishlist') }}</a></li>
-                        <li><a href="/customer/notifications"{{ account_page|default('') == 'notifications' ? ' class="is-active"' : '' }}>{{ trans('account.notifications') }}</a></li>
+                        <li>
+                            <a href="/customer/profile"{{ account_page|default('') == 'profile' ? ' class="is-active"' : '' }}>
+                                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="account__nav-icon" aria-hidden="true">
+                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                                    <circle cx="12" cy="7" r="4"/>
+                                </svg>
+                                <span>{{ trans('account.profile') }}</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/customer/orders"{{ account_page|default('') == 'orders' ? ' class="is-active"' : '' }}>
+                                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="account__nav-icon" aria-hidden="true">
+                                    <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+                                    <line x1="3" y1="6" x2="21" y2="6"/>
+                                    <path d="M16 10a4 4 0 0 1-8 0"/>
+                                </svg>
+                                <span>{{ trans('account.orders') }}</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/customer/wishlist"{{ account_page|default('') == 'wishlist' ? ' class="is-active"' : '' }}>
+                                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="account__nav-icon" aria-hidden="true">
+                                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                                </svg>
+                                <span>{{ trans('account.wishlist') }}</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/customer/notifications"{{ account_page|default('') == 'notifications' ? ' class="is-active"' : '' }}>
+                                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="account__nav-icon" aria-hidden="true">
+                                    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+                                    <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+                                </svg>
+                                <span>{{ trans('account.notifications') }}</span>
+                            </a>
+                        </li>
                     </ul>
                 </nav>
             </aside>

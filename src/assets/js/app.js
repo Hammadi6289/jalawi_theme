@@ -1698,6 +1698,62 @@
         });
     }
 
+    /* Customer area enhancements: dynamic theme-primary illustration hydration */
+    function enhanceCustomerPages() {
+        var accountEl = document.querySelector('.account');
+        if (!accountEl) return;
+
+        var PARCEL_SVG = '<svg class="empty-state__illustration" viewBox="0 0 260 200" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M85 35 C145 20, 210 40, 215 95 C220 150, 160 175, 115 170 C70 165, 45 130, 50 85 C55 45, 60 40, 85 35 Z" fill="color-mix(in srgb, var(--color-primary, #ce5a67) 14%, #ffffff)" /><circle cx="48" cy="115" r="5" stroke="color-mix(in srgb, var(--color-primary, #ce5a67) 35%, transparent)" stroke-width="2" fill="none" /><circle cx="56" cy="65" r="10" stroke="color-mix(in srgb, var(--color-primary, #ce5a67) 30%, transparent)" stroke-width="2" fill="none" /><circle cx="215" cy="48" r="8" stroke="color-mix(in srgb, var(--color-primary, #ce5a67) 30%, transparent)" stroke-width="2" fill="none" /><circle cx="68" cy="180" r="3.5" fill="#e59866" /><path d="M175 185 C190 190, 200 175, 210 180 C215 182, 222 175, 228 178" stroke="#e59866" stroke-width="1.8" stroke-dasharray="3 3" fill="none" /><circle cx="225" cy="160" r="11" fill="#e59866" /><path d="M221 156 L229 164 M229 156 L221 164" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" /><g class="empty-state__parcel-group"><path d="M130 50 L195 85 L130 120 L65 85 Z" fill="color-mix(in srgb, var(--color-primary, #ce5a67) 35%, #ffffff)" /><path d="M65 85 L130 120 V168 L65 133 Z" fill="color-mix(in srgb, var(--color-primary, #ce5a67) 65%, #ffffff)" /><path d="M130 120 L195 85 V133 L130 168 Z" fill="color-mix(in srgb, var(--color-primary, #ce5a67) 80%, #ffffff)" /><path d="M65 85 L130 120 L195 85 V133 L130 168 L65 133 Z" stroke="var(--color-primary, #ce5a67)" stroke-width="4" stroke-linejoin="round" /><path d="M130 120 V168" stroke="var(--color-primary, #ce5a67)" stroke-width="4" stroke-linejoin="round" /><polygon points="80,108 108,123 108,144 80,129" fill="#ffffff" /><line x1="86" y1="118" x2="102" y2="127" stroke="color-mix(in srgb, var(--color-primary, #ce5a67) 50%, #ffffff)" stroke-width="2.5" stroke-linecap="round" /><line x1="86" y1="125" x2="98" y2="132" stroke="color-mix(in srgb, var(--color-primary, #ce5a67) 50%, #ffffff)" stroke-width="2.5" stroke-linecap="round" /><path d="M97 68 L163 103" stroke="var(--color-primary, #ce5a67)" stroke-width="6" opacity="0.85" /><path d="M162 68 L98 103" stroke="var(--color-primary, #ce5a67)" stroke-width="6" opacity="0.85" /></g></svg>';
+        var HEART_SVG = '<svg class="empty-state__illustration" viewBox="0 0 260 200" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M85 35 C145 20, 210 40, 215 95 C220 150, 160 175, 115 170 C70 165, 45 130, 50 85 C55 45, 60 40, 85 35 Z" fill="color-mix(in srgb, var(--color-primary, #ce5a67) 14%, #ffffff)" /><circle cx="48" cy="115" r="5" stroke="color-mix(in srgb, var(--color-primary, #ce5a67) 35%, transparent)" stroke-width="2" fill="none" /><circle cx="56" cy="65" r="10" stroke="color-mix(in srgb, var(--color-primary, #ce5a67) 30%, transparent)" stroke-width="2" fill="none" /><circle cx="215" cy="48" r="8" stroke="color-mix(in srgb, var(--color-primary, #ce5a67) 30%, transparent)" stroke-width="2" fill="none" /><circle cx="68" cy="180" r="3.5" fill="#e59866" /><path d="M175 185 C190 190, 200 175, 210 180 C215 182, 222 175, 228 178" stroke="#e59866" stroke-width="1.8" stroke-dasharray="3 3" fill="none" /><circle cx="225" cy="160" r="11" fill="#e59866" /><path d="M221 156 L229 164 M229 156 L221 164" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" /><g class="empty-state__heart-group"><path d="M130 168 C130 168 62 125 62 82 C62 58 82 40 106 40 C120 40 128 48 130 52 C132 48 140 40 154 40 C178 40 198 58 198 82 C198 125 130 168 130 168 Z" fill="color-mix(in srgb, var(--color-primary, #ce5a67) 25%, #ffffff)" opacity="0.4" /><path d="M130 160 C130 160 68 120 68 80 C68 58 86 42 108 42 C121 42 127 50 130 54 C133 50 139 42 152 42 C174 42 192 58 192 80 C192 120 130 160 130 160 Z" fill="color-mix(in srgb, var(--color-primary, #ce5a67) 85%, #ffffff)" stroke="var(--color-primary, #ce5a67)" stroke-width="4.5" stroke-linejoin="round" /><path d="M88 64 C80 72 78 84 80 94" stroke="#ffffff" stroke-width="4" stroke-linecap="round" /><circle cx="88" cy="58" r="2.5" fill="#ffffff" /><path d="M185 45 L189 53 L197 57 L189 61 L185 69 L181 61 L173 57 L181 53 Z" fill="#e59866" /></g></svg>';
+        var BELL_SVG = '<svg class="empty-state__illustration" viewBox="0 0 260 200" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M85 35 C145 20, 210 40, 215 95 C220 150, 160 175, 115 170 C70 165, 45 130, 50 85 C55 45, 60 40, 85 35 Z" fill="color-mix(in srgb, var(--color-primary, #ce5a67) 14%, #ffffff)" /><circle cx="48" cy="115" r="5" stroke="color-mix(in srgb, var(--color-primary, #ce5a67) 35%, transparent)" stroke-width="2" fill="none" /><circle cx="56" cy="65" r="10" stroke="color-mix(in srgb, var(--color-primary, #ce5a67) 30%, transparent)" stroke-width="2" fill="none" /><circle cx="215" cy="48" r="8" stroke="color-mix(in srgb, var(--color-primary, #ce5a67) 30%, transparent)" stroke-width="2" fill="none" /><circle cx="68" cy="180" r="3.5" fill="#e59866" /><path d="M175 185 C190 190, 200 175, 210 180 C215 182, 222 175, 228 178" stroke="#e59866" stroke-width="1.8" stroke-dasharray="3 3" fill="none" /><circle cx="225" cy="160" r="11" fill="#e59866" /><path d="M221 156 L229 164 M229 156 L221 164" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" /><g class="empty-state__bell-group"><path d="M130 52 C108 52 92 68 92 98 C92 122 84 135 76 142 H184 C176 135 168 122 168 98 C168 68 152 52 130 52 Z" fill="color-mix(in srgb, var(--color-primary, #ce5a67) 75%, #ffffff)" stroke="var(--color-primary, #ce5a67)" stroke-width="4.5" stroke-linejoin="round" /><rect x="72" y="140" width="116" height="10" rx="5" fill="color-mix(in srgb, var(--color-primary, #ce5a67) 45%, #ffffff)" stroke="var(--color-primary, #ce5a67)" stroke-width="3.5" /><circle cx="130" cy="158" r="12" fill="color-mix(in srgb, var(--color-primary, #ce5a67) 85%, #ffffff)" stroke="var(--color-primary, #ce5a67)" stroke-width="3.5" /><path d="M124 52 V44 C124 40.7 126.7 38 130 38 C133.3 38 136 40.7 136 44 V52" stroke="var(--color-primary, #ce5a67)" stroke-width="4" stroke-linecap="round" /><path d="M72 82 C65 92 65 106 72 116" stroke="color-mix(in srgb, var(--color-primary, #ce5a67) 50%, transparent)" stroke-width="3" stroke-linecap="round" /><path d="M188 82 C195 92 195 106 188 116" stroke="color-mix(in srgb, var(--color-primary, #ce5a67) 50%, transparent)" stroke-width="3" stroke-linecap="round" /></g></svg>';
+        var USER_SVG = '<svg class="empty-state__illustration" viewBox="0 0 260 200" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M85 35 C145 20, 210 40, 215 95 C220 150, 160 175, 115 170 C70 165, 45 130, 50 85 C55 45, 60 40, 85 35 Z" fill="color-mix(in srgb, var(--color-primary, #ce5a67) 14%, #ffffff)" /><circle cx="48" cy="115" r="5" stroke="color-mix(in srgb, var(--color-primary, #ce5a67) 35%, transparent)" stroke-width="2" fill="none" /><circle cx="56" cy="65" r="10" stroke="color-mix(in srgb, var(--color-primary, #ce5a67) 30%, transparent)" stroke-width="2" fill="none" /><circle cx="215" cy="48" r="8" stroke="color-mix(in srgb, var(--color-primary, #ce5a67) 30%, transparent)" stroke-width="2" fill="none" /><circle cx="68" cy="180" r="3.5" fill="#e59866" /><path d="M175 185 C190 190, 200 175, 210 180 C215 182, 222 175, 228 178" stroke="#e59866" stroke-width="1.8" stroke-dasharray="3 3" fill="none" /><circle cx="225" cy="160" r="11" fill="#e59866" /><path d="M221 156 L229 164 M229 156 L221 164" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" /><g class="empty-state__user-group"><circle cx="130" cy="110" r="52" fill="color-mix(in srgb, var(--color-primary, #ce5a67) 75%, #ffffff)" stroke="var(--color-primary, #ce5a67)" stroke-width="4.5" /><circle cx="130" cy="94" r="20" fill="color-mix(in srgb, var(--color-primary, #ce5a67) 25%, #ffffff)" stroke="var(--color-primary, #ce5a67)" stroke-width="3" /><path d="M96 145 C96 126 111 120 130 120 C149 120 164 126 164 145" fill="color-mix(in srgb, var(--color-primary, #ce5a67) 35%, #ffffff)" stroke="var(--color-primary, #ce5a67)" stroke-width="3" stroke-linecap="round" /></g></svg>';
+
+        function upgradeIcons() {
+            // Check placeholders
+            accountEl.querySelectorAll('.f-placeholder, .f-orders__empty, falak-placeholder').forEach(function (ph) {
+                var iconEl = ph.querySelector('.f-placeholder__icon');
+                if (iconEl && !iconEl.querySelector('svg')) {
+                    var txt = (iconEl.textContent || '').trim();
+                    if (txt === '📦' || ph.closest('falak-orders') || ph.closest('.f-orders')) {
+                        iconEl.innerHTML = PARCEL_SVG;
+                        iconEl.classList.add('empty-state__icon-wrap');
+                    } else if (txt === '♡' || ph.closest('.account-page--wishlist')) {
+                        iconEl.innerHTML = HEART_SVG;
+                        iconEl.classList.add('empty-state__icon-wrap');
+                    } else if (txt === '🔔' || ph.closest('.account-page--notifications')) {
+                        iconEl.innerHTML = BELL_SVG;
+                        iconEl.classList.add('empty-state__icon-wrap');
+                    } else if (txt === '👤' || ph.closest('falak-user-profile')) {
+                        iconEl.innerHTML = USER_SVG;
+                        iconEl.classList.add('empty-state__icon-wrap');
+                    }
+                }
+            });
+
+            // Check standard empty-states
+            accountEl.querySelectorAll('.empty-state__icon').forEach(function (iconEl) {
+                if (!iconEl.querySelector('svg')) {
+                    var txt = (iconEl.textContent || '').trim();
+                    if (txt === '👤') {
+                        iconEl.innerHTML = USER_SVG;
+                        iconEl.classList.add('empty-state__icon-wrap');
+                    }
+                }
+            });
+        }
+
+        upgradeIcons();
+
+        if (window.MutationObserver) {
+            var custObserver = new MutationObserver(function () {
+                upgradeIcons();
+            });
+            custObserver.observe(accountEl, { childList: true, subtree: true });
+        }
+    }
+
     enhanceProductSingle();
+    enhanceCustomerPages();
 })();
+
 

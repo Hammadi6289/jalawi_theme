@@ -33,9 +33,31 @@
                 {% endif %}
             </dl>
         {% else %}
-            <div class="empty-state">
-                <div class="empty-state__icon" aria-hidden="true">👤</div>
-                <p>{{ trans('account.sign_in_prompt') }}</p>
+            <div class="empty-state account__empty-state">
+                <div class="empty-state__icon-wrap">
+                    <svg class="empty-state__illustration" viewBox="0 0 260 200" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <!-- Soft Theme Blob -->
+                        <path d="M85 35 C145 20, 210 40, 215 95 C220 150, 160 175, 115 170 C70 165, 45 130, 50 85 C55 45, 60 40, 85 35 Z" fill="color-mix(in srgb, var(--color-primary, #ce5a67) 14%, #ffffff)" />
+                        <circle cx="48" cy="115" r="5" stroke="color-mix(in srgb, var(--color-primary, #ce5a67) 35%, transparent)" stroke-width="2" fill="none" />
+                        <circle cx="56" cy="65" r="10" stroke="color-mix(in srgb, var(--color-primary, #ce5a67) 30%, transparent)" stroke-width="2" fill="none" />
+                        <circle cx="215" cy="48" r="8" stroke="color-mix(in srgb, var(--color-primary, #ce5a67) 30%, transparent)" stroke-width="2" fill="none" />
+                        <circle cx="68" cy="180" r="3.5" fill="#e59866" />
+                        <path d="M175 185 C190 190, 200 175, 210 180 C215 182, 222 175, 228 178" stroke="#e59866" stroke-width="1.8" stroke-dasharray="3 3" fill="none" />
+                        <circle cx="225" cy="160" r="11" fill="#e59866" />
+                        <path d="M221 156 L229 164 M229 156 L221 164" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" />
+
+                        <!-- Theme Primary User Shield / Profile Avatar -->
+                        <g class="empty-state__user-group">
+                            <!-- Outer Circle Card -->
+                            <circle cx="130" cy="110" r="52" fill="color-mix(in srgb, var(--color-primary, #ce5a67) 75%, #ffffff)" stroke="var(--color-primary, #ce5a67)" stroke-width="4.5" />
+                            <!-- User Head -->
+                            <circle cx="130" cy="94" r="20" fill="color-mix(in srgb, var(--color-primary, #ce5a67) 25%, #ffffff)" stroke="var(--color-primary, #ce5a67)" stroke-width="3" />
+                            <!-- User Body -->
+                            <path d="M96 145 C96 126 111 120 130 120 C149 120 164 126 164 145" fill="color-mix(in srgb, var(--color-primary, #ce5a67) 35%, #ffffff)" stroke="var(--color-primary, #ce5a67)" stroke-width="3" stroke-linecap="round" />
+                        </g>
+                    </svg>
+                </div>
+                <p class="empty-state__text">{{ trans('account.sign_in_prompt') }}</p>
             </div>
         {% endif %}
     </falak-user-profile>

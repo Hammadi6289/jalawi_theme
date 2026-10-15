@@ -6805,9 +6805,9 @@ body.f-modal-open {
 
 .f-profile__stats {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(7rem, 1fr));
-    gap: 0.75rem;
-    margin: 0 0 1.5rem;
+    grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr));
+    gap: 0.9rem;
+    margin: 0 0 1.75rem;
     padding: 0;
     list-style: none;
 }
@@ -6815,22 +6815,36 @@ body.f-modal-open {
 .f-profile__stat {
     display: flex;
     flex-direction: column;
-    gap: 0.15rem;
-    padding: 0.85rem 1rem;
-    border: 1px solid rgba(0, 0, 0, 0.08);
-    border-radius: 0.75rem;
-    background: rgba(0, 0, 0, 0.02);
+    gap: 0.25rem;
+    padding: 1rem 1.15rem;
+    background: var(--color-surface, #ffffff);
+    background: linear-gradient(145deg, color-mix(in srgb, var(--color-primary) 3%, #ffffff) 0%, color-mix(in srgb, var(--color-primary) 6.5%, #ffffff) 100%);
+    border: 1px solid var(--color-border, #e5e7eb);
+    border: 1px solid color-mix(in srgb, var(--color-primary) 14%, rgba(0, 0, 0, 0.06));
+    border-radius: var(--radius-md, 12px);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+    box-shadow: 0 2px 8px color-mix(in srgb, var(--color-primary) 4%, transparent);
+    transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.f-profile__stat:hover {
+    transform: translateY(-2px);
+    border-color: var(--color-primary);
+    box-shadow: 0 8px 20px color-mix(in srgb, var(--color-primary) 12%, transparent);
 }
 
 .f-profile__stat-value {
-    font-size: 1.35rem;
-    font-weight: 700;
+    font-size: 1.55rem;
+    font-weight: 800;
     line-height: 1.1;
+    color: var(--color-primary);
 }
 
 .f-profile__stat-label {
-    font-size: 0.8rem;
-    opacity: 0.7;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--color-text-soft, #6b7280);
+    text-transform: capitalize;
 }
 
 .f-profile__form {
@@ -13804,24 +13818,82 @@ falak-filters .f-filters {
 
 .account__layout {
     display: grid;
-    grid-template-columns: 15rem minmax(0, 1fr);
-    gap: 2rem;
+    grid-template-columns: 16.5rem minmax(0, 1fr);
+    gap: 2.25rem;
     align-items: start;
 }
 
-@media (max-width: 720px) {
+@media (max-width: 768px) {
+    .account {
+        overflow-x: clip;
+    }
+
     .account__layout {
-        grid-template-columns: 1fr;
+        grid-template-columns: minmax(0, 1fr);
+        gap: 1.25rem;
+        min-inline-size: 0;
     }
 }
 
 .account__nav {
     border: 1px solid var(--color-border);
-    border-radius: var(--radius);
-    background: var(--color-surface);
-    padding: 0.6rem;
+    border: 1px solid color-mix(in srgb, var(--color-primary) 14%, rgba(0, 0, 0, 0.08));
+    border-radius: var(--radius-md, 16px);
+    background: #ffffff;
+    background: linear-gradient(180deg, #ffffff 0%, color-mix(in srgb, var(--color-primary) 2.5%, #ffffff) 100%);
+    padding: 1rem 0.85rem;
+    box-shadow: 0 4px 20px color-mix(in srgb, var(--color-primary) 6%, transparent);
     position: sticky;
-    top: calc(var(--header-h) + 1rem);
+    top: calc(var(--header-h, 4.5rem) + 1.25rem);
+}
+
+.account__nav-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.35rem 0.5rem 0.9rem;
+    margin-block-end: 0.75rem;
+    border-block-end: 1px solid color-mix(in srgb, var(--color-primary) 12%, rgba(0, 0, 0, 0.06));
+}
+
+.account__nav-avatar {
+    inline-size: 2.5rem;
+    block-size: 2.5rem;
+    border-radius: 50%;
+    background: color-mix(in srgb, var(--color-primary) 12%, transparent);
+    color: var(--color-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.account__nav-meta {
+    display: flex;
+    flex-direction: column;
+    min-inline-size: 0;
+}
+
+.account__nav-title {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--color-text-soft, #8a8f9c);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.account__nav-user {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--color-text, #1f2430);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.account__nav nav {
+    min-inline-size: 0;
+    max-inline-size: 100%;
 }
 
 .account__nav ul {
@@ -13830,38 +13902,104 @@ falak-filters .f-filters {
     padding: 0;
     display: flex;
     flex-direction: column;
-    gap: 0.15rem;
+    gap: 0.3rem;
 }
 
-@media (max-width: 720px) {
+.account__nav a {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    border-radius: var(--radius-sm, 10px);
+    color: var(--color-text, #374151);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.95rem;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+}
+
+.account__nav-icon {
+    inline-size: 1.2rem;
+    block-size: 1.2rem;
+    flex-shrink: 0;
+    stroke: currentColor;
+    transition: stroke 0.2s ease, transform 0.2s ease;
+}
+
+.account__nav a:hover:not(.is-active) {
+    background: color-mix(in srgb, var(--color-primary) 8%, transparent);
+    color: var(--color-primary);
+    transform: translateX(4px);
+}
+
+[dir="rtl"] .account__nav a:hover:not(.is-active) {
+    transform: translateX(-4px);
+}
+
+.account__nav a.is-active {
+    background: var(--color-primary);
+    color: var(--color-on-primary, #ffffff);
+    box-shadow: 0 4px 14px color-mix(in srgb, var(--color-primary) 28%, transparent);
+}
+
+.account__nav a.is-active .account__nav-icon {
+    stroke: var(--color-on-primary, #ffffff);
+}
+
+@media (max-width: 768px) {
     .account__nav {
         position: static;
+        padding: 0.5rem;
+        border-radius: var(--radius-md, 12px);
+        min-inline-size: 0;
+        max-inline-size: 100%;
+        overflow: hidden;
+    }
+
+    .account__nav-header {
+        display: none;
+    }
+
+    .account__nav nav {
+        min-inline-size: 0;
+        max-inline-size: 100%;
+        overflow: hidden;
     }
 
     .account__nav ul {
         flex-direction: row;
         overflow-x: auto;
+        padding-block-end: 0.25rem;
+        gap: 0.4rem;
+        scrollbar-width: none;
+        -webkit-overflow-scrolling: touch;
+        min-inline-size: 0;
+        max-inline-size: 100%;
+    }
+
+    .account__nav ul::-webkit-scrollbar {
+        display: none;
+    }
+
+    .account__nav a {
+        padding: 0.65rem 0.9rem;
+        font-size: 0.88rem;
+        border-radius: var(--radius-sm, 8px);
+        flex-shrink: 0;
+    }
+
+    .account__nav a:hover:not(.is-active) {
+        transform: none;
+    }
+
+    [dir="rtl"] .account__nav a:hover:not(.is-active) {
+        transform: none;
     }
 }
 
-.account__nav a {
-    display: block;
-    padding: 0.6rem 0.9rem;
-    border-radius: var(--radius-sm);
-    color: var(--color-text);
-    text-decoration: none;
-    font-weight: 600;
-    font-size: 0.95rem;
-    white-space: nowrap;
-}
-
-.account__nav a:hover {
-    color: var(--color-primary);
-}
-
-.account__nav a.is-active {
-    background: var(--color-primary);
-    color: var(--color-on-primary);
+.account__content {
+    min-inline-size: 0;
 }
 
 .account-details {
@@ -13876,6 +14014,15 @@ falak-filters .f-filters {
     grid-template-columns: 10rem minmax(0, 1fr);
     gap: 1rem;
     padding: 0.9rem 1.25rem;
+    min-inline-size: 0;
+}
+
+@media (max-width: 600px) {
+    .account-details__row {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 0.35rem;
+        padding: 0.75rem 1rem;
+    }
 }
 
 .account-details__row+.account-details__row {
@@ -17330,4 +17477,193 @@ body.mega-is-open {
     font-size: 0.85rem;
     font-weight: 600;
     color: var(--color-primary);
+}
+
+/* ========================================================================
+   Customer Area Theme Refinements (Profile, Orders, Wishlist, Notifications)
+   ======================================================================== */
+
+.account h1 {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    font-size: 1.65rem;
+    font-weight: 800;
+    color: var(--color-text, #1f2430);
+    margin-block: 0 1.5rem;
+}
+
+.account h1::before {
+    content: "";
+    display: inline-block;
+    inline-size: 5px;
+    block-size: 1.4rem;
+    background: var(--color-primary);
+    border-radius: 999px;
+}
+
+/* Customer Details & Form inputs */
+.f-profile__form {
+    background: #ffffff;
+    border: 1px solid color-mix(in srgb, var(--color-primary) 14%, rgba(0, 0, 0, 0.08));
+    border-radius: var(--radius-md, 16px);
+    padding: 1.75rem 1.5rem;
+    box-shadow: 0 4px 18px color-mix(in srgb, var(--color-primary) 5%, transparent);
+    min-inline-size: 0;
+    max-inline-size: 100%;
+    box-sizing: border-box;
+}
+
+.f-profile__input,
+.f-login__input,
+.f-orders__search input,
+.f-orders__filter select,
+.f-input,
+.account input[type="text"],
+.account input[type="email"],
+.account input[type="tel"],
+.account textarea,
+.account select {
+    box-sizing: border-box;
+    max-inline-size: 100%;
+    inline-size: 100%;
+    background: #ffffff;
+    border: 1px solid color-mix(in srgb, var(--color-primary) 18%, var(--color-border, #e5e7eb));
+    border-radius: var(--radius-sm, 10px);
+    padding: 0.8rem 1rem;
+    font: inherit;
+    font-size: 0.95rem;
+    color: var(--color-text, #1f2430);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+}
+
+@media (max-width: 600px) {
+    .f-profile__stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.6rem;
+    }
+
+    .f-profile__stat {
+        padding: 0.75rem 0.85rem;
+    }
+
+    .f-profile__stat-value {
+        font-size: 1.3rem;
+    }
+
+    .f-profile__form {
+        padding: 1.25rem 1rem;
+    }
+
+    .f-profile__grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
+
+.f-profile__input:focus,
+.f-login__input:focus,
+.f-orders__search input:focus,
+.f-orders__filter select:focus,
+.f-input:focus,
+.account input[type="text"]:focus,
+.account input[type="email"]:focus,
+.account input[type="tel"]:focus,
+.account textarea:focus,
+.account select:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary) 18%, transparent);
+    background: #ffffff;
+}
+
+.f-profile__save {
+    background: var(--color-primary);
+    color: var(--color-on-primary, #ffffff);
+    border: none;
+    border-radius: var(--radius-sm, 10px);
+    padding: 0.85rem 2.25rem;
+    font-weight: 600;
+    font-size: 0.98rem;
+    cursor: pointer;
+    box-shadow: 0 4px 14px color-mix(in srgb, var(--color-primary) 28%, transparent);
+    transition: background-color 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
+}
+
+.f-profile__save:hover {
+    background: var(--color-primary-dark, var(--color-primary));
+    box-shadow: 0 6px 20px color-mix(in srgb, var(--color-primary) 36%, transparent);
+    transform: translateY(-1px);
+}
+
+/* Orders List & Cards */
+.account .order-row {
+    background: #ffffff;
+    border: 1px solid color-mix(in srgb, var(--color-primary) 12%, rgba(0, 0, 0, 0.06));
+    border-radius: var(--radius-md, 12px);
+    padding: 1.15rem 1.4rem;
+    margin-block-end: 0.75rem;
+    box-shadow: 0 2px 8px color-mix(in srgb, var(--color-primary) 4%, transparent);
+    transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.account .order-row:hover {
+    transform: translateY(-2px);
+    border-color: var(--color-primary);
+    box-shadow: 0 8px 20px color-mix(in srgb, var(--color-primary) 12%, transparent);
+}
+
+.account .order-row__number {
+    color: var(--color-primary);
+    font-size: 1.05rem;
+}
+
+/* Customer Empty States & Illustrations */
+.account .empty-state,
+.account .f-placeholder,
+.account .f-orders__empty {
+    text-align: center;
+    padding-block: 3.5rem 3rem;
+    color: var(--color-text-soft, #6b7280);
+}
+
+.account .empty-state__icon-wrap,
+.account .f-placeholder__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.5rem;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+}
+
+.account .empty-state__illustration,
+.account .f-placeholder__illustration {
+    display: block;
+    max-inline-size: 100%;
+    inline-size: min(16.5rem, 85vw);
+    block-size: auto;
+    margin: 0 auto;
+    transition: transform var(--transition, 0.3s ease);
+}
+
+@media (min-width: 900px) {
+    .account .empty-state__illustration,
+    .account .f-placeholder__illustration {
+        inline-size: 26rem;
+    }
+}
+
+.account .empty-state__illustration:hover,
+.account .f-placeholder__illustration:hover {
+    transform: scale(1.03);
+}
+
+.account .empty-state__text,
+.account .f-placeholder__text {
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: var(--color-text, #1f2430);
+    margin-block: 1rem 1.75rem;
 }
