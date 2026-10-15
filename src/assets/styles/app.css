@@ -9887,7 +9887,7 @@ falak-announcement:not(.f-announce--scroll) .f-announce__inner {
     transform: scaleX(-1) translateX(3px);
 }
 
-/* ---- store branches (home.branches) — Jalawi store locator block ---- */
+/* ---- store branches, Jalawi store locator block ---- */
 .block--branches {
     padding-block: clamp(2rem, 4vw, 3.75rem);
 }
