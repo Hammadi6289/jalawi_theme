@@ -1274,9 +1274,7 @@ falak-rating-stars[data-busy] {
     }
 }
 
-/* ========================================================================
-   Product options — variant pills
-   ======================================================================== */
+/* Product options — variant pills */
 
 .f-options {
     display: flex;
@@ -1362,6 +1360,25 @@ falak-rating-stars[data-busy] {
     border-color: var(--color-primary, #1d9e75);
     background: var(--color-primary, #1d9e75);
     color: var(--color-on-primary, #fff);
+}
+
+.f-options__color-swatch {
+    display: inline-block;
+    inline-size: 1rem;
+    block-size: 1rem;
+    width: 1rem;
+    height: 1rem;
+    border-radius: 50%;
+    margin-inline-end: 0.45rem;
+    border: 1px solid rgba(0, 0, 0, 0.18);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+    flex-shrink: 0;
+    vertical-align: middle;
+}
+
+.f-options__pill.is-selected .f-options__color-swatch {
+    border-color: rgba(255, 255, 255, 0.85);
+    box-shadow: 0 0 0 1.5px #ffffff, 0 1px 3px rgba(0, 0, 0, 0.2);
 }
 
 .f-options__pill:disabled {
@@ -14641,6 +14658,15 @@ falak-filters .f-filters {
     flex-shrink: 0;
 }
 
+.cart-item__color-dot[hidden] {
+    display: none;
+}
+
+.cart-item__color-name {
+    margin-inline-start: 0.35rem;
+    font-weight: 500;
+}
+
 .cart-item__unit {
     display: block;
     font-size: 0.9rem;
@@ -14805,7 +14831,7 @@ falak-filters .f-filters {
     fill: currentColor;
 }
 
-/* ------------------------------------------------------------- search */
+/*  search */
 /* Header trigger matches the wishlist/account icons; the dropdown panel
    takes the theme's surface, radius and price colours. */
 .search-link .f-search__trigger {

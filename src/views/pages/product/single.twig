@@ -99,6 +99,7 @@
                        attribute; the add button below consults it before adding. #}
                     <falak-product-options product-id="{{ product.id }}"
                                            variations="{{ product.variations|json_encode|escape('html_attr') }}"
+                                           {% if product.options is defined and product.options %}options="{{ product.options|json_encode|escape('html_attr') }}"{% endif %}
                                            class="product-single__options"></falak-product-options>
                 {% endif %}
 

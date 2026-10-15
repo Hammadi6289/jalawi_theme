@@ -42,7 +42,7 @@
                                     <span class="cart-item__variation">
                                         {%- for key, value in item.variation.attributes -%}
                                             {%- if key|lower in ['color', 'colors', 'colour', 'colours'] or key in ['اللون', 'ألوان', 'الوان'] or value starts with '#' -%}
-                                                {{ key }}: <span class="cart-item__color-dot" style="background-color: {{ value }};" title="{{ value }}" aria-label="{{ value }}"></span>
+                                                {{ key }}: <span class="cart-item__color-dot" data-color="{{ value }}" style="background-color: {{ value }};" title="{{ value }}" aria-label="{{ value }}"></span><span class="cart-item__color-name">{{ value }}</span>
                                             {%- else -%}
                                                 {{ key }}: {{ value }}
                                             {%- endif -%}

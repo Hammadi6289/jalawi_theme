@@ -115,6 +115,7 @@
     "product.showing_count": "Showing {shown} of {total}",
     "product.details": "Product details",
     "product.shipping_returns": "Shipping & returns",
+    "product.free_shipping": "Free shipping",
     "product.description": "Description",
     "product.comments": "Comments",
     "product.related": "You may also like",

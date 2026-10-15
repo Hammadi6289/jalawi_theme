@@ -911,6 +911,104 @@
         });
     }
 
+    /* variant color swatches */
+    function resolveDashboardColor(val, colorDefs) {
+        if (!val) return null;
+        var clean = String(val).trim();
+        if (clean.charAt(0) === '#' || clean.startsWith('rgb')) return clean;
+
+        // Read exact color chosen in merchant store dashboard
+        if (colorDefs && Array.isArray(colorDefs)) {
+            for (var i = 0; i < colorDefs.length; i++) {
+                var def = colorDefs[i];
+                if (def && Array.isArray(def.values)) {
+                    for (var j = 0; j < def.values.length; j++) {
+                        var item = def.values[j];
+                        if (item && (item.value === clean || item.label === clean)) {
+                            var disp = item.display_value || item.display;
+                            if (disp) return disp;
+                        }
+                    }
+                }
+            }
+        }
+
+        // Standard CSS color name support
+        var s = new Option().style;
+        s.color = clean;
+        if (s.color !== '') return clean;
+
+        return null;
+    }
+
+    function enhanceProductOptions() {
+        var optionsEl = document.querySelector('falak-product-options');
+        if (!optionsEl) return;
+
+        var optionsData = null;
+        try {
+            var raw = optionsEl.getAttribute('options');
+            if (raw) optionsData = JSON.parse(raw);
+        } catch (e) { }
+
+        if (!optionsData && optionsEl.options && Array.isArray(optionsEl.options)) {
+            optionsData = optionsEl.options;
+        }
+
+        var groups = optionsEl.querySelectorAll('.f-options__group');
+        groups.forEach(function (group) {
+            var nameEl = group.querySelector('.f-options__name');
+            var groupName = nameEl ? nameEl.textContent.trim().toLowerCase() : '';
+            var isColor = /color|colour|لون|ألوان|الوان/.test(groupName);
+
+            var pills = group.querySelectorAll('.f-options__pill');
+            pills.forEach(function (pill) {
+                if (pill.querySelector('.f-options__color-swatch')) return;
+
+                var val = pill.getAttribute('data-value') || pill.textContent.trim();
+                var color = isColor ? resolveDashboardColor(val, optionsData) : null;
+                if (!color && isColor) {
+                    color = resolveDashboardColor(pill.textContent.trim(), optionsData);
+                }
+
+                if (color) {
+                    var swatch = document.createElement('span');
+                    swatch.className = 'f-options__color-swatch';
+                    swatch.style.backgroundColor = color;
+                    swatch.setAttribute('aria-hidden', 'true');
+                    pill.prepend(swatch);
+                }
+            });
+        });
+    }
+
+    function enhanceCartColors() {
+        document.querySelectorAll('.cart-item__color-dot').forEach(function (dot) {
+            var raw = dot.getAttribute('data-color') || dot.getAttribute('title') || '';
+            var color = resolveDashboardColor(raw);
+            if (color) {
+                dot.style.backgroundColor = color;
+                dot.removeAttribute('hidden');
+            } else {
+                var computed = window.getComputedStyle(dot).backgroundColor;
+                if (!computed || computed === 'transparent' || computed === 'rgba(0, 0, 0, 0)') {
+                    dot.setAttribute('hidden', '');
+                }
+            }
+        });
+    }
+
+    enhanceProductOptions();
+    enhanceCartColors();
+
+    var optionsEl = document.querySelector('falak-product-options');
+    if (optionsEl) {
+        var optObserver = new MutationObserver(function () {
+            enhanceProductOptions();
+        });
+        optObserver.observe(optionsEl, { childList: true, subtree: true });
+    }
+
     /*  description read more */
     // The description is clamped by CSS; a toggle is added only when the text
     // actually overflows, so short descriptions show no dead button.
@@ -1664,7 +1762,7 @@
                 if (hasAny && specsWrap) {
                     specsWrap.removeAttribute('hidden');
                 }
-            }).catch(function () {});
+            }).catch(function () { });
         }
 
         // 3. Variant change listener: update SKU dynamically if variant has a different SKU

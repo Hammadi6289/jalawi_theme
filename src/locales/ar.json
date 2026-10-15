@@ -115,6 +115,7 @@
     "product.showing_count": "عرض {shown} من {total}",
     "product.details": "تفاصيل المنتج",
     "product.shipping_returns": "الشحن والإرجاع",
+    "product.free_shipping": "ًالشحن مجانا",
     "product.description": "الوصف",
     "product.comments": "التعليقات",
     "product.related": "قد يعجبك أيضاً",
