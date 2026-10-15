@@ -200,7 +200,7 @@ a {
     cursor: not-allowed;
 }
 
-.btn.is-added {
+.btn.is-added:not(.btn--gallery-wishlist):not(.btn--wishlist) {
     background: var(--color-primary-dark);
 }
 
@@ -12596,10 +12596,23 @@ falak-product-card falak-add-product-button button.is-clicked svg path,
     transform: scale(1.05);
 }
 
+.gallery__main .btn--gallery-wishlist.is-added,
+.gallery__main .btn--gallery-wishlist.is-active,
 .btn--gallery-wishlist.is-added,
 .btn--gallery-wishlist.is-active {
+    background: #ffffff;
     color: var(--color-primary);
     border-color: var(--color-primary);
+}
+
+.gallery__main .btn--gallery-wishlist.is-added:hover,
+.gallery__main .btn--gallery-wishlist.is-active:hover,
+.btn--gallery-wishlist.is-added:hover,
+.btn--gallery-wishlist.is-active:hover {
+    background: #ffffff;
+    color: var(--color-primary);
+    border-color: var(--color-primary);
+    transform: scale(1.05);
 }
 
 .btn--gallery-wishlist.is-added svg,
