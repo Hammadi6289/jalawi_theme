@@ -17161,3 +17161,173 @@ body.mega-is-open {
 @keyframes blog-spin {
     to { transform: rotate(360deg); }
 }
+
+/* Product Single: SKU */
+.product-single__sku {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    font-size: 0.88rem;
+    margin-block: 0.75rem 0.65rem;
+    padding: 0;
+    background: transparent;
+    border: none;
+    line-height: 1.4;
+    color: var(--color-text-soft, #6b7280);
+}
+
+.product-single__sku[hidden] {
+    display: none;
+}
+
+.product-single__sku-label {
+    color: var(--color-text-soft, #6b7280);
+    font-weight: 500;
+    font-size: 0.82rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.product-single__sku-value {
+    color: var(--color-text, #1f2430);
+    font-weight: 600;
+    font-family: inherit;
+    letter-spacing: 0.02em;
+    user-select: all;
+}
+
+.product-single__sku-copy {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    padding: 0.25rem;
+    color: var(--color-text-soft, #9ca3af);
+    cursor: pointer;
+    border-radius: var(--radius-sm, 4px);
+    transition: color 0.15s ease, transform 0.15s ease;
+}
+
+.product-single__sku-copy:hover {
+    color: var(--color-primary);
+    transform: scale(1.15);
+}
+
+/* Product Specifications & Dimensions in description tab */
+.product-specs {
+    margin-block-start: 2.5rem;
+    padding-block-start: 2rem;
+    border-block-start: 1px solid var(--color-border, #e5e7eb);
+    border-block-start-color: color-mix(in srgb, var(--color-primary) 15%, var(--color-border, #e5e7eb));
+}
+
+.product-specs[hidden] {
+    display: none;
+}
+
+.product-specs__title {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--color-text, #1f2430);
+    margin-block: 0 1.25rem;
+}
+
+.product-specs__title::before {
+    content: "";
+    display: inline-block;
+    inline-size: 4px;
+    block-size: 1.15rem;
+    background: var(--color-primary);
+    border-radius: 999px;
+}
+
+.product-specs__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(13.5rem, 1fr));
+    gap: 1.1rem;
+}
+
+.product-specs__item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 1.25rem;
+    background: var(--color-surface, #ffffff);
+    background: linear-gradient(145deg, color-mix(in srgb, var(--color-primary) 3%, #ffffff) 0%, color-mix(in srgb, var(--color-primary) 6.5%, #ffffff) 100%);
+    border: 1px solid var(--color-border, #e5e7eb);
+    border: 1px solid color-mix(in srgb, var(--color-primary) 14%, rgba(0, 0, 0, 0.06));
+    border-radius: var(--radius-md, 12px);
+    box-shadow: 0 2px 8px color-mix(in srgb, var(--color-primary) 4%, transparent);
+    transition: border-color var(--transition, 0.25s ease), box-shadow var(--transition, 0.25s ease), transform var(--transition, 0.25s ease);
+}
+
+.product-specs__item[hidden] {
+    display: none;
+}
+
+.product-specs__item:hover {
+    border-color: var(--color-primary);
+    box-shadow: 0 8px 24px color-mix(in srgb, var(--color-primary) 12%, transparent);
+    transform: translateY(-2px);
+}
+
+.product-specs__icon {
+    inline-size: 2.75rem;
+    block-size: 2.75rem;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.04);
+    background: color-mix(in srgb, var(--color-primary) 11%, transparent);
+    color: var(--color-primary);
+    border: 1px solid color-mix(in srgb, var(--color-primary) 18%, transparent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: background-color var(--transition, 0.2s ease), color var(--transition, 0.2s ease), border-color var(--transition, 0.2s ease), transform var(--transition, 0.2s ease);
+}
+
+.product-specs__item:hover .product-specs__icon {
+    background: var(--color-primary);
+    color: var(--color-on-primary, #ffffff);
+    border-color: var(--color-primary);
+    transform: scale(1.05);
+}
+
+.product-specs__icon svg {
+    inline-size: 1.3rem;
+    block-size: 1.3rem;
+    stroke: currentColor;
+}
+
+.product-specs__content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+}
+
+.product-specs__label {
+    font-size: 0.78rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--color-text-soft, #717786);
+}
+
+.product-specs__value {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--color-text, #1f2430);
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.25rem;
+}
+
+.product-specs__unit {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--color-primary);
+}

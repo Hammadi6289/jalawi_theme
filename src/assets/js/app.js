@@ -1575,4 +1575,129 @@
             searchObserver.observe(searchTarget, { childList: true, subtree: true });
         }
     }
+
+    /* Product details enhancement: SKU, Detailed Description & Specifications */
+    function enhanceProductSingle() {
+        var productSingle = document.querySelector('.product-single');
+        if (!productSingle) return;
+
+        // 1. Check unit duplication on specs (if value already ends with kg / cm, hide the separate unit span)
+        document.querySelectorAll('.product-specs__item').forEach(function (item) {
+            var valEl = item.querySelector('[data-spec-val]');
+            var unitEl = item.querySelector('[data-spec-unit]');
+            if (!valEl || !unitEl) return;
+            var text = valEl.textContent.trim().toLowerCase();
+            if (!text) {
+                item.hidden = true;
+                return;
+            }
+            if (text.indexOf('kg') !== -1 || text.indexOf('كجم') !== -1 || text.indexOf('cm') !== -1 || text.indexOf('سم') !== -1) {
+                unitEl.hidden = true;
+            }
+        });
+
+        // 2. Fetch full product payload from storefront API if available, to fill any missing SKU, detailed description, or dimensions
+        var idSource = productSingle.querySelector('[product-id]');
+        var productId = idSource ? idSource.getAttribute('product-id') : null;
+        if (!productId && window.location.pathname) {
+            var match = window.location.pathname.match(/\/product(?:s)?\/([^\/?#]+)/);
+            if (match) productId = match[1];
+        }
+
+        if (productId && window.falak && window.falak.product && typeof window.falak.product.show === 'function') {
+            window.falak.product.show(productId).then(function (res) {
+                var p = res && res.data ? res.data : res;
+                if (!p) return;
+
+                // Sync SKU
+                var skuWrap = productSingle.querySelector('[data-product-sku]');
+                var skuVal = productSingle.querySelector('[data-product-sku-value]');
+                var sku = p.sku || p.code || (p.variants && p.variants[0] && p.variants[0].sku);
+                if (skuWrap && skuVal) {
+                    if (sku) {
+                        skuVal.textContent = sku;
+                        skuWrap.removeAttribute('hidden');
+                    }
+                }
+
+                // Sync Detailed Description
+                var detailedDescEl = productSingle.querySelector('[data-product-detailed-desc]');
+                var detailed = p.detailed_description || p.detail_description || p.details || p.long_description || p.description_detail;
+                if (detailedDescEl && detailed && detailed.trim() && detailed !== p.description) {
+                    detailedDescEl.innerHTML = detailed;
+                }
+
+                // Sync Specifications (Weight, Height, Width, Length)
+                var specsWrap = productSingle.querySelector('[data-product-specs]');
+                var weight = p.weight || p.shipping_weight;
+                var height = p.height || (p.dimensions && p.dimensions.height);
+                var width = p.width || (p.dimensions && p.dimensions.width);
+                var length = p.length || (p.dimensions && p.dimensions.length) || p.depth;
+
+                var hasAny = false;
+                function updateSpec(name, val) {
+                    var item = productSingle.querySelector('[data-spec-item="' + name + '"]');
+                    var span = productSingle.querySelector('[data-spec-val="' + name + '"]');
+                    var unit = productSingle.querySelector('[data-spec-unit="' + name + '"]');
+                    if (!item || !span) return;
+                    if (val != null && String(val).trim() !== '' && String(val).trim() !== '0') {
+                        var str = String(val).trim();
+                        span.textContent = str;
+                        item.removeAttribute('hidden');
+                        hasAny = true;
+                        if (unit) {
+                            var lower = str.toLowerCase();
+                            if (lower.indexOf('kg') !== -1 || lower.indexOf('كجم') !== -1 || lower.indexOf('cm') !== -1 || lower.indexOf('سم') !== -1) {
+                                unit.hidden = true;
+                            } else {
+                                unit.removeAttribute('hidden');
+                            }
+                        }
+                    }
+                }
+
+                updateSpec('weight', weight);
+                updateSpec('height', height);
+                updateSpec('width', width);
+                updateSpec('length', length);
+
+                if (hasAny && specsWrap) {
+                    specsWrap.removeAttribute('hidden');
+                }
+            }).catch(function () {});
+        }
+
+        // 3. Variant change listener: update SKU dynamically if variant has a different SKU
+        document.addEventListener('variant-change', function (e) {
+            var variant = e.detail && (e.detail.variant || e.detail);
+            if (variant && variant.sku) {
+                var skuWrap = productSingle.querySelector('[data-product-sku]');
+                var skuVal = productSingle.querySelector('[data-product-sku-value]');
+                if (skuWrap && skuVal) {
+                    skuVal.textContent = variant.sku;
+                    skuWrap.removeAttribute('hidden');
+                }
+            }
+        });
+
+        // 4. Copy SKU button click handler
+        document.addEventListener('click', function (e) {
+            var btn = e.target.closest('[data-copy-sku]');
+            if (!btn) return;
+            var skuVal = productSingle.querySelector('[data-product-sku-value]');
+            var text = skuVal ? skuVal.textContent.trim() : '';
+            if (!text) return;
+            var isAr = document.documentElement.lang === 'ar' || document.documentElement.dir === 'rtl';
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(text).then(function () {
+                    showToast(isAr ? 'تم نسخ رمز المنتج' : 'SKU copied to clipboard', 'success');
+                }).catch(function () {
+                    showToast(text, 'info');
+                });
+            }
+        });
+    }
+
+    enhanceProductSingle();
 })();
+

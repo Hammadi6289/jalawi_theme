@@ -399,5 +399,13 @@
     "branches.phone": "Phone Number",
     "branches.view_map": "View our location on the map",
     "branches.open_google_maps": "Open in Google Maps",
-    "branches.map_title": "Branch Location Map"
+    "branches.map_title": "Branch Location Map",
+    "product.sku": "SKU",
+    "product.specifications": "Specifications",
+    "product.weight": "Weight",
+    "product.height": "Height",
+    "product.width": "Width",
+    "product.length": "Length",
+    "common.unit_kg": "kg",
+    "common.unit_cm": "cm"
 }

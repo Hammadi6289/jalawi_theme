@@ -399,5 +399,13 @@
     "branches.phone": "رقم الهاتف",
     "branches.view_map": "رؤية موقعنا علي الخريطة",
     "branches.open_google_maps": "الفتح في \"خرائط Google\"",
-    "branches.map_title": "خريطة موقع الفرع"
+    "branches.map_title": "خريطة موقع الفرع",
+    "product.sku": "رمز المنتج",
+    "product.specifications": "المواصفات والأبعاد",
+    "product.weight": "الوزن",
+    "product.height": "الارتفاع",
+    "product.width": "العرض",
+    "product.length": "الطول",
+    "common.unit_kg": "كجم",
+    "common.unit_cm": "سم"
 }

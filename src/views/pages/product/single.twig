@@ -140,6 +140,18 @@
 
                 </div>
 
+                {# Product SKU #}
+                <div class="product-single__sku" data-product-sku{% if not (product.sku or product.code) %} hidden{% endif %}>
+                    <span class="product-single__sku-label">{{ trans('product.sku') }}:</span>
+                    <span class="product-single__sku-value" data-product-sku-value>{{ product.sku|default(product.code) }}</span>
+                    <button type="button" class="product-single__sku-copy" data-copy-sku aria-label="{{ trans('common.copy') }}" title="{{ trans('common.copy') }}">
+                        <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                        </svg>
+                    </button>
+                </div>
+
                 {# Compare & Share row (directly follows buy box, matching reference theme) #}
                 <div class="product-single__actions-row">
                     {% if theme.settings.get('compare_enabled', true) %}
@@ -189,13 +201,87 @@
 
             <div class="product-tabs__panels">
                 <div class="product-tabs__panel is-active" id="tab-description" role="tabpanel">
-                    {% if product.description %}
-                        <div class="product-single__full-desc">
-                            {{ product.description|raw }}
+                    {% set detailed_desc = product.detailed_description|default(product.detail_description)|default(product.details)|default(product.long_description)|default(product.description) %}
+                    {% if detailed_desc %}
+                        <div class="product-single__full-desc" data-product-detailed-desc>
+                            {{ detailed_desc|raw }}
                         </div>
                     {% else %}
                         <p class="product-tabs__empty">{{ trans('product.details') }}</p>
                     {% endif %}
+
+                    {# Product specifications / dimensions: Weight, Height, Width, Length #}
+                    {% set spec_weight = product.weight|default(product.shipping_weight) %}
+                    {% set spec_height = product.height|default(product.dimensions.height|default('')) %}
+                    {% set spec_width = product.width|default(product.dimensions.width|default('')) %}
+                    {% set spec_length = product.length|default(product.dimensions.length|default(product.depth|default(''))) %}
+                    {% set has_specs = spec_weight or spec_height or spec_width or spec_length %}
+
+                    <div class="product-specs" data-product-specs{% if not has_specs %} hidden{% endif %}>
+                        <h3 class="product-specs__title">{{ trans('product.specifications') }}</h3>
+                        <div class="product-specs__grid">
+                            <div class="product-specs__item" data-spec-item="weight"{% if not spec_weight %} hidden{% endif %}>
+                                <div class="product-specs__icon" aria-hidden="true">
+                                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                        <circle cx="12" cy="6" r="3"/>
+                                        <path d="M6 12h12l-1.5 8.5a1.5 1.5 0 0 1-1.5 1.5H9a1.5 1.5 0 0 1-1.5-1.5L6 12z"/>
+                                    </svg>
+                                </div>
+                                <div class="product-specs__content">
+                                    <span class="product-specs__label">{{ trans('product.weight') }}</span>
+                                    <span class="product-specs__value">
+                                        <span data-spec-val="weight">{{ spec_weight }}</span>
+                                        <span class="product-specs__unit" data-spec-unit="weight">{{ trans('common.unit_kg') }}</span>
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div class="product-specs__item" data-spec-item="height"{% if not spec_height %} hidden{% endif %}>
+                                <div class="product-specs__icon" aria-hidden="true">
+                                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M12 3v18M8 6l4-3 4 3M8 18l4 3 4-3"/>
+                                    </svg>
+                                </div>
+                                <div class="product-specs__content">
+                                    <span class="product-specs__label">{{ trans('product.height') }}</span>
+                                    <span class="product-specs__value">
+                                        <span data-spec-val="height">{{ spec_height }}</span>
+                                        <span class="product-specs__unit" data-spec-unit="height">{{ trans('common.unit_cm') }}</span>
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div class="product-specs__item" data-spec-item="width"{% if not spec_width %} hidden{% endif %}>
+                                <div class="product-specs__icon" aria-hidden="true">
+                                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M3 12h18M6 8l-3 4 3 4M18 8l3 4-3 4"/>
+                                    </svg>
+                                </div>
+                                <div class="product-specs__content">
+                                    <span class="product-specs__label">{{ trans('product.width') }}</span>
+                                    <span class="product-specs__value">
+                                        <span data-spec-val="width">{{ spec_width }}</span>
+                                        <span class="product-specs__unit" data-spec-unit="width">{{ trans('common.unit_cm') }}</span>
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div class="product-specs__item" data-spec-item="length"{% if not spec_length %} hidden{% endif %}>
+                                <div class="product-specs__icon" aria-hidden="true">
+                                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M21 3L3 21M7 3h14v14M17 21H3V7"/>
+                                    </svg>
+                                </div>
+                                <div class="product-specs__content">
+                                    <span class="product-specs__label">{{ trans('product.length') }}</span>
+                                    <span class="product-specs__value">
+                                        <span data-spec-val="length">{{ spec_length }}</span>
+                                        <span class="product-specs__unit" data-spec-unit="length">{{ trans('common.unit_cm') }}</span>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="product-tabs__panel" id="tab-comments" role="tabpanel" hidden>
