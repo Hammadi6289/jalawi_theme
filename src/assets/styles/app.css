@@ -16849,6 +16849,25 @@ body.mega-is-open {
     transform: scale(1.25);
 }
 
+.mega-menu__tile-placeholder {
+    inline-size: 100%;
+    block-size: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: color-mix(in srgb, var(--color-primary) 6%, #f3f4f6);
+    color: color-mix(in srgb, var(--color-primary) 40%, #9ca3af);
+    border: 1px dashed color-mix(in srgb, var(--color-primary) 22%, #d1d5db);
+    border-radius: 0.5rem;
+    transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+.mega-menu__tile:hover .mega-menu__tile-placeholder {
+    background: color-mix(in srgb, var(--color-primary) 12%, #f3f4f6);
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+}
+
 .mega-menu__tile-title {
     display: flex;
     align-items: center;

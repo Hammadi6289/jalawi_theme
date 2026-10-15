@@ -67,9 +67,41 @@
             </ul>
         </falak-menu>
 
+        {% set custom_cards = theme.settings.get('mega_menu_cards')|default([]) %}
         {% set has_images = false %}
         {% for item in menu_items %}{% if item.image %}{% set has_images = true %}{% endif %}{% endfor %}
-        {% if has_images %}
+
+        {% if custom_cards|length > 0 %}
+            <div class="mega-menu__strip">
+                {% for card in custom_cards %}
+                    {% set tile_title = card.title|default(card['mega_menu_cards.title']|default('')) %}
+                    {% if tile_title is iterable %}
+                        {% set tile_title = tile_title[user.language.code]|default(tile_title.ar|default(tile_title.en|default(''))) %}
+                    {% endif %}
+                    {% set tile_link = card.link|default(card['mega_menu_cards.link']|default('/products')) %}
+                    {% set tile_image = card.image|default(card['mega_menu_cards.image']|default(null)) %}
+                    <a class="mega-menu__tile" href="{{ tile_link }}">
+                        <span class="mega-menu__tile-media">
+                            {% if tile_image %}
+                                <img src="{{ tile_image }}" alt="{{ tile_title }}" loading="lazy">
+                            {% else %}
+                                <span class="mega-menu__tile-placeholder">
+                                    <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                                        <circle cx="8.5" cy="8.5" r="1.5"/>
+                                        <polyline points="21 15 16 10 5 21"/>
+                                    </svg>
+                                </span>
+                            {% endif %}
+                        </span>
+                        <span class="mega-menu__tile-title">
+                            <span>{{ tile_title }}</span>
+                            <svg class="mega-menu__go" viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M19 12H5m6-6-6 6 6 6"/></svg>
+                        </span>
+                    </a>
+                {% endfor %}
+            </div>
+        {% elseif has_images %}
             <div class="mega-menu__strip">
                 {% for pass in ['parents', 'links'] %}
                     {% for item in menu_items %}

@@ -457,6 +457,95 @@
                     "required": false
                 },
                 {
+                    "id": "mega_menu_cards",
+                    "type": "collection",
+                    "format": "collection",
+                    "label": {
+                        "ar": "بطاقات القائمة المميزة",
+                        "en": "Featured menu cards"
+                    },
+                    "description": {
+                        "ar": "تظهر أسفل القائمة الجانبية (مثل بطاقات الأقسام المصورة)",
+                        "en": "Shown at the bottom of the side menu (e.g. featured category cards)"
+                    },
+                    "item_label": {
+                        "ar": "بطاقة",
+                        "en": "Card"
+                    },
+                    "required": false,
+                    "minLength": 0,
+                    "maxLength": 6,
+                    "value": [
+                        {
+                            "mega_menu_cards.title": {
+                                "ar": "مكياج",
+                                "en": "Makeup"
+                            },
+                            "mega_menu_cards.link": "/products",
+                            "mega_menu_cards.image": null
+                        },
+                        {
+                            "mega_menu_cards.title": {
+                                "ar": "عطور",
+                                "en": "Perfumes"
+                            },
+                            "mega_menu_cards.link": "/products",
+                            "mega_menu_cards.image": null
+                        },
+                        {
+                            "mega_menu_cards.title": {
+                                "ar": "عناية بالشعر",
+                                "en": "Hair care"
+                            },
+                            "mega_menu_cards.link": "/products",
+                            "mega_menu_cards.image": null
+                        }
+                    ],
+                    "fields": [
+                        {
+                            "id": "mega_menu_cards.title",
+                            "type": "string",
+                            "format": "text",
+                            "label": {
+                                "ar": "العنوان",
+                                "en": "Title"
+                            },
+                            "multilanguage": true,
+                            "required": true,
+                            "maxLength": 50
+                        },
+                        {
+                            "id": "mega_menu_cards.link",
+                            "type": "string",
+                            "format": "url",
+                            "label": {
+                                "ar": "الرابط",
+                                "en": "Link"
+                            },
+                            "description": {
+                                "ar": "رابط القسم أو الصفحة",
+                                "en": "Link to category or page"
+                            },
+                            "required": false,
+                            "maxLength": 255
+                        },
+                        {
+                            "id": "mega_menu_cards.image",
+                            "type": "string",
+                            "format": "image",
+                            "label": {
+                                "ar": "الصورة",
+                                "en": "Image"
+                            },
+                            "description": {
+                                "ar": "صورة البطاقة",
+                                "en": "Card image"
+                            },
+                            "required": false
+                        }
+                    ]
+                },
+                {
                     "id": "topnav_is_dark",
                     "type": "boolean",
                     "format": "switch",
