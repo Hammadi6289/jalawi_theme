@@ -13072,6 +13072,12 @@ falak-product-card falak-add-product-button button.is-clicked svg path,
     color: var(--color-text, #333333);
 }
 
+.cart-page:has(.empty-state) .page-head,
+.cart-page:has(.f-placeholder) .page-head,
+.cart-page:has([data-cart-empty]) .page-head {
+    display: none;
+}
+
 /*
     The "other products" grid shown when a category turns up empty. Only the
     heading needs rules — the grid and cards inside it are <falak-products-list>,

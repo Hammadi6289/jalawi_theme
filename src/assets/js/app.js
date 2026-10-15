@@ -1752,8 +1752,43 @@
         }
     }
 
+    /* Cart page enhancements: hide page-head when empty and hydrate theme-primary cart SVG */
+    function enhanceCartPage() {
+        var cartEl = document.querySelector('[data-cart-page]');
+        if (!cartEl) return;
+
+        var CART_SVG = '<svg class="empty-state__illustration" viewBox="0 0 260 200" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M85 35 C145 20, 210 40, 215 95 C220 150, 160 175, 115 170 C70 165, 45 130, 50 85 C55 45, 60 40, 85 35 Z" fill="color-mix(in srgb, var(--color-primary, #ce5a67) 14%, #ffffff)" /><circle cx="48" cy="115" r="5" stroke="color-mix(in srgb, var(--color-primary, #ce5a67) 35%, transparent)" stroke-width="2" fill="none" /><circle cx="56" cy="65" r="10" stroke="color-mix(in srgb, var(--color-primary, #ce5a67) 30%, transparent)" stroke-width="2" fill="none" /><circle cx="215" cy="48" r="8" stroke="color-mix(in srgb, var(--color-primary, #ce5a67) 30%, transparent)" stroke-width="2" fill="none" /><circle cx="68" cy="180" r="3.5" fill="#e59866" /><path d="M175 185 C190 190, 200 175, 210 180 C215 182, 222 175, 228 178" stroke="#e59866" stroke-width="1.8" stroke-dasharray="3 3" fill="none" /><circle cx="225" cy="160" r="11" fill="#e59866" /><path d="M221 156 L229 164 M229 156 L221 164" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" /><g class="empty-state__cart-group"><path d="M68 76 H78 L92 142 C93 147, 97 150, 102 150 H184 C189 150, 193 147, 194 142 L206 95 H83" stroke="var(--color-primary, #ce5a67)" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.2" /><path d="M68 76 H78 L92 142 C93 147, 97 150, 102 150 H184 C189 150, 193 147, 194 142 L206 95 H83" fill="color-mix(in srgb, var(--color-primary, #ce5a67) 38%, #ffffff)" /><rect x="106" y="104" width="46" height="6.5" rx="3.25" fill="#ffffff" /><rect x="112" y="120" width="46" height="6.5" rx="3.25" fill="#ffffff" /><circle cx="112" cy="165" r="13" fill="color-mix(in srgb, var(--color-primary, #ce5a67) 42%, #ffffff)" /><circle cx="174" cy="165" r="13" fill="color-mix(in srgb, var(--color-primary, #ce5a67) 42%, #ffffff)" /><circle cx="196" cy="90" r="19" fill="var(--color-primary, #ce5a67)" /><path d="M189 83 L203 97 M203 83 L189 97" stroke="#ffffff" stroke-width="3.5" stroke-linecap="round" /></g></svg>';
+
+        function checkCart() {
+            var emptyEl = cartEl.querySelector('.empty-state, .f-placeholder, [data-cart-empty]');
+            var pageHead = cartEl.querySelector('.page-head');
+            if (emptyEl && pageHead) {
+                pageHead.style.display = 'none';
+            }
+
+            var ph = cartEl.querySelector('.f-placeholder');
+            if (ph) {
+                var iconEl = ph.querySelector('.f-placeholder__icon');
+                if (iconEl && !iconEl.querySelector('svg')) {
+                    iconEl.innerHTML = CART_SVG;
+                    iconEl.classList.add('empty-state__icon-wrap');
+                }
+            }
+        }
+
+        checkCart();
+
+        if (window.MutationObserver) {
+            var cartObs = new MutationObserver(function () {
+                checkCart();
+            });
+            cartObs.observe(cartEl, { childList: true, subtree: true });
+        }
+    }
+
     enhanceProductSingle();
     enhanceCustomerPages();
+    enhanceCartPage();
 })();
 
 
