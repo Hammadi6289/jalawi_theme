@@ -8966,7 +8966,8 @@ falak-announcement:not(.f-announce--scroll) .f-announce__inner {
     inline-size: 2.5rem;
     block-size: 1.75rem;
     border-radius: 32px;
-    background: var(--color-secondary, #c18c63);
+    /* background: var(--color-secondary, #c18c63); */
+    background: var(--color-primary,  #c18c63);
     color: #fff;
     transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
 }
@@ -8981,16 +8982,19 @@ falak-announcement:not(.f-announce--scroll) .f-announce__inner {
     transform: scaleX(-1);
 }
 
-.hero-thumb--category:hover .hero-thumb__pill {
+.hero-thumb--category:hover .hero-thumb__pill,
+.hero-thumb--link:hover .hero-thumb__pill {
     background: #fff;
-    color: var(--color-secondary, #c18c63);
+    color: var(--color-primary);
 }
 
-.hero-thumb--category:hover .hero-thumb__pill svg {
+.hero-thumb--category:hover .hero-thumb__pill svg,
+.hero-thumb--link:hover .hero-thumb__pill svg {
     transform: rotate(45deg);
 }
 
-[dir="rtl"] .hero-thumb--category:hover .hero-thumb__pill svg {
+[dir="rtl"] .hero-thumb--category:hover .hero-thumb__pill svg,
+[dir="rtl"] .hero-thumb--link:hover .hero-thumb__pill svg {
     transform: scaleX(-1) rotate(45deg);
 }
 
