@@ -30,7 +30,9 @@
     The `card` styleable role has no element: <falak-products-list> renders
     its own cards so the role reaches them through the --falak-el-* custom
     properties, read back in app.css under "Customizer style hooks".
-#}
+{# `latest` is the endpoint’s own order, which it gives when no sort is sent —
+   so the attribute is omitted rather than set to a value the API does not know. #}
+{% set source = component.source|default('latest') %}
 <section class="block block--products" id="products-{{ position }}" {{ falak_section() }}>
     <div class="container">
         {% if component.title %}
@@ -38,6 +40,7 @@
         {% endif %}
 
         <falak-products-list
+            {% if source != 'latest' %}sort="{{ source }}"{% endif %}
             limit="{{ component.limit|default(8) }}"
             columns="{{ component.columns|default(4) }}"
             {% if component.category %}category="{{ component.category }}"{% endif %}

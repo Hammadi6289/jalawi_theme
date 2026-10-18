@@ -74,8 +74,16 @@
                     Platform component. `fetch` is opt-in per element — here it
                     is on because the product page is one product and one extra
                     request; the listing grid below leaves it off.
+
+                    Only rendered once the product HAS a review: empty stars and
+                    a "0" under the name read as a bad score rather than as no
+                    score yet, and the guard also saves the fetch on a product
+                    nobody has reviewed. The reviews section further down still
+                    shows, so a shopper can be the first to write one.
                 #}
-                <falak-rating-stars product-id="{{ product.id }}" fetch show-value></falak-rating-stars>
+                {% if product.reviews_count > 0 %}
+                    <falak-rating-stars product-id="{{ product.id }}" fetch show-value></falak-rating-stars>
+                {% endif %}
 
                 {# data-product-price: app.js rewrites it when a variant is chosen. #}
                 <p class="product-single__price" data-product-price>

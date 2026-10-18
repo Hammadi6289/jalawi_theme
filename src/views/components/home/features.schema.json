@@ -177,6 +177,20 @@
                     "maxLength": 200
                 }
             ]
+        },
+        {
+            "id": "show_icons",
+            "type": "boolean",
+            "format": "switch",
+            "label": {
+                "ar": "إظهار الأيقونات",
+                "en": "Show icons"
+            },
+            "description": {
+                "ar": "البطاقات التي لا تملك أيقونة تعرض علامة بديلة.",
+                "en": "Cards with no icon of their own fall back to a placeholder mark."
+            },
+            "value": true
         }
     ]
 }

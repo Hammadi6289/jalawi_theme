@@ -12,6 +12,17 @@
     Each item: title (localized), url, is_new_tab, image, children[].
 #}
 {% set menu_items = menus.main_menu|default([]) %}
+{#
+    A brand new store has no menu rows at all, which left this nav rendering an
+    empty <ul> — a header with nothing to click. `topnav_links` in theme.json
+    seeds Home and Products so the strip is never blank.
+
+    A FALLBACK, not an addition: the moment the merchant creates a menu on the
+    Menus screen their items take over completely.
+#}
+{% set starter_links = menu_items|length == 0
+    ? theme.settings.get('topnav_links')|default([])
+    : [] %}
 {% set banner = theme.settings.get('mega_menu_image')|default('images/mega-menu-banner.webp'|asset) %}
 
 <div class="mega-overlay" data-mega-close></div>
@@ -36,6 +47,22 @@
            link now toggles its list. #}
         <falak-menu class="mega-menu__nav" mobile label="{{ trans('common.menu') }}">
             <ul class="mega-menu__grid">
+                {% for link in starter_links %}
+                    {% set link_label = link.label|default(link['topnav_links.label']|default('')) %}
+                    {% if link_label is iterable %}
+                        {% set link_label = link_label[user.language.code]|default(link_label.ar|default(link_label.en|default(''))) %}
+                    {% endif %}
+                    {% set link_url = link.url|default(link['topnav_links.url']|default('/')) %}
+                    {% set link_visible = link.visible is defined ? link.visible : (link['topnav_links.visible'] is defined ? link['topnav_links.visible'] : true) %}
+                    {% if link_visible %}
+                        <li class="mega-menu__card">
+                            <a class="mega-menu__parent" href="{{ link_url }}">
+                                <span>{{ link_label }}</span>
+                            </a>
+                        </li>
+                    {% endif %}
+                {% endfor %}
+
                 {% for pass in ['parents', 'links'] %}
                     {% for item in menu_items %}
                         {% set has_children = item.children|default([])|length > 0 %}

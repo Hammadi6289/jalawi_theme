@@ -408,5 +408,9 @@
     "product.width": "العرض",
     "product.length": "الطول",
     "common.unit_kg": "كجم",
-    "common.unit_cm": "سم"
+    "common.unit_cm": "سم",
+    "videos.failed": "تعذّر تشغيل الفيديو.",
+    "product.quick_view": "عرض سريع",
+    "product.quick_view_failed": "تعذّر تحميل هذا المنتج.",
+    "product.full_details": "عرض التفاصيل الكاملة"
 }

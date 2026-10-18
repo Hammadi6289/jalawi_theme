@@ -408,5 +408,9 @@
     "product.width": "Width",
     "product.length": "Length",
     "common.unit_kg": "kg",
-    "common.unit_cm": "cm"
+    "common.unit_cm": "cm",
+    "videos.failed": "The video could not be played.",
+    "product.quick_view": "Quick view",
+    "product.quick_view_failed": "Could not load this product.",
+    "product.full_details": "View full details"
 }
