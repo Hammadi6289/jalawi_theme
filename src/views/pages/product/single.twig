@@ -141,16 +141,17 @@
 
                 </div>
 
-                {# Product SKU #}
-                <div class="product-single__sku" data-product-sku{% if not (product.sku or product.code) %} hidden{% endif %}>
-                    <span class="product-single__sku-label">{{ trans('product.sku') }}:</span>
-                    <span class="product-single__sku-value" data-product-sku-value>{{ product.sku|default(product.code) }}</span>
-                    <button type="button" class="product-single__sku-copy" data-copy-sku aria-label="{{ trans('common.copy') }}" title="{{ trans('common.copy') }}">
+                {# Product SKU 
+                 <button type="button" class="product-single__sku-copy" data-copy-sku aria-label="{{ trans('common.copy') }}" title="{{ trans('common.copy') }}">
                         <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                             <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
                             <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
                         </svg>
                     </button>
+                    #}
+                <div class="product-single__sku" data-product-sku{% if not (product.sku or product.code) %} hidden{% endif %}>
+                    <span class="product-single__sku-label">{{ trans('product.sku') }}:</span>
+                    <span class="product-single__sku-value" data-product-sku-value>{{ product.sku|default(product.code) }}</span>
                 </div>
 
                 {# Compare & Share row (directly follows buy box, matching reference theme) #}
