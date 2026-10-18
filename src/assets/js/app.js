@@ -1612,6 +1612,31 @@
         });
     });
 
+    /* Product single page Comments tab empty state handling */
+    function initCommentsEmptyState() {
+        var tabComments = document.getElementById('tab-comments');
+        if (!tabComments) return;
+
+        function checkEmpty() {
+            var hasList = tabComments.querySelector('.f-comments__item, .f-reviews-summary__bars');
+            var hasEmpty = tabComments.querySelector('.f-comments__empty, .f-reviews-summary__empty');
+
+            if (hasList) {
+                tabComments.classList.remove('is-empty');
+            } else if (hasEmpty) {
+                tabComments.classList.add('is-empty');
+            }
+        }
+
+        checkEmpty();
+        if (window.MutationObserver) {
+            var commentsObserver = new MutationObserver(checkEmpty);
+            commentsObserver.observe(tabComments, { childList: true, subtree: true });
+        }
+    }
+    initCommentsEmptyState();
+    window.addEventListener('load', initCommentsEmptyState);
+
     /* Button icons for Add to cart (Cart icon) & Buy now (Wallet icon) in buy-box */
     var cartSvg = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="btn-icon btn-icon--cart" aria-hidden="true"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>';
     var walletSvg = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="btn-icon btn-icon--wallet" aria-hidden="true"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"/><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"/><path d="M18 12a2 2 0 0 0 0 4h4v-4z"/></svg>';

@@ -12793,6 +12793,56 @@ falak-product-card falak-add-product-button button.is-clicked svg path,
     line-height: 1.8;
 }
 
+/* Product Comments Tab Empty State */
+.product-comments-empty {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding-block: 3.5rem 4rem;
+    padding-inline: 1.5rem;
+}
+
+.product-comments-empty__icon {
+    display: block;
+    inline-size: 4.25rem;
+    block-size: 4.25rem;
+    color: var(--color-primary);
+    margin-block-end: 1.15rem;
+    flex-shrink: 0;
+}
+
+.product-comments-empty__text {
+    margin: 0;
+    font-size: 1.05rem;
+    font-weight: 500;
+    line-height: 1.5;
+    color: var(--color-text);
+}
+
+/* Show empty state when tab is empty */
+#tab-comments.is-empty .product-comments-empty,
+#tab-comments:has(.f-comments__empty) .product-comments-empty,
+#tab-comments:has(.f-reviews-summary__empty) .product-comments-empty {
+    display: flex;
+}
+
+/* Hide clutter when empty */
+#tab-comments.is-empty .product-single__reviews-summary,
+.product-single__reviews-summary:has(.f-reviews-summary__empty) {
+    display: none;
+}
+
+#tab-comments.is-empty .f-comments__head,
+#tab-comments.is-empty .f-comments__gate,
+#tab-comments.is-empty .f-comments__empty,
+#tab-comments:has(.f-comments__empty) .f-comments__head,
+#tab-comments:has(.f-comments__empty) .f-comments__gate,
+#tab-comments:has(.f-comments__empty) .f-comments__empty {
+    display: none;
+}
+
 /* Mobile: Add to cart + Buy now stay pinned to the bottom while scrolling. */
 @media (max-width: 820px) {
     .product-single {

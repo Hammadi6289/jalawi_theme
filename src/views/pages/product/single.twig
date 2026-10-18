@@ -287,6 +287,13 @@
                 </div>
 
                 <div class="product-tabs__panel" id="tab-comments" role="tabpanel" hidden>
+                    <div class="product-comments-empty" id="product-comments-empty">
+                        <svg class="product-comments-empty__icon" viewBox="0 0 64 64" width="68" height="68" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M28 11 C19.2 11 12 16.8 12 24 C12 28.5 14.8 32.4 19 34.8 C21.6 36.3 24.7 37 28 37 C29.5 37 31 36.8 32.5 36.4 L39 42 L38 34.8 C41.6 32.5 44 28.5 44 24 C44 16.8 36.8 11 28 11 Z" />
+                            <path d="M42 27 C47 28.5 50.5 32.5 50.5 37.5 C50.5 41 48.8 44.1 46 46 L47 52 L41.5 48.5 C39.5 49.5 37.3 50 35 50 C31 50 27.5 48.5 25 46" />
+                        </svg>
+                        <p class="product-comments-empty__text">{{ trans('reviews.none_yet')|default('No reviews yet — be the first.') }}</p>
+                    </div>
                     <falak-reviews-summary product-id="{{ product.id }}" class="product-single__reviews-summary"></falak-reviews-summary>
                     <falak-comments product-id="{{ product.id }}" per-page="5"></falak-comments>
                 </div>
