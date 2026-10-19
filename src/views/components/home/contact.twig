@@ -28,7 +28,7 @@
 <section class="block block--contact" id="contact-{{ position }}" {{ falak_section() }}>
     <div class="container">
         {% if component.badge or component.title or component.subtitle %}
-            <div class="contact__header">
+            <div class="contact__header" data-reveal="fade">
                 {% if component.badge %}
                     <span class="contact-badge" data-falak-field="badge" data-falak-part="badge">{{ component.badge }}</span>
                 {% endif %}
@@ -41,7 +41,7 @@
             </div>
         {% endif %}
 
-        <div class="contact contact--pos-{{ img_pos }}{{ has_image ? '' : ' contact--single' }}">
+        <div class="contact contact--pos-{{ img_pos }}{{ has_image ? '' : ' contact--single' }}" data-reveal="slide-up" style="--reveal-delay: 120ms;">
             {% if has_image %}
                 <div class="contact__media" data-falak-part="image">
                     <img class="contact__image" data-falak-field="image" data-falak-label="{{ trans('editor.field.image') }}" src="{{ component.image }}" alt="{{ component.title|default('') }}" loading="lazy">

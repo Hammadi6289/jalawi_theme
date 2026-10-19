@@ -19,10 +19,10 @@
 <section class="block block--video" id="video-{{ position }}" {{ falak_section() }}>
     <div class="container">
         {% if component.title %}
-            <h2 class="block__title" data-falak-field="title" data-falak-label="{{ trans('editor.field.title') }}">{{ component.title }}</h2>
+            <h2 class="block__title" data-reveal="fade" data-falak-field="title" data-falak-label="{{ trans('editor.field.title') }}">{{ component.title }}</h2>
         {% endif %}
 
-        <div class="video-embed" data-falak-field="embed_url" data-falak-label="{{ trans('editor.field.video') }}" data-falak-bind="none">
+        <div class="video-embed" data-reveal="slide-up" style="--reveal-delay: 120ms;" data-falak-field="embed_url" data-falak-label="{{ trans('editor.field.video') }}" data-falak-bind="none">
             <iframe data-falak-bind-src="embed_url" src="{{ component.embed_url }}"
                     title="{{ component.title|default('Video') }}"
                     loading="lazy"

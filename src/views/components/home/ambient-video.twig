@@ -37,6 +37,7 @@
             </div>
         {% else %}
             <div class="ambient-video" style="aspect-ratio: {{ ratio }};"
+                 data-reveal="slide-up" style="--reveal-delay: 100ms;"
                  data-falak-field="{{ source == 'url' ? 'video_url' : 'video_file' }}"
                  data-falak-label="{{ trans('editor.field.video') }}"
                  data-falak-bind="none"

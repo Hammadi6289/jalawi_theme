@@ -10529,23 +10529,76 @@ falak-announcement:not(.f-announce--scroll) .f-announce__inner {
    Only while <html> has `has-reveal` (set in the head, confirmed by app.js). */
 .has-reveal [data-reveal] {
     opacity: 0;
+    will-change: opacity, transform;
     transition:
-        opacity var(--reveal-duration, 0.6s) cubic-bezier(0.165, 0.84, 0.44, 1) var(--reveal-delay, 0s),
-        transform var(--reveal-duration, 0.6s) cubic-bezier(0.165, 0.84, 0.44, 1) var(--reveal-delay, 0s);
+        opacity var(--reveal-duration, 0.65s) cubic-bezier(0.16, 1, 0.3, 1) var(--reveal-delay, 0s),
+        transform var(--reveal-duration, 0.65s) cubic-bezier(0.16, 1, 0.3, 1) var(--reveal-delay, 0s);
 }
 
+/* Slide from right in LTR, and vice versa in RTL */
 .has-reveal [data-reveal="slide-left"] {
-    transform: translateX(20%);
-    --reveal-duration: 0.25s;
+    transform: translate3d(35px, 0, 0);
 }
 
+[dir="rtl"] .has-reveal [data-reveal="slide-left"],
+html[lang="ar"] .has-reveal [data-reveal="slide-left"] {
+    transform: translate3d(-35px, 0, 0);
+}
+
+/* Slide from left in LTR, and vice versa (from right) in RTL / Arabic mode */
+.has-reveal [data-reveal="slide-right"] {
+    transform: translate3d(-35px, 0, 0);
+}
+
+[dir="rtl"] .has-reveal [data-reveal="slide-right"],
+html[lang="ar"] .has-reveal [data-reveal="slide-right"] {
+    transform: translate3d(35px, 0, 0);
+}
+
+/* Slide from start edge (left in LTR, right in RTL) */
+.has-reveal [data-reveal="slide-start"] {
+    transform: translate3d(-35px, 0, 0);
+}
+
+[dir="rtl"] .has-reveal [data-reveal="slide-start"],
+html[lang="ar"] .has-reveal [data-reveal="slide-start"] {
+    transform: translate3d(35px, 0, 0);
+}
+
+/* Slide from end edge (right in LTR, left in RTL) */
+.has-reveal [data-reveal="slide-end"] {
+    transform: translate3d(35px, 0, 0);
+}
+
+[dir="rtl"] .has-reveal [data-reveal="slide-end"],
+html[lang="ar"] .has-reveal [data-reveal="slide-end"] {
+    transform: translate3d(-35px, 0, 0);
+}
+
+/* Slide up from downwards */
 .has-reveal [data-reveal="slide-up"] {
-    transform: translateY(20%);
+    transform: translate3d(0, 35px, 0);
+}
+
+/* Slide down from upwards */
+.has-reveal [data-reveal="slide-down"] {
+    transform: translate3d(0, -35px, 0);
+}
+
+/* Fade in place */
+.has-reveal [data-reveal="fade"] {
+    transform: none;
+}
+
+/* Subtle zoom in */
+.has-reveal [data-reveal="zoom-in"] {
+    transform: scale(0.94);
 }
 
 .has-reveal [data-reveal].is-revealed {
     opacity: 1;
     transform: none;
+    will-change: auto;
 }
 
 /* ---- photo grid (home.photo-grid) — Jalawi's "Shop by category" flip cards ----
@@ -18208,4 +18261,4 @@ body.mega-is-open {
 .block--products .f-card__inner {
     border-radius: var(--falak-el-card-radius, revert);
     background-color: var(--falak-el-card-bg, revert);
-}
+}

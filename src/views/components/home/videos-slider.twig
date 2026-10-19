@@ -18,10 +18,11 @@
 <section class="block block--videos-slider" id="videos-slider-{{ position }}" {{ falak_section() }}>
     <div class="container">
         {% if component.title %}
-            <h2 class="block__title" data-falak-field="title" data-falak-label="{{ trans('editor.field.title') }}">{{ component.title }}</h2>
+            <h2 class="block__title" data-reveal="fade" data-falak-field="title" data-falak-label="{{ trans('editor.field.title') }}">{{ component.title }}</h2>
         {% endif %}
 
-        <falak-slider slides-per-view="4" gap="1.25rem" show-controls
+        <falak-slider data-reveal="slide-up" style="--reveal-delay: 120ms;"
+                      slides-per-view="4" gap="1.25rem" show-controls
                       data-falak-field="items" data-falak-label="{{ trans('editor.field.items') }}" data-falak-bind="none">
             <div slot="items">
                 {% for item in component.items|default([]) %}

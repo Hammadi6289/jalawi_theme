@@ -24,7 +24,7 @@
 <section class="block block--branches" id="branches-{{ position }}" {{ falak_section() }}>
     <div class="container">
         <div class="branches-layout">
-            <div class="branches-info-col">
+            <div class="branches-info-col" data-reveal="slide-start" style="--reveal-delay: 80ms;">
                 {% if component.title %}
                     <h2 class="branches__title" data-falak-field="title" data-falak-label="{{ trans('editor.field.title') }}" data-falak-part="title">
                         {{ component.title }}
@@ -127,7 +127,7 @@
                 {% endif %}
             </div>
 
-            <div class="branches-map-col">
+            <div class="branches-map-col" data-reveal="slide-end" style="--reveal-delay: 160ms;">
                 {% set first_item = items|first %}
                 {% set embed_url = first_item ? first_item.map_embed_url|default('https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d115982.9!2d46.72!3d24.71!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3e2f03890d48939b%3A0x60a9fba414f9b0aa!2sRiyadh!5e0!3m2!1sen!2ssa!4v1700000000000!5m2!1sen!2ssa') : '' %}
                 {% set link_url = first_item ? first_item.map_link|default('https://maps.google.com/?q=Riyadh') : '' %}

@@ -44,7 +44,8 @@
 
 <section class="block block--countdown" id="countdown-{{ position }}" {{ falak_section() }}>
     <div class="container">
-        <falak-countdown date="{{ component.ends_at }}" end-of-day boxed labeled size="lg"
+        <falak-countdown data-reveal="slide-up" style="--reveal-delay: 100ms;"
+                         date="{{ component.ends_at }}" end-of-day boxed labeled size="lg"
                          theme="{{ component.style|default('dark') }}"
                          title="{{ component.title }}"
                          description="{{ component.description }}"

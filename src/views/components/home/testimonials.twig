@@ -23,19 +23,20 @@
 <section class="block block--testimonials" id="testimonials-{{ position }}" {{ falak_section() }}>
     <div class="container">
         {% if component.title %}
-            <h2 class="block__title" data-falak-field="title" data-falak-label="{{ trans('editor.field.title') }}">{{ component.title }}</h2>
+            <h2 class="block__title" data-reveal="fade" data-falak-field="title" data-falak-label="{{ trans('editor.field.title') }}">{{ component.title }}</h2>
         {% endif %}
 
         {% set show_stars = component.show_stars is defined ? component.show_stars : true %}
         {% set items = component.items|default([]) %}
 
         {% if items|length %}
-            <div class="testimonials-slider-wrap">
+            <div class="testimonials-slider-wrap" data-reveal="slide-up" style="--reveal-delay: 100ms;">
                 <falak-slider class="testimonials-slider" slides-per-view="3" gap="1.5rem" show-controls loop
                               data-falak-field="items" data-falak-label="{{ trans('editor.field.items') }}" data-falak-bind="none">
                     <div slot="items" class="testimonials-grid">
                         {% for item in items %}
-                            <figure class="testimonial-card" data-falak-field="items" data-falak-label="{{ trans('editor.field.items') }}" data-falak-bind="none">
+                            <figure class="testimonial-card" data-reveal="slide-up" style="--reveal-delay: {{ 100 + (loop.index0 % 4) * 80 }}ms;"
+                                    data-falak-field="items" data-falak-label="{{ trans('editor.field.items') }}" data-falak-bind="none">
                                 <blockquote class="testimonial-card__quote" data-falak-part="quote">{{ item.text }}</blockquote>
 
                                 <div class="testimonial-card__footer">

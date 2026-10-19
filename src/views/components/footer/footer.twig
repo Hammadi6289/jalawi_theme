@@ -18,7 +18,7 @@
 <footer class="site-footer{{ theme.settings.get('footer_is_dark') ? ' site-footer--dark' : '' }}">
     <div class="site-footer__main">
         <div class="container site-footer__grid">
-            <div class="site-footer__brand">
+            <div class="site-footer__brand" data-reveal="slide-up" style="--reveal-delay: 50ms;">
                 <a href="{{ store.url }}" class="site-footer__logo" aria-label="{{ store.name }}">
                     {% if store.logo %}
                         <img src="{{ store.logo }}" alt="{{ store.name }}" width="69" height="69" loading="lazy">
@@ -49,7 +49,7 @@
                an empty "Useful links" heading reads as broken. #}
             {% set footer_links = menus.footer_menu|default([]) %}
             {% if footer_links|length %}
-                <nav class="site-footer__col site-footer__menu" aria-labelledby="footer-links-title">
+                <nav class="site-footer__col site-footer__menu" data-reveal="slide-up" style="--reveal-delay: 100ms;" aria-labelledby="footer-links-title">
                     <h3 class="site-footer__title" id="footer-links-title">{{ trans('footer.links') }}</h3>
                     <ul>
                         {% for item in footer_links %}
@@ -63,7 +63,7 @@
                (mobile, phone, email, WhatsApp, Telegram), rendered by the SDK.
                The component hides itself when none is on file; the column
                follows it (:has) so no orphan heading is left behind. #}
-            <div class="site-footer__col site-footer__contact">
+            <div class="site-footer__col site-footer__contact" data-reveal="slide-up" style="--reveal-delay: 150ms;">
                 <h3 class="site-footer__title">{{ trans('footer.contact') }}</h3>
                 <falak-contact-links only="mobile,phone,email,telegram" labels="false"></falak-contact-links>
             </div>
@@ -71,7 +71,7 @@
             {# Instagram gallery — footer_gallery collection; each tile links to
                its own URL, else the gallery link / Instagram account. #}
             {% if gallery|length %}
-                <div class="site-footer__col site-footer__gallery">
+                <div class="site-footer__col site-footer__gallery" data-reveal="slide-up" style="--reveal-delay: 200ms;">
                     <h3 class="site-footer__title">{{ theme.settings.get('footer_gallery_title')|default(trans('footer.instagram')) }}</h3>
                     <div class="site-footer__gallery-grid">
                         {% for tile in gallery %}
@@ -93,7 +93,7 @@
 
             {# Mobile apps — renders nothing until the store
                has the data on file, so an empty column costs no layout. #}
-            <div class="site-footer__col site-footer__apps">
+            <div class="site-footer__col site-footer__apps" data-reveal="slide-up" style="--reveal-delay: 250ms;">
                 <falak-apps-icons></falak-apps-icons>
             </div>
         </div>
@@ -103,7 +103,7 @@
            store's language, and posts through falak.newsletter.subscribe().
            The theme only skins it. #}
         {% if theme.settings.get('footer_newsletter_enabled', true) %}
-            <div class="container site-footer__newsletter">
+            <div class="container site-footer__newsletter" data-reveal="slide-up" style="--reveal-delay: 120ms;">
                 <h2 class="site-footer__newsletter-title">
                     {{ theme.settings.get('footer_newsletter_title')|default(trans('footer.newsletter')) }}
                 </h2>
@@ -113,7 +113,7 @@
     </div>
 
     <div class="site-footer__bottom">
-        <div class="container site-footer__bottom-inner">
+        <div class="container site-footer__bottom-inner" data-reveal="fade" style="--reveal-delay: 80ms;">
             <p class="site-footer__copyright">
                 {{ trans('footer.rights') }} | {{ 'now'|date('Y') }}
                 <a href="{{ store.url }}">{{ store.name }}</a>

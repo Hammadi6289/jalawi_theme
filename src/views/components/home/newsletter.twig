@@ -29,7 +29,7 @@
 #}
 <section class="block block--newsletter" id="newsletter-{{ position }}" {{ falak_section() }}>
     <div class="container">
-        <div class="newsletter" data-falak-part="box">
+        <div class="newsletter" data-reveal="slide-up" style="--reveal-delay: 100ms;" data-falak-part="box">
             {% if component.title %}
                 <h2 class="block__title" data-falak-field="title" data-falak-label="{{ trans('editor.field.title') }}">{{ component.title }}</h2>
             {% endif %}

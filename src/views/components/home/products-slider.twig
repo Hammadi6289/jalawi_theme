@@ -35,6 +35,8 @@
 <section class="block block--products-slider" id="products-slider-{{ position }}" {{ falak_section() }}>
     <div class="container">
         <falak-products-slider
+            data-reveal="slide-up"
+            style="--reveal-delay: 120ms;"
             data-falak-field="title"
             data-falak-label="{{ trans('editor.field.title') }}"
             data-falak-bind="none"

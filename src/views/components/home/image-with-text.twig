@@ -25,10 +25,10 @@
 <section class="block block--image-text" id="image-text-{{ position }}" {{ falak_section() }}>
     <div class="container">
         <div class="image-text{{ component.flipped ? ' image-text--flipped' : '' }}">
-            <div class="image-text__media">
+            <div class="image-text__media" data-reveal="slide-start" style="--reveal-delay: 100ms;">
                 <img data-falak-field="image" data-falak-label="{{ trans('editor.field.image') }}" src="{{ component.image }}" alt="{{ component.title|default('') }}" loading="lazy">
             </div>
-            <div class="image-text__body" data-falak-part="body">
+            <div class="image-text__body" data-reveal="slide-end" style="--reveal-delay: 180ms;" data-falak-part="body">
                 {% if component.title %}<h2 data-falak-field="title" data-falak-label="{{ trans('editor.field.title') }}">{{ component.title }}</h2>{% endif %}
                 {% if component.text %}<p data-falak-field="text" data-falak-label="{{ trans('editor.field.text') }}">{{ component.text }}</p>{% endif %}
                 {% if component.button_text and component.button_url %}

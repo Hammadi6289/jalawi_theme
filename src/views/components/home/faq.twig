@@ -26,7 +26,7 @@
 <section class="block block--faq" id="faq-{{ position }}" {{ falak_section() }}>
     <div class="container">
         {% if component.title %}
-            <h2 class="faq__title" data-falak-field="title" data-falak-label="{{ trans('editor.field.title') }}" data-falak-part="title">{{ component.title }}</h2>
+            <h2 class="faq__title" data-reveal="fade" data-falak-field="title" data-falak-label="{{ trans('editor.field.title') }}" data-falak-part="title">{{ component.title }}</h2>
         {% endif %}
 
         <div class="faq__grid{{ component.columns|default('2') == '1' ? ' faq__grid--single' : '' }}">
@@ -34,6 +34,7 @@
                 {% if item.question|default(null) %}
                     <falak-accordion class="faq__item" collapsible name="faq-{{ position }}-{{ loop.index }}"
                                      collapsed="{{ first_open and loop.first ? 'false' : 'true' }}"
+                                     data-reveal="slide-left" style="--reveal-delay: {{ 80 + (loop.index0 % 6) * 90 }}ms;"
                                      data-falak-field="items" data-falak-label="{{ trans('editor.field.items') }}" data-falak-bind="none">
                         <falak-accordion-head class="faq__head">
                             <span class="faq__question" data-falak-part="question">{{ item.question }}</span>

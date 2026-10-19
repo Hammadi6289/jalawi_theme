@@ -247,14 +247,14 @@
                     var limit = parseInt(feed.getAttribute('data-limit'), 10) || 4;
                     var items = list.slice(0, limit);
 
-                    feed.innerHTML = items.map(function (article) {
+                    feed.innerHTML = items.map(function (article, index) {
                         var url = '/blogs/' + encodeURIComponent(article.slug || article.id);
                         var imgUrl = article.featured_image_url || article.image_url || article.image || '';
                         var title = escapeHtml(article.title || '');
                         var excerpt = article.excerpt ? escapeHtml(article.excerpt) : '';
                         var dateFormatted = formatDate(article.published_at || article.created_at);
 
-                        return '<article class="blog-card">' +
+                        return '<article class="blog-card" data-reveal="slide-left" style="--reveal-delay: ' + (100 + index * 100) + 'ms;">' +
                             '<a class="blog-card__media" href="' + url + '" tabindex="-1" aria-hidden="true">' +
                                 (imgUrl ? '<img src="' + escapeHtml(imgUrl) + '" alt="' + title + '" loading="lazy">' : '<div class="blog-placeholder-img"></div>') +
                             '</a>' +
