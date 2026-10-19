@@ -1,0 +1,142 @@
+{#
+    Featured Showcase — merchant-placeable component (home + builder pages).
+    Symmetrical 3-column interactive layout:
+    - Start column: items with thumbnail pointing toward the center
+    - Centerpiece: large prominent featured showcase image
+    - End column: items with thumbnail pointing toward the center
+
+    | Variable                   | Type    | Description                              |
+    | component.badge            | ?string | small eyebrow / badge text               |
+    | component.title            | ?string | headline                                 |
+    | component.subtitle         | ?string | description                              |
+    | component.center_image     | ?string | centerpiece image URL                    |
+    | component.center_url       | ?string | centerpiece link                         |
+    | component.items[].image    | ?string | thumbnail image URL                      |
+    | component.items[].title    | string  | item headline                            |
+    | component.items[].text     | ?string | item short description                   |
+    | component.items[].url      | ?string | target link                              |
+    | position                   | int     | section order                            |
+
+    Customizer bindings:
+    | Element                  | Tag                                             |
+    | .showcase__badge         | data-falak-field="badge"                        |
+    | .showcase__title         | data-falak-field="title"                        |
+    | .showcase__subtitle      | data-falak-field="subtitle"                     |
+    | .showcase__center        | data-falak-field="center_image"                 |
+    | .showcase-item           | data-falak-field="items" data-falak-bind="none" |
+#}
+{% set badge = component.badge|default(null) %}
+{% set title = component.title|default(null) %}
+{% set subtitle = component.subtitle|default(null) %}
+{% set center_url = component.center_url|default(null) %}
+{% set center_image = component.center_image|default(null) %}
+{% if not center_image %}
+    {% set center_image = 'images/category-sidebar-banner.jpg'|asset %}
+{% endif %}
+
+{% set items = component.items|default([]) %}
+{% set total_items = items|length %}
+{% set fallback_images = [
+    'images/category-1.jpg',
+    'images/category-2.jpg',
+    'images/category-3.jpg',
+    'images/category-4.jpg',
+    'images/banner-1.jpg',
+    'images/banner-2.jpg',
+    'images/banner-3.jpg',
+    'images/mega-menu-banner.webp'
+] %}
+
+<section class="block block--featured-showcase" id="featured-showcase-{{ position }}" {{ falak_section() }}>
+    <div class="container">
+        {% if badge or title or subtitle %}
+            <header class="showcase__head" data-reveal="fade" style="--reveal-delay: 80ms;">
+                <div class="showcase__divider" aria-hidden="true"></div>
+                <div class="showcase__head-content">
+                    {% if badge %}
+                        <span class="showcase__badge" data-falak-field="badge" data-falak-label="{{ trans('editor.field.badge') }}" data-falak-part="badge">{{ badge }}</span>
+                    {% endif %}
+                    {% if title %}
+                        <h2 class="showcase__title" data-falak-field="title" data-falak-label="{{ trans('editor.field.title') }}" data-falak-part="title">{{ title }}</h2>
+                    {% endif %}
+                    {% if subtitle %}
+                        <p class="showcase__subtitle" data-falak-field="subtitle" data-falak-label="{{ trans('editor.field.text') }}" data-falak-part="subtitle">{{ subtitle }}</p>
+                    {% endif %}
+                </div>
+            </header>
+        {% endif %}
+
+        <div class="showcase__grid">
+            {# Column 1: Start Column (Left in LTR, Right in RTL) #}
+            {% if total_items > 0 %}
+                <div class="showcase__col showcase__col--start">
+                    {% for item in items %}
+                        {% if loop.index0 < (total_items / 2) %}
+                            {% set href = item.url|default('#') %}
+                            {% set img = item.image|default(null) %}
+                            {% if not img %}
+                                {% set img = fallback_images[loop.index0 % 8]|asset %}
+                            {% endif %}
+                            <a href="{{ href }}" class="showcase-item" data-reveal="slide-start" style="--reveal-delay: {{ 100 + loop.index0 * 70 }}ms;"
+                               data-falak-field="items" data-falak-label="{{ trans('editor.field.items') }}" data-falak-bind="none" data-falak-part="item_card">
+                                <div class="showcase-item__content">
+                                    {% if item.title %}
+                                        <h3 class="showcase-item__title" data-falak-part="item_title">{{ item.title }}</h3>
+                                    {% endif %}
+                                    {% if item.text %}
+                                        <p class="showcase-item__desc" data-falak-part="item_text">{{ item.text }}</p>
+                                    {% endif %}
+                                </div>
+                                <div class="showcase-item__thumb" data-falak-part="thumbnail" aria-hidden="true">
+                                    <img src="{{ img }}" alt="{{ item.title|default('') }}" loading="lazy">
+                                </div>
+                            </a>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            {# Column 2: Centerpiece Hero Product #}
+            <div class="showcase__center" data-reveal="zoom-in" style="--reveal-delay: 150ms;">
+                {% if center_url %}
+                    <a href="{{ center_url }}" class="showcase__center-link" data-falak-field="center_image" data-falak-label="{{ trans('editor.field.image') }}" data-falak-part="center_image">
+                        <img class="showcase__center-img" src="{{ center_image }}" alt="{{ title|default('') }}" loading="lazy">
+                    </a>
+                {% else %}
+                    <div class="showcase__center-media" data-falak-field="center_image" data-falak-label="{{ trans('editor.field.image') }}" data-falak-part="center_image">
+                        <img class="showcase__center-img" src="{{ center_image }}" alt="{{ title|default('') }}" loading="lazy">
+                    </div>
+                {% endif %}
+            </div>
+
+            {# Column 3: End Column (Right in LTR, Left in RTL) #}
+            {% if total_items > 1 %}
+                <div class="showcase__col showcase__col--end">
+                    {% for item in items %}
+                        {% if loop.index0 >= (total_items / 2) %}
+                            {% set href = item.url|default('#') %}
+                            {% set img = item.image|default(null) %}
+                            {% if not img %}
+                                {% set img = fallback_images[loop.index0 % 8]|asset %}
+                            {% endif %}
+                            <a href="{{ href }}" class="showcase-item" data-reveal="slide-end" style="--reveal-delay: {{ 100 + loop.index0 * 70 }}ms;"
+                               data-falak-field="items" data-falak-label="{{ trans('editor.field.items') }}" data-falak-bind="none" data-falak-part="item_card">
+                                <div class="showcase-item__content">
+                                    {% if item.title %}
+                                        <h3 class="showcase-item__title" data-falak-part="item_title">{{ item.title }}</h3>
+                                    {% endif %}
+                                    {% if item.text %}
+                                        <p class="showcase-item__desc" data-falak-part="item_text">{{ item.text }}</p>
+                                    {% endif %}
+                                </div>
+                                <div class="showcase-item__thumb" data-falak-part="thumbnail" aria-hidden="true">
+                                    <img src="{{ img }}" alt="{{ item.title|default('') }}" loading="lazy">
+                                </div>
+                            </a>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</section>

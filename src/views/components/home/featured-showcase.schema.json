@@ -1,0 +1,359 @@
+{
+    "key": "falak-featured-showcase",
+    "path": "home.featured-showcase",
+    "title": {
+        "ar": "تشكيلة مميزة ومبتكرة",
+        "en": "Featured Showcase"
+    },
+    "icon": "layout-masonry-line",
+    "is_default": false,
+    "areas": [
+        "home",
+        "pages"
+    ],
+    "styleable": [
+        {
+            "id": "badge",
+            "label": {
+                "ar": "الشارة العلوية",
+                "en": "Top badge"
+            },
+            "properties": [
+                "font_size",
+                "font_weight",
+                "color",
+                "background_color",
+                "border_radius",
+                "padding_block",
+                "padding_inline"
+            ]
+        },
+        {
+            "id": "title",
+            "label": {
+                "ar": "عنوان القسم",
+                "en": "Section title"
+            },
+            "properties": [
+                "font_size",
+                "font_weight",
+                "color"
+            ]
+        },
+        {
+            "id": "subtitle",
+            "label": {
+                "ar": "نص القسم",
+                "en": "Section text"
+            },
+            "properties": [
+                "font_size",
+                "font_weight",
+                "color"
+            ]
+        },
+        {
+            "id": "center_image",
+            "label": {
+                "ar": "الصورة الرئيسية بالمنتصف",
+                "en": "Centerpiece image"
+            },
+            "properties": [
+                "border_radius",
+                "border_width",
+                "border_color",
+                "max_width"
+            ]
+        },
+        {
+            "id": "item_card",
+            "label": {
+                "ar": "بطاقة العنصر",
+                "en": "Item card"
+            },
+            "properties": [
+                "background_color",
+                "border_radius",
+                "border_width",
+                "border_color",
+                "padding_block",
+                "padding_inline"
+            ]
+        },
+        {
+            "id": "item_title",
+            "label": {
+                "ar": "عنوان العنصر",
+                "en": "Item title"
+            },
+            "properties": [
+                "font_size",
+                "font_weight",
+                "color"
+            ]
+        },
+        {
+            "id": "item_text",
+            "label": {
+                "ar": "وصف العنصر",
+                "en": "Item description"
+            },
+            "properties": [
+                "font_size",
+                "font_weight",
+                "color"
+            ]
+        },
+        {
+            "id": "thumbnail",
+            "label": {
+                "ar": "الصورة المصغرة",
+                "en": "Item thumbnail"
+            },
+            "properties": [
+                "border_radius",
+                "border_width",
+                "border_color"
+            ]
+        }
+    ],
+    "fields": [
+        {
+            "id": "badge",
+            "type": "string",
+            "format": "text",
+            "label": {
+                "ar": "الشارة أو النص العلوي",
+                "en": "Top badge text"
+            },
+            "multilanguage": true,
+            "required": false,
+            "maxLength": 80,
+            "value": {
+                "ar": "تخفيضات كبيرة تصل لـ 70%",
+                "en": "Exclusive Offers Up To 70%"
+            }
+        },
+        {
+            "id": "title",
+            "type": "string",
+            "format": "text",
+            "label": {
+                "ar": "العنوان الرئيسي",
+                "en": "Section headline"
+            },
+            "multilanguage": true,
+            "required": false,
+            "maxLength": 120,
+            "value": {
+                "ar": "نقدم لكِ تشكيلة متكاملة من الجمال والأناقة",
+                "en": "Curated Collection of Beauty & Elegance"
+            }
+        },
+        {
+            "id": "subtitle",
+            "type": "string",
+            "format": "textarea",
+            "label": {
+                "ar": "النص التوضيحي",
+                "en": "Description under title"
+            },
+            "multilanguage": true,
+            "required": false,
+            "maxLength": 255,
+            "value": {
+                "ar": "تتمتع منتجاتنا بأعلى معايير الجودة والخامات الأصلية 100% لإبراز تميزكِ",
+                "en": "100% authentic curated craftsmanship designed to elevate your everyday glow"
+            }
+        },
+        {
+            "id": "center_image",
+            "type": "string",
+            "format": "image",
+            "label": {
+                "ar": "الصورة الرئيسية بالمنتصف",
+                "en": "Centerpiece image"
+            },
+            "description": {
+                "ar": "الصورة المركزية البارزة. المقاس الموصى به: صورة طولية بدقة 600×800 بكسل وبخلفية شفافة (PNG أو WebP).",
+                "en": "Prominent centerpiece image. Recommended size: 600x800 px portrait with transparent background (PNG or WebP)."
+            },
+            "required": false
+        },
+        {
+            "id": "center_url",
+            "type": "string",
+            "format": "text",
+            "label": {
+                "ar": "رابط الصورة الرئيسية",
+                "en": "Centerpiece link"
+            },
+            "required": false,
+            "value": "/"
+        },
+        {
+            "id": "items",
+            "type": "collection",
+            "format": "collection",
+            "label": {
+                "ar": "العناصر المحيطة",
+                "en": "Showcase items"
+            },
+            "item_label": {
+                "ar": "عنصر",
+                "en": "Item"
+            },
+            "description": {
+                "ar": "أضف ما يصل إلى 12 عنصرًا (تتوزع بالتساوي على جانبي الصورة المركزية)",
+                "en": "Add up to 12 items (distributed symmetrically around the centerpiece)"
+            },
+            "required": true,
+            "minLength": 2,
+            "maxLength": 12,
+            "value": [
+                {
+                    "items.image": "",
+                    "items.title": {
+                        "ar": "العناية بالبشرة",
+                        "en": "Skincare"
+                    },
+                    "items.text": {
+                        "ar": "مستحضرات طبيعية لترطيب ونضارة فائقة طوال اليوم",
+                        "en": "Natural formulas for deep hydration and daily radiance"
+                    },
+                    "items.url": "/"
+                },
+                {
+                    "items.image": "",
+                    "items.title": {
+                        "ar": "مكياج وإشراقة",
+                        "en": "Makeup & Glow"
+                    },
+                    "items.text": {
+                        "ar": "ألوان عصرية وأدوات احترافية لإطلالة ساحرة",
+                        "en": "Trendy shades and tools for a flawless finish"
+                    },
+                    "items.url": "/"
+                },
+                {
+                    "items.image": "",
+                    "items.title": {
+                        "ar": "العطور الفاخرة",
+                        "en": "Luxury Perfumes"
+                    },
+                    "items.text": {
+                        "ar": "نفحات عطرية ساحرة تدوم طويلاً وتأسر الحواس",
+                        "en": "Enchanting scents that linger with elegance"
+                    },
+                    "items.url": "/"
+                },
+                {
+                    "items.image": "",
+                    "items.title": {
+                        "ar": "العناية بالشعر",
+                        "en": "Hair Care"
+                    },
+                    "items.text": {
+                        "ar": "زيوت وسيرومات مغذية لشعر صحي وقوي ولامع",
+                        "en": "Nourishing oils and serums for radiant, strong hair"
+                    },
+                    "items.url": "/"
+                },
+                {
+                    "items.image": "",
+                    "items.title": {
+                        "ar": "أطقم ومجموعات",
+                        "en": "Gift Sets"
+                    },
+                    "items.text": {
+                        "ar": "تشكيلات حصرية لهدايا فاخرة لا تُنسى",
+                        "en": "Exclusive sets curated for unforgettable moments"
+                    },
+                    "items.url": "/"
+                },
+                {
+                    "items.image": "",
+                    "items.title": {
+                        "ar": "إكسسوارات الأناقة",
+                        "en": "Fashion Accessories"
+                    },
+                    "items.text": {
+                        "ar": "لمسات نهائية أنيقة تكمل بهاء مظهركِ العصري",
+                        "en": "Elegant finishing touches to complete your look"
+                    },
+                    "items.url": "/"
+                },
+                {
+                    "items.image": "",
+                    "items.title": {
+                        "ar": "منتجات الاستحمام",
+                        "en": "Bath & Body"
+                    },
+                    "items.text": {
+                        "ar": "تجربة سبا فاخرة ومريحة في راحة منزلكِ",
+                        "en": "A lavish spa retreat in the comfort of your home"
+                    },
+                    "items.url": "/"
+                },
+                {
+                    "items.image": "",
+                    "items.title": {
+                        "ar": "أدوات التجميل",
+                        "en": "Beauty Tools"
+                    },
+                    "items.text": {
+                        "ar": "أدوات دقيقة وعملية للعناية اليومية المتكاملة",
+                        "en": "Precision tools crafted for your daily routine"
+                    },
+                    "items.url": "/"
+                }
+            ],
+            "fields": [
+                {
+                    "id": "items.image",
+                    "type": "string",
+                    "format": "image",
+                    "label": {
+                        "ar": "الصورة المصغرة",
+                        "en": "Thumbnail image"
+                    },
+                    "required": false
+                },
+                {
+                    "id": "items.title",
+                    "type": "string",
+                    "format": "text",
+                    "label": {
+                        "ar": "العنوان",
+                        "en": "Title"
+                    },
+                    "multilanguage": true,
+                    "required": true,
+                    "maxLength": 80
+                },
+                {
+                    "id": "items.text",
+                    "type": "string",
+                    "format": "textarea",
+                    "label": {
+                        "ar": "الوصف المختصر",
+                        "en": "Short description"
+                    },
+                    "multilanguage": true,
+                    "required": false,
+                    "maxLength": 200
+                },
+                {
+                    "id": "items.url",
+                    "type": "string",
+                    "format": "text",
+                    "label": {
+                        "ar": "الرابط",
+                        "en": "Link"
+                    },
+                    "required": false
+                }
+            ]
+        }
+    ]
+}
