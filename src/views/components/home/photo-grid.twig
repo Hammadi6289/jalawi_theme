@@ -47,6 +47,7 @@
                     {% set category_id = item.category|default(null) %}
                     {% set href = category_id ? '/products?category_id[]=' ~ category_id : item.url|default('#') %}
                     {% set image = item.image|default(null) %}
+                    {% if not image and not category_id %}{% set image = ('images/category-' ~ ((loop.index0 % 4) + 1) ~ '.jpg')|asset %}{% endif %}
                     <div class="cat-card" data-reveal="slide-left" style="--reveal-delay: {{ 100 + loop.index0 * 80 }}ms;"
                          {% if category_id %}data-category-id="{{ category_id }}"{% endif %}
                          data-falak-field="items" data-falak-label="{{ trans('editor.field.items') }}" data-falak-bind="none">

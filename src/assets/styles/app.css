@@ -816,7 +816,7 @@ falak-rating-stars[data-busy] {
 
 /* ------------------------------------------------- product card variants */
 /*
-    Theme-raed's custom-salla-product-card vocabulary, as attributes:
+    Theme-raed's custom-product-card vocabulary, as attributes:
     minimal · full-image · special · horizontal. Same data, four treatments.
 */
 
@@ -15950,7 +15950,7 @@ html[lang="ar"] #falak-search .f-search__list:not(:empty)::before {
 }
 
 /* --------------------------------------------------------------- top bar */
-/* Mirrors the Jalawi (Salla) head marquee + top-navbar: primary background,
+/* Mirrors the head marquee + top-navbar: primary background,
    white text, marquee masked inside the container, contacts desktop-only. */
 
 .site-topbar {

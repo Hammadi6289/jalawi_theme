@@ -103,7 +103,7 @@
             "value": [
                 {
                     "items.category": null,
-                    "items.image": "https://cdn.salla.sa/lGlWoD/categories/OA1Qilz0FcWTB9YFqLLATnILGS0CV1fWv5jXcYoY.png",
+                    "items.image": "",
                     "items.title": {
                         "ar": "العناية بالشعر",
                         "en": "Hair care"
@@ -112,7 +112,7 @@
                 },
                 {
                     "items.category": null,
-                    "items.image": "https://cdn.salla.sa/lGlWoD/categories/zt4Vc7qQvEPGnjBPENxSu8aMZneIz8RiRIkHCTxm.png",
+                    "items.image": "",
                     "items.title": {
                         "ar": "العناية بالبشرة",
                         "en": "Skincare"
@@ -121,7 +121,7 @@
                 },
                 {
                     "items.category": null,
-                    "items.image": "https://cdn.salla.sa/lGlWoD/categories/PdS5ronRbtq7pYWJDUlLUFAnVoSJmyr1Wpx5rFdg.png",
+                    "items.image": "",
                     "items.title": {
                         "ar": "مكياج",
                         "en": "Makeup"
@@ -134,7 +134,7 @@
                 },
                 {
                     "items.category": null,
-                    "items.image": "https://cdn.salla.sa/lGlWoD/categories/XwXQOsfJRK64cdNJvdo9kwuscdAQ52nrhXqQcANo.png",
+                    "items.image": "",
                     "items.title": {
                         "ar": "العطور",
                         "en": "perfumes"

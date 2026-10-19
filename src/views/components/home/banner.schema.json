@@ -84,7 +84,7 @@
             "maxLength": 8,
             "value": [
                 {
-                    "banners.image": "https://cdn.files.salla.network/homepage/2070588102/4fbb4d86-d9c5-46a5-9dcd-5a5b3f551e6f.webp",
+                    "banners.image": "",
                     "banners.subtitle": {
                         "ar": "منتجات مختارة بعناية",
                         "en": "carefully selected products"
@@ -102,7 +102,7 @@
                     "banners.text_color": "dark"
                 },
                 {
-                    "banners.image": "https://cdn.files.salla.network/homepage/2070588102/57365c80-ec7b-484a-8321-aa843c9e72aa.webp",
+                    "banners.image": "",
                     "banners.subtitle": {
                         "ar": "جمال الموسم",
                         "en": "The beauty of the season"
@@ -120,7 +120,7 @@
                     "banners.text_color": "dark"
                 },
                 {
-                    "banners.image": "https://cdn.files.salla.network/homepage/2070588102/27be0f0d-f02c-47cd-ae2b-68c2842f7f90.webp",
+                    "banners.image": "",
                     "banners.subtitle": {
                         "ar": "دلّلي شعرك",
                         "en": "Treat Your Hair Right"
@@ -151,7 +151,7 @@
                         "ar": "البنر الكبير ~800×1000، الجانبية ~800×500",
                         "en": "Large banner ~800×1000, side banners ~800×500"
                     },
-                    "required": true
+                    "required": false
                 },
                 {
                     "id": "banners.subtitle",

@@ -47,9 +47,8 @@
                 <div class="promo-tile promo-tile--{{ align }}{{ banner.text_color|default('dark') == 'light' ? ' promo-tile--light' : '' }}{{ loop.first ? ' promo-tile--main' : '' }}"
                      data-reveal="slide-up" style="--reveal-delay: {{ 100 + loop.index0 * 90 }}ms;"
                      data-falak-field="banners" data-falak-label="{{ trans('editor.field.items') }}" data-falak-bind="none">
-                    {% if banner.image|default(null) %}
-                        <img class="promo-tile__img" src="{{ banner.image }}" alt="" loading="lazy">
-                    {% endif %}
+                    {% set banner_image = banner.image|default(null) ?: ('images/banner-' ~ ((loop.index0 % 3) + 1) ~ '.jpg')|asset %}
+                    <img class="promo-tile__img" src="{{ banner_image }}" alt="" loading="lazy">
                     <div class="promo-tile__content" data-falak-part="content">
                         {% if banner.subtitle|default(null) %}<h2 class="promo-tile__subtitle" data-falak-part="subtitle">{{ banner.subtitle }}</h2>{% endif %}
                         {% if banner.title|default(null) %}<p class="promo-tile__title" data-falak-part="title">{{ banner.title }}</p>{% endif %}
