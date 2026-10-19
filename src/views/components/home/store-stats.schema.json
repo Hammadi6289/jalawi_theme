@@ -1,0 +1,305 @@
+{
+    "key": "falak-store-stats",
+    "path": "home.store-stats",
+    "title": {
+        "ar": "إحصائيات المتجر",
+        "en": "Store Stats"
+    },
+    "icon": "bar-chart-line",
+    "is_default": false,
+    "areas": [
+        "home",
+        "pages"
+    ],
+    "styleable": [
+        {
+            "id": "badge",
+            "label": {
+                "ar": "النص العلوي الصغير",
+                "en": "Small top line"
+            },
+            "properties": [
+                "font_size",
+                "font_weight",
+                "color"
+            ]
+        },
+        {
+            "id": "title",
+            "label": {
+                "ar": "عنوان القسم",
+                "en": "Section title"
+            },
+            "properties": [
+                "font_size",
+                "font_weight",
+                "color"
+            ]
+        },
+        {
+            "id": "subtitle",
+            "label": {
+                "ar": "نص القسم",
+                "en": "Section text"
+            },
+            "properties": [
+                "font_size",
+                "font_weight",
+                "color"
+            ]
+        },
+        {
+            "id": "stat_card",
+            "label": {
+                "ar": "بطاقة الإحصائية",
+                "en": "Stat card"
+            },
+            "properties": [
+                "background_color",
+                "border_radius",
+                "border_width",
+                "border_color",
+                "padding_block",
+                "padding_inline"
+            ]
+        },
+        {
+            "id": "stat_icon",
+            "label": {
+                "ar": "دائرة الأيقونة",
+                "en": "Icon circle"
+            },
+            "properties": [
+                "border_radius",
+                "border_width",
+                "border_color"
+            ]
+        },
+        {
+            "id": "stat_value",
+            "label": {
+                "ar": "الرقم",
+                "en": "Number"
+            },
+            "properties": [
+                "font_size",
+                "font_weight",
+                "color"
+            ]
+        },
+        {
+            "id": "stat_label",
+            "label": {
+                "ar": "وصف الرقم",
+                "en": "Number caption"
+            },
+            "properties": [
+                "font_size",
+                "font_weight",
+                "color"
+            ]
+        }
+    ],
+    "fields": [
+        {
+            "id": "badge",
+            "type": "string",
+            "format": "text",
+            "label": {
+                "ar": "النص العلوي الصغير",
+                "en": "Small top line"
+            },
+            "multilanguage": true,
+            "required": false,
+            "maxLength": 60,
+            "value": {
+                "ar": "إنجازات نفخر بها",
+                "en": "Milestones of Excellence"
+            }
+        },
+        {
+            "id": "title",
+            "type": "string",
+            "format": "text",
+            "label": {
+                "ar": "عنوان القسم",
+                "en": "Section title"
+            },
+            "multilanguage": true,
+            "required": false,
+            "maxLength": 100,
+            "value": {
+                "ar": "إحصائيات المتجر",
+                "en": "Our store in numbers"
+            }
+        },
+        {
+            "id": "subtitle",
+            "type": "string",
+            "format": "textarea",
+            "label": {
+                "ar": "نص تحت العنوان",
+                "en": "Text under the title"
+            },
+            "multilanguage": true,
+            "required": false,
+            "maxLength": 255,
+            "value": {
+                "ar": "أرقام تعكس ثقة عميلاتنا وشغفهن بتشكيلاتنا من الأزياء والجمال، ونفخر بمشاركتها معكِ.",
+                "en": "Numbers that reflect our customers' trust and their love for our fashion and beauty collections."
+            }
+        },
+        {
+            "id": "items",
+            "type": "collection",
+            "format": "collection",
+            "label": {
+                "ar": "الإحصائيات",
+                "en": "Stats"
+            },
+            "item_label": {
+                "ar": "إحصائية",
+                "en": "Stat"
+            },
+            "description": {
+                "ar": "اكتب الرقم كما تريد ظهوره (مثل 10,482 أو 98% أو +25,000) — يعدّ تصاعديًا عند ظهوره على الشاشة.",
+                "en": "Type the number as it should appear (e.g. 10,482, 98% or +25,000) — it counts up when it scrolls into view."
+            },
+            "required": true,
+            "minLength": 1,
+            "maxLength": 8,
+            "value": [
+                {
+                    "items.icon": "bag",
+                    "items.image": "",
+                    "items.color": "#d6336c",
+                    "items.value": "10,482",
+                    "items.label": {
+                        "ar": "قطعة أزياء مباعة",
+                        "en": "Fashion pieces sold"
+                    }
+                },
+                {
+                    "items.icon": "users",
+                    "items.image": "",
+                    "items.color": "#3f9d6b",
+                    "items.value": "+25,000",
+                    "items.label": {
+                        "ar": "زائرة يوميًا",
+                        "en": "Daily visitors"
+                    }
+                },
+                {
+                    "items.icon": "heart-user",
+                    "items.image": "",
+                    "items.color": "#e0a106",
+                    "items.value": "98%",
+                    "items.label": {
+                        "ar": "عميلات راضيات عن تجربتهن",
+                        "en": "Happy, satisfied customers"
+                    }
+                },
+                {
+                    "items.icon": "box",
+                    "items.image": "",
+                    "items.color": "#3b6fd8",
+                    "items.value": "65,482",
+                    "items.label": {
+                        "ar": "طلب تم توصيله",
+                        "en": "Orders delivered"
+                    }
+                }
+            ],
+            "fields": [
+                {
+                    "id": "items.icon",
+                    "type": "items",
+                    "format": "dropdown-list",
+                    "label": {
+                        "ar": "الأيقونة",
+                        "en": "Icon"
+                    },
+                    "value": "bag",
+                    "required": false,
+                    "options": [
+                        { "label": { "ar": "حقيبة تسوق", "en": "Shopping bag" }, "value": "bag" },
+                        { "label": { "ar": "عربة التسوق", "en": "Shopping cart" }, "value": "cart" },
+                        { "label": { "ar": "زوار / عملاء", "en": "Visitors / customers" }, "value": "users" },
+                        { "label": { "ar": "عميل راضٍ", "en": "Happy customer" }, "value": "heart-user" },
+                        { "label": { "ar": "طلب / صندوق", "en": "Order / box" }, "value": "box" },
+                        { "label": { "ar": "شحن", "en": "Delivery truck" }, "value": "truck" },
+                        { "label": { "ar": "نجمة / تقييم", "en": "Star / rating" }, "value": "star" },
+                        { "label": { "ar": "هدية", "en": "Gift" }, "value": "gift" },
+                        { "label": { "ar": "ألماسة / فخامة", "en": "Diamond / luxury" }, "value": "diamond" },
+                        { "label": { "ar": "فستان / أزياء", "en": "Dress / fashion" }, "value": "dress" }
+                    ]
+                },
+                {
+                    "id": "items.image",
+                    "type": "string",
+                    "format": "image",
+                    "label": {
+                        "ar": "أيقونة مخصصة (اختياري)",
+                        "en": "Custom icon (optional)"
+                    },
+                    "description": {
+                        "ar": "تحل محل الأيقونة المختارة أعلاه — يُفضّل PNG أو SVG مربع بخلفية شفافة (96×96 بكسل)",
+                        "en": "Replaces the icon picked above — a square transparent PNG or SVG works best (96×96 px)"
+                    },
+                    "required": false
+                },
+                {
+                    "id": "items.color",
+                    "type": "string",
+                    "format": "color",
+                    "label": {
+                        "ar": "لون الأيقونة",
+                        "en": "Icon colour"
+                    },
+                    "description": {
+                        "ar": "تُلوَّن الدائرة خلف الأيقونة بدرجة فاتحة من نفس اللون",
+                        "en": "The circle behind the icon uses a soft tint of the same colour"
+                    },
+                    "required": false
+                },
+                {
+                    "id": "items.value",
+                    "type": "string",
+                    "format": "text",
+                    "label": {
+                        "ar": "الرقم",
+                        "en": "Number"
+                    },
+                    "required": true,
+                    "maxLength": 20
+                },
+                {
+                    "id": "items.label",
+                    "type": "string",
+                    "format": "text",
+                    "label": {
+                        "ar": "وصف الرقم",
+                        "en": "Caption"
+                    },
+                    "multilanguage": true,
+                    "required": false,
+                    "maxLength": 80
+                }
+            ]
+        },
+        {
+            "id": "count_up",
+            "type": "boolean",
+            "format": "switch",
+            "label": {
+                "ar": "عدّ الأرقام تصاعديًا",
+                "en": "Count the numbers up"
+            },
+            "description": {
+                "ar": "تتحرك الأرقام من الصفر حتى قيمتها عند ظهور القسم",
+                "en": "Numbers animate from zero to their value when the section scrolls into view"
+            },
+            "value": true
+        }
+    ]
+}

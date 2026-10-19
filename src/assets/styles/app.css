@@ -18585,3 +18585,259 @@ body.mega-is-open {
     max-width: var(--falak-el-center_image-max-width, revert);
 }
 
+/* 
+   store-stats (home.store-stats) — Floating staggered store statistics
+   2-column responsive layout with animated count-up numbers and fallback
+   vector icons matching Jalawi's fashion identity.
+*/
+
+.block--store-stats {
+    padding-block: clamp(2.5rem, 5vw, 5rem);
+    position: relative;
+    overflow: hidden;
+}
+
+.stats-layout {
+    display: flex;
+    flex-direction: column;
+    gap: clamp(2rem, 4vw, 3rem);
+}
+
+/* Section Header / Info Column */
+.stats-info-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.stats__badge {
+    display: inline-block;
+    font-size: clamp(0.8125rem, 0.75rem + 0.2vw, 0.9375rem);
+    font-weight: 600;
+    color: var(--color-primary);
+    margin-block-end: 0.5rem;
+    letter-spacing: 0.01em;
+}
+
+.stats__title-wrap {
+    display: inline-flex;
+    align-items: center;
+    gap: 1.25rem;
+    margin-block-end: 0.85rem;
+    width: 100%;
+    justify-content: center;
+}
+
+.stats__title-line {
+    flex: 1;
+    max-width: 6rem;
+    height: 1px;
+    background: var(--color-border);
+}
+
+.stats__title {
+    font-size: clamp(1.45rem, 1.2rem + 1.1vw, 2.25rem);
+    font-weight: 700;
+    line-height: 1.3;
+    margin: 0;
+    color: var(--color-text);
+    white-space: nowrap;
+}
+
+.stats__subtitle {
+    font-size: clamp(0.875rem, 0.8rem + 0.25vw, 1rem);
+    line-height: 1.65;
+    color: var(--color-text-soft);
+    margin: 0;
+    max-width: 38rem;
+}
+
+/* Stats Cards Grid */
+.stats-cards-col {
+    width: 100%;
+}
+
+.stats-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: clamp(0.85rem, 2.5vw, 1.25rem);
+}
+
+/* Stat Card */
+.stat-card {
+    background: var(--color-bg, #ffffff);
+    border-radius: var(--radius-lg, 1.15rem);
+    padding: clamp(1.15rem, 3vw, 1.6rem) clamp(0.85rem, 2vw, 1.25rem);
+    box-shadow: 0 10px 30px rgba(16, 24, 40, 0.06);
+    border: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 0.85rem;
+    transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 18px 40px rgba(16, 24, 40, 0.1);
+}
+
+.stat-card__icon {
+    width: 64px;
+    height: 64px;
+    min-width: 64px;
+    min-height: 64px;
+    max-width: 64px;
+    max-height: 64px;
+    aspect-ratio: 1 / 1;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    overflow: hidden;
+    background-color: color-mix(in srgb, var(--stat-color, var(--color-primary)) 12%, transparent);
+    color: var(--stat-color, var(--color-primary));
+    transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.stat-card:hover .stat-card__icon {
+    transform: scale(1.08);
+}
+
+.stat-icon-svg {
+    width: 32px;
+    height: 32px;
+    display: block;
+}
+
+.stat-card__icon img {
+    width: 36px;
+    height: 36px;
+    object-fit: contain;
+}
+
+.stat-card__content {
+    min-width: 0;
+}
+
+.stat-card__value {
+    font-size: clamp(1.45rem, 1.25rem + 0.6vw, 1.85rem);
+    font-weight: 800;
+    line-height: 1.2;
+    color: var(--color-text);
+    margin-block-end: 0.25rem;
+    letter-spacing: -0.01em;
+}
+
+.stat-card__label {
+    font-size: clamp(0.8125rem, 0.775rem + 0.15vw, 0.9rem);
+    line-height: 1.45;
+    color: var(--color-text-soft);
+    margin: 0;
+}
+@media (min-width: 992px) {
+    .stats-layout {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr);
+        align-items: center;
+        gap: clamp(2.5rem, 5vw, 5rem);
+    }
+
+    .stats-info-col {
+        align-items: flex-start;
+        text-align: start;
+    }
+
+    .stats__title-wrap {
+        justify-content: flex-start;
+        width: auto;
+    }
+
+    .stats__title-line {
+        width: clamp(2.5rem, 4vw, 4.5rem);
+        flex: none;
+    }
+
+    .stats-cards-grid {
+        gap: clamp(1.25rem, 2vw, 1.75rem);
+        align-items: start;
+        padding-block: 0.5rem clamp(2.5rem, 4vw, 3.5rem);
+        position: relative;
+    }
+
+    /* Asymmetric floating stagger matching reference layout:
+       1. Column 1 (inner column closest to header) sits lower:
+          Card 1 (top-inner) & Card 3 (bottom-inner).
+       2. Second row (3rd & 4th cards) shifted horizontally inward toward header.
+       None of the cards sit on the same horizontal or vertical line. */
+    .stat-card:nth-child(odd) {
+        margin-block-start: clamp(1.75rem, 3vw, 2.75rem);
+    }
+
+    .stat-card:nth-child(n+3) {
+        position: relative;
+        inset-inline-start: calc(-1 * clamp(1.5rem, 2.5vw, 2.5rem));
+    }
+
+    /* Horizontal card interior on desktop */
+    .stat-card {
+        flex-direction: row;
+        align-items: center;
+        text-align: start;
+        gap: 1.25rem;
+        padding: 1.35rem 1.6rem;
+    }
+}
+
+/* store-stats styleable hooks */
+.block--store-stats .stats__badge {
+    font-size: var(--falak-el-badge-size, revert);
+    font-weight: var(--falak-el-badge-weight, revert);
+    color: var(--falak-el-badge-color, var(--color-primary));
+}
+
+.block--store-stats .stats__title {
+    font-size: var(--falak-el-title-size, revert);
+    font-weight: var(--falak-el-title-weight, revert);
+    color: var(--falak-el-title-color, revert);
+}
+
+.block--store-stats .stats__subtitle {
+    font-size: var(--falak-el-subtitle-size, revert);
+    font-weight: var(--falak-el-subtitle-weight, revert);
+    color: var(--falak-el-subtitle-color, revert);
+}
+
+.block--store-stats .stat-card {
+    background-color: var(--falak-el-stat_card-bg, revert);
+    border-radius: var(--falak-el-stat_card-radius, revert);
+    border-width: var(--falak-el-stat_card-border-width, 0);
+    border-color: var(--falak-el-stat_card-border-color, transparent);
+    border-style: solid;
+    padding-block: var(--falak-el-stat_card-py, revert);
+    padding-inline: var(--falak-el-stat_card-px, revert);
+}
+
+.block--store-stats .stat-card__icon {
+    border-radius: var(--falak-el-stat_icon-radius, 50%);
+    border-width: var(--falak-el-stat_icon-border-width, 0);
+    border-color: var(--falak-el-stat_icon-border-color, transparent);
+    border-style: solid;
+}
+
+.block--store-stats .stat-card__value {
+    font-size: var(--falak-el-stat_value-size, revert);
+    font-weight: var(--falak-el-stat_value-weight, revert);
+    color: var(--falak-el-stat_value-color, revert);
+}
+
+.block--store-stats .stat-card__label {
+    font-size: var(--falak-el-stat_label-size, revert);
+    font-weight: var(--falak-el-stat_label-weight, revert);
+    color: var(--falak-el-stat_label-color, revert);
+}
+
+

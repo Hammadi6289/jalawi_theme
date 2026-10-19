@@ -1,0 +1,214 @@
+{#
+    Store Stats — merchant-placeable home + page block.
+    Asymmetric floating cards displaying key store achievements with
+    animated count-up and theme-matching SVG icon fallbacks.
+
+    | Variable                   | Type    | Description                       |
+    | component.badge            | ?string | small eyebrow line                |
+    | component.title            | ?string | section headline                  |
+    | component.subtitle         | ?string | description text                  |
+    | component.count_up         | ?bool   | whether to animate numbers        |
+    | component.items[].icon     | ?string | icon slug (bag, cart, users, etc) |
+    | component.items[].image    | ?string | custom uploaded icon image        |
+    | component.items[].color    | ?string | icon accent hex color             |
+    | component.items[].value    | string  | stat number (e.g. 10,482, 98%)    |
+    | component.items[].label    | ?string | stat description caption          |
+    | position                   | int     | section order                     |
+#}
+{% set default_badge = user.language.code == 'ar' ? 'إنجازات نفخر بها' : 'Milestones of Excellence' %}
+{% set badge = component.badge is defined ? component.badge : default_badge %}
+{% set title = component.title|default(null) %}
+{% set subtitle = component.subtitle|default(null) %}
+{% set items = component.items|default([]) %}
+{% set count_up = component.count_up is defined ? component.count_up : true %}
+
+<section class="block block--store-stats" id="store-stats-{{ position }}" {{ falak_section() }}>
+    <div class="container">
+        <div class="stats-layout">
+            {# Section Info / Header Column #}
+            <div class="stats-info-col" data-reveal="fade" style="--reveal-delay: 80ms;">
+                {% if badge %}
+                    <span class="stats__badge" data-falak-field="badge" data-falak-label="{{ trans('editor.field.badge') }}" data-falak-part="badge">{{ badge }}</span>
+                {% endif %}
+                {% if title %}
+                    <div class="stats__title-wrap">
+                        <div class="stats__title-line stats__title-line--start" aria-hidden="true"></div>
+                        <h2 class="stats__title" data-falak-field="title" data-falak-label="{{ trans('editor.field.title') }}" data-falak-part="title">{{ title }}</h2>
+                        <div class="stats__title-line stats__title-line--end" aria-hidden="true"></div>
+                    </div>
+                {% endif %}
+                {% if subtitle %}
+                    <p class="stats__subtitle" data-falak-field="subtitle" data-falak-label="{{ trans('editor.field.text') }}" data-falak-part="subtitle">{{ subtitle }}</p>
+                {% endif %}
+            </div>
+
+            {# Stats Cards Column #}
+            {% if items|length %}
+                <div class="stats-cards-col">
+                    <div class="stats-cards-grid">
+                        {% for item in items %}
+                            {% set icon_color = item.color|default(null) %}
+                            {% if not icon_color %}
+                                {% if loop.index == 1 %}{% set icon_color = '#3f9d6b' %}
+                                {% elseif loop.index == 2 %}{% set icon_color = '#d6336c' %}
+                                {% elseif loop.index == 3 %}{% set icon_color = '#3b6fd8' %}
+                                {% elseif loop.index == 4 %}{% set icon_color = '#e0a106' %}
+                                {% else %}{% set icon_color = 'var(--color-primary)' %}{% endif %}
+                            {% endif %}
+                            {% set icon_name = item.icon|default('bag') %}
+                            {% set custom_image = item.image|default(null) %}
+
+                            <div class="stat-card" data-reveal="slide-up" style="--reveal-delay: {{ 100 + loop.index0 * 80 }}ms; --stat-color: {{ icon_color }};"
+                                 data-falak-field="items" data-falak-label="{{ trans('editor.field.items') }}" data-falak-bind="none" data-falak-part="stat_card">
+                                
+                                <div class="stat-card__icon" data-falak-part="stat_icon" aria-hidden="true">
+                                    {% if custom_image %}
+                                        <img src="{{ custom_image }}" alt="" loading="lazy">
+                                    {% else %}
+                                        {% if icon_name == 'users' %}
+                                            <svg class="stat-icon-svg" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                <path d="M16 15a4.5 4.5 0 100-9 4.5 4.5 0 000 9zM6.5 25.5v-1.75a5.25 5.25 0 015.25-5.25h8.5a5.25 5.25 0 015.25 5.25v1.75"/>
+                                                <path d="M22.5 7.5a3.75 3.75 0 010 7.5M25.5 23.5v-.75a4.5 4.5 0 00-3.5-4.4"/>
+                                            </svg>
+                                        {% elseif icon_name == 'cart' %}
+                                            <svg class="stat-icon-svg" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                <circle cx="12" cy="25" r="2"/>
+                                                <circle cx="23" cy="25" r="2"/>
+                                                <path d="M5 6h4l2.5 13h13l3-9H10"/>
+                                                <path d="M18 10v6M15 13h6"/>
+                                            </svg>
+                                        {% elseif icon_name == 'box' %}
+                                            <svg class="stat-icon-svg" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                <path d="M16 4l11 5.5v13L16 28 5 22.5v-13L16 4z"/>
+                                                <path d="M5 9.5l11 5.5 11-5.5"/>
+                                                <path d="M16 15v13"/>
+                                                <path d="M10.5 6.75l11 5.5"/>
+                                            </svg>
+                                        {% elseif icon_name == 'heart-user' %}
+                                            <svg class="stat-icon-svg" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                <circle cx="13" cy="11" r="4.5"/>
+                                                <path d="M5.5 24.5v-1.5a5 5 0 015-5h5a5 5 0 015 5v1.5"/>
+                                                <path d="M23.5 17c-2 0-3.5 1.7-3.5 3.3 0 2.4 3.5 4.7 3.5 4.7s3.5-2.3 3.5-4.7c0-1.6-1.5-3.3-3.5-3.3z"/>
+                                            </svg>
+                                        {% elseif icon_name == 'star' %}
+                                            <svg class="stat-icon-svg" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                <polygon points="16 4 19.8 12.2 28.5 13.4 22.2 19.5 23.7 28.1 16 24 8.3 28.1 9.8 19.5 3.5 13.4 12.2 12.2 16 4"/>
+                                            </svg>
+                                        {% elseif icon_name == 'truck' %}
+                                            <svg class="stat-icon-svg" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                <rect x="4" y="9" width="15" height="11" rx="1.5"/>
+                                                <path d="M19 13h5l3 3.5v3.5h-8v-7z"/>
+                                                <circle cx="9.5" cy="23.5" r="2.5"/>
+                                                <circle cx="22.5" cy="23.5" r="2.5"/>
+                                            </svg>
+                                        {% elseif icon_name == 'gift' %}
+                                            <svg class="stat-icon-svg" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                <rect x="5" y="13" width="22" height="13" rx="1.5"/>
+                                                <rect x="3.5" y="9" width="25" height="4" rx="1"/>
+                                                <path d="M16 9v17M16 9c-2-3-5.5-3-5.5 0 0 2.5 5.5 4 5.5 0zm0 0c2-3 5.5-3 5.5 0 0 2.5-5.5 4-5.5 0z"/>
+                                            </svg>
+                                        {% elseif icon_name == 'diamond' %}
+                                            <svg class="stat-icon-svg" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                <path d="M8 6h16l5 7-13 14L3 13l5-7z"/>
+                                                <path d="M3 13h26M11.5 6l4.5 7 4.5-7M9.5 13l6.5 13 6.5-13"/>
+                                            </svg>
+                                        {% elseif icon_name == 'dress' %}
+                                            <svg class="stat-icon-svg" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                <path d="M13 5c0 2 1.3 3.5 3 3.5s3-1.5 3-3.5h3l-2.5 8 4 13.5H8.5l4-13.5L10 5h3z"/>
+                                                <path d="M11 13h10"/>
+                                            </svg>
+                                        {% else %}
+                                            {# Default: shopping bag #}
+                                            <svg class="stat-icon-svg" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                <path d="M7 11h18l-1.5 16H8.5L7 11z"/>
+                                                <path d="M11.5 11V8.5a4.5 4.5 0 019 0V11"/>
+                                            </svg>
+                                        {% endif %}
+                                    {% endif %}
+                                </div>
+
+                                <div class="stat-card__content">
+                                    <div class="stat-card__value" data-falak-part="stat_value"
+                                         {% if count_up %}data-stat-counter="{{ item.value }}"{% endif %}>
+                                        {{ item.value }}
+                                    </div>
+                                    {% if item.label %}
+                                        <p class="stat-card__label" data-falak-part="stat_label">{{ item.label }}</p>
+                                    {% endif %}
+                                </div>
+
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+{% if count_up %}
+<script>
+(function() {
+    var section = document.getElementById('store-stats-{{ position }}');
+    if (!section || !('IntersectionObserver' in window)) return;
+
+    var counters = section.querySelectorAll('[data-stat-counter]');
+    if (!counters.length) return;
+
+    var animated = false;
+
+    function animateValue(el, rawText) {
+        var str = String(rawText).trim();
+        var prefix = str.match(/^[^\d]+/);
+        prefix = prefix ? prefix[0] : '';
+        var suffix = str.match(/[^\d]+$/);
+        suffix = suffix ? suffix[0] : '';
+        
+        var numStr = str.replace(/^[^\d]+/, '').replace(/[^\d]+$/, '');
+        var hasComma = numStr.indexOf(',') !== -1;
+        var cleanNum = parseFloat(numStr.replace(/,/g, ''));
+
+        if (isNaN(cleanNum)) {
+            el.textContent = rawText;
+            return;
+        }
+
+        var duration = 1600;
+        var startTime = null;
+
+        function step(timestamp) {
+            if (!startTime) startTime = timestamp;
+            var progress = Math.min((timestamp - startTime) / duration, 1);
+            var ease = 1 - Math.pow(1 - progress, 3);
+            var current = Math.floor(ease * cleanNum);
+            
+            var formatted = hasComma ? current.toLocaleString() : current.toString();
+            el.textContent = prefix + formatted + suffix;
+
+            if (progress < 1) {
+                window.requestAnimationFrame(step);
+            } else {
+                el.textContent = rawText;
+            }
+        }
+
+        window.requestAnimationFrame(step);
+    }
+
+    var observer = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+            if (entry.isIntersecting && !animated) {
+                animated = true;
+                counters.forEach(function(c) {
+                    var val = c.getAttribute('data-stat-counter');
+                    if (val) animateValue(c, val);
+                });
+                observer.disconnect();
+            }
+        });
+    }, { threshold: 0.25 });
+
+    observer.observe(section);
+})();
+</script>
+{% endif %}
