@@ -814,7 +814,7 @@ falak-rating-stars[data-busy] {
     }
 }
 
-/* ------------------------------------------------- product card variants */
+/*  product card variants */
 /*
     Theme-raed's custom-product-card vocabulary, as attributes:
     minimal · full-image · special · horizontal. Same data, four treatments.
@@ -18603,7 +18603,6 @@ body.mega-is-open {
     gap: clamp(2rem, 4vw, 3rem);
 }
 
-/* Section Header / Info Column */
 .stats-info-col {
     display: flex;
     flex-direction: column;
@@ -18653,7 +18652,6 @@ body.mega-is-open {
     max-width: 38rem;
 }
 
-/* Stats Cards Grid */
 .stats-cards-col {
     width: 100%;
 }
@@ -18664,7 +18662,6 @@ body.mega-is-open {
     gap: clamp(0.85rem, 2.5vw, 1.25rem);
 }
 
-/* Stat Card */
 .stat-card {
     background: var(--color-bg, #ffffff);
     border-radius: var(--radius-lg, 1.15rem);
@@ -18770,9 +18767,9 @@ body.mega-is-open {
 
     /* Asymmetric floating stagger matching reference layout:
        1. Column 1 (inner column closest to header) sits lower:
-          Card 1 (top-inner) & Card 3 (bottom-inner).
+          Card 1 (top-inner) & Card 3 (bottom-inner)
        2. Second row (3rd & 4th cards) shifted horizontally inward toward header.
-       None of the cards sit on the same horizontal or vertical line. */
+       None of the cards sit on the same horizontal or vertical line */
     .stat-card:nth-child(odd) {
         margin-block-start: clamp(1.75rem, 3vw, 2.75rem);
     }
