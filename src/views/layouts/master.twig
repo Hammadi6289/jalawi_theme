@@ -172,7 +172,12 @@
     {# The platform blocks video files inside a theme, so the clip is always
        an external URL; the bundled poster keeps the card showing even when
        that URL is empty or fails to load. #}
-    {% set side_video = theme.settings.get('side_video_url') %}
+    {% set side_source = theme.settings.get('side_video_source', 'url') %}
+    {% if side_source is iterable %}{% set side_source = side_source|first %}{% endif %}
+    {% set side_video = side_source == 'upload' ? theme.settings.get('side_video_file') : theme.settings.get('side_video_url') %}
+    {% if not side_video %}
+        {% set side_video = theme.settings.get('side_video_file')|default(theme.settings.get('side_video_url')) %}
+    {% endif %}
     {% set side_image = theme.settings.get('side_video_image')|default('images/side-video-poster.webp'|asset) %}
     {% if theme.settings.get('side_video_enabled', true) %}
         {# Floating video card — slides in once the hero slider is scrolled

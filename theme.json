@@ -211,6 +211,38 @@
                     "value": true
                 },
                 {
+                    "id": "side_video_source",
+                    "type": "items",
+                    "format": "dropdown-list",
+                    "label": {
+                        "ar": "مصدر الفيديو",
+                        "en": "Video source"
+                    },
+                    "value": "url",
+                    "required": true,
+                    "options": [
+                        { "label": { "ar": "رفع من جهازي", "en": "Upload from my device" }, "value": "upload" },
+                        { "label": { "ar": "رابط مباشر (URL)", "en": "Direct link (URL)" }, "value": "url" }
+                    ]
+                },
+                {
+                    "id": "side_video_file",
+                    "type": "string",
+                    "format": "video",
+                    "label": {
+                        "ar": "ملف الفيديو",
+                        "en": "Video file"
+                    },
+                    "description": {
+                        "ar": "اختر ملف MP4 أو WebM من جهازك — يُفضّل فيديو قصير وخفيف",
+                        "en": "Select an MP4 or WebM file from your device — a short, light clip works best"
+                    },
+                    "required": false,
+                    "conditions": [
+                        { "id": "side_video_source", "value": "upload" }
+                    ]
+                },
+                {
                     "id": "side_video_url",
                     "type": "string",
                     "format": "text",
@@ -224,7 +256,10 @@
                     },
                     "required": false,
                     "maxLength": 500,
-                    "value": "https://files.catbox.moe/2tfcev.mp4"
+                    "value": "https://files.catbox.moe/2tfcev.mp4",
+                    "conditions": [
+                        { "id": "side_video_source", "value": "url" }
+                    ]
                 },
                 {
                     "id": "side_video_image",
