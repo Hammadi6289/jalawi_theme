@@ -18766,17 +18766,16 @@ body.mega-is-open {
     }
 
     /* Asymmetric floating stagger matching reference layout:
-       1. Column 1 (inner column closest to header) sits lower:
-          Card 1 (top-inner) & Card 3 (bottom-inner)
-       2. Second row (3rd & 4th cards) shifted horizontally inward toward header.
-       None of the cards sit on the same horizontal or vertical line */
-    .stat-card:nth-child(odd) {
-        margin-block-start: clamp(1.75rem, 3vw, 2.75rem);
+       1. Outer column (:nth-child(even)) sits lower with gentle elevation,
+          creating the downstairs descending direction in both English and Arabic modes.
+       2. Second row (3rd & 4th cards) shifted horizontally inward toward header. */
+    .stat-card:nth-child(even) {
+        margin-block-start: clamp(1rem, 1.6vw, 1.35rem);
     }
 
     .stat-card:nth-child(n+3) {
         position: relative;
-        inset-inline-start: calc(-1 * clamp(1.5rem, 2.5vw, 2.5rem));
+        inset-inline-start: calc(-1 * clamp(1.25rem, 2vw, 1.75rem));
     }
 
     /* Horizontal card interior on desktop */
