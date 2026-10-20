@@ -15,8 +15,7 @@
     | component.items[].label    | ?string | stat description caption          |
     | position                   | int     | section order                     |
 #}
-{% set default_badge = user.language.code == 'ar' ? 'إنجازات نفخر بها' : 'Milestones of Excellence' %}
-{% set badge = component.badge is defined ? component.badge : default_badge %}
+{% set badge = component.badge|default(null) %}
 {% set title = component.title|default(null) %}
 {% set subtitle = component.subtitle|default(null) %}
 {% set items = component.items|default([]) %}
@@ -32,9 +31,9 @@
                 {% endif %}
                 {% if title %}
                     <div class="stats__title-wrap">
-                        <div class="stats__title-line stats__title-line--start" aria-hidden="true"></div>
+                        <div class="stats__title-line" aria-hidden="true"></div>
                         <h2 class="stats__title" data-falak-field="title" data-falak-label="{{ trans('editor.field.title') }}" data-falak-part="title">{{ title }}</h2>
-                        <div class="stats__title-line stats__title-line--end" aria-hidden="true"></div>
+                        <div class="stats__title-line" aria-hidden="true"></div>
                     </div>
                 {% endif %}
                 {% if subtitle %}
