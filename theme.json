@@ -240,7 +240,7 @@
                 {
                     "id": "side_video_file",
                     "type": "string",
-                    "format": "video",
+                    "format": "image",
                     "label": {
                         "ar": "ملف الفيديو",
                         "en": "Video file"
