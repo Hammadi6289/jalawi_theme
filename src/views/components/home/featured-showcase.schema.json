@@ -193,6 +193,7 @@
                 "en": "Pick where the image goes, or “Custom link” to type your own"
             },
             "value": "custom",
+            "required": false,
             "options": [
                 { "label": { "ar": "رابط مخصص", "en": "Custom link" }, "value": "custom" },
                 { "label": { "ar": "تصنيف", "en": "Category" }, "value": "category" },
@@ -254,7 +255,7 @@
                 "en": "Enter the URL (page, external link, etc.)"
             },
             "required": false,
-            "value": "/",
+            "maxLength": 255,
             "conditions": [
                 {
                     "id": "center_link_type",

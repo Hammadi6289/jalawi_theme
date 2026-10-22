@@ -18414,12 +18414,12 @@ body.mega-is-open {
     border-radius: 14px;
     overflow: hidden;
     background: var(--color-surface);
-    border: 1px solid var(--color-border);
+    border: none;
     display: flex;
     align-items: center;
     justify-content: center;
     box-shadow: var(--shadow-sm);
-    transition: border-color var(--transition, 160ms ease), box-shadow var(--transition, 160ms ease);
+    transition: box-shadow var(--transition, 160ms ease);
 }
 
 .showcase-item__thumb img {
@@ -18558,15 +18558,16 @@ body.mega-is-open {
 
 .block--featured-showcase .showcase-item__thumb {
     border-radius: var(--falak-el-thumbnail-radius, revert);
-    border-width: var(--falak-el-thumbnail-border-width, revert);
-    border-color: var(--falak-el-thumbnail-border-color, revert);
+    border-width: var(--falak-el-thumbnail-border-width, 0);
+    border-color: var(--falak-el-thumbnail-border-color, transparent);
+    border-style: solid;
 }
 
 .block--featured-showcase .showcase__center-img {
     border-radius: var(--falak-el-center_image-radius, revert);
     border-width: var(--falak-el-center_image-border-width, revert);
     border-color: var(--falak-el-center_image-border-color, revert);
-    max-width: var(--falak-el-center_image-max-width, revert);
+    max-width: var(--falak-el-center_image-max-width, 100%);
 }
 
 /* 

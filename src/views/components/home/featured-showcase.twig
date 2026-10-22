@@ -112,12 +112,12 @@
             {# Column 2: Centerpiece Hero Product #}
             <div class="showcase__center" data-reveal="zoom-in" style="--reveal-delay: 150ms;">
                 {% if center_url %}
-                    <a href="{{ center_url }}" class="showcase__center-link" data-falak-field="center_image" data-falak-label="{{ trans('editor.field.image') }}" data-falak-part="center_image">
-                        <img class="showcase__center-img" src="{{ center_image }}" alt="{{ title|default('') }}" loading="lazy">
+                    <a href="{{ center_url }}" class="showcase__center-link">
+                        <img class="showcase__center-img" data-falak-field="center_image" data-falak-label="{{ trans('editor.field.image') }}" data-falak-part="center_image" src="{{ center_image }}" alt="{{ title|default('') }}" loading="lazy">
                     </a>
                 {% else %}
-                    <div class="showcase__center-media" data-falak-field="center_image" data-falak-label="{{ trans('editor.field.image') }}" data-falak-part="center_image">
-                        <img class="showcase__center-img" src="{{ center_image }}" alt="{{ title|default('') }}" loading="lazy">
+                    <div class="showcase__center-media">
+                        <img class="showcase__center-img" data-falak-field="center_image" data-falak-label="{{ trans('editor.field.image') }}" data-falak-part="center_image" src="{{ center_image }}" alt="{{ title|default('') }}" loading="lazy">
                     </div>
                 {% endif %}
             </div>
