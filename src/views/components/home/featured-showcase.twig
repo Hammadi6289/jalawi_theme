@@ -29,6 +29,13 @@
 {% set title = component.title|default(null) %}
 {% set subtitle = component.subtitle|default(null) %}
 {% set center_url = component.center_url|default(null) %}
+{# Link type: a picked destination wins over the typed link. #}
+{% set center_type = component.center_link_type|default('custom') %}
+{% if center_type is iterable %}{% set center_type = center_type|first %}{% endif %}
+{% if center_type == 'category' and component.center_category|default(null) %}{% set center_url = '/products?category_id[]=' ~ component.center_category %}
+{% elseif center_type == 'product' and component.center_product|default(null) %}{% set center_url = '/product/' ~ component.center_product %}
+{% elseif center_type == 'products' %}{% set center_url = '/products' %}
+{% elseif center_type == 'home' %}{% set center_url = '/' %}{% endif %}
 {% set center_image = component.center_image|default(null) %}
 {% if not center_image %}
     {% set center_image = 'images/category-sidebar-banner.jpg'|asset %}
@@ -73,6 +80,12 @@
                     {% for item in items %}
                         {% if loop.index0 < (total_items / 2) %}
                             {% set href = item.url|default('#') %}
+                            {% set item_type = item.link_type|default('custom') %}
+                            {% if item_type is iterable %}{% set item_type = item_type|first %}{% endif %}
+                            {% if item_type == 'category' and item.link_category|default(null) %}{% set href = '/products?category_id[]=' ~ item.link_category %}
+                            {% elseif item_type == 'product' and item.link_product|default(null) %}{% set href = '/product/' ~ item.link_product %}
+                            {% elseif item_type == 'products' %}{% set href = '/products' %}
+                            {% elseif item_type == 'home' %}{% set href = '/' %}{% endif %}
                             {% set img = item.image|default(null) %}
                             {% if not img %}
                                 {% set img = fallback_images[loop.index0 % 8]|asset %}
@@ -115,6 +128,12 @@
                     {% for item in items %}
                         {% if loop.index0 >= (total_items / 2) %}
                             {% set href = item.url|default('#') %}
+                            {% set item_type = item.link_type|default('custom') %}
+                            {% if item_type is iterable %}{% set item_type = item_type|first %}{% endif %}
+                            {% if item_type == 'category' and item.link_category|default(null) %}{% set href = '/products?category_id[]=' ~ item.link_category %}
+                            {% elseif item_type == 'product' and item.link_product|default(null) %}{% set href = '/product/' ~ item.link_product %}
+                            {% elseif item_type == 'products' %}{% set href = '/products' %}
+                            {% elseif item_type == 'home' %}{% set href = '/' %}{% endif %}
                             {% set img = item.image|default(null) %}
                             {% if not img %}
                                 {% set img = fallback_images[loop.index0 % 8]|asset %}

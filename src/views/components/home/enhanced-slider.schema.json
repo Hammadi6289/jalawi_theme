@@ -92,6 +92,68 @@
                     "maxLength": 40
                 },
                 {
+                    "id": "slides.link_type",
+                    "type": "items",
+                    "format": "dropdown-list",
+                    "label": {
+                        "ar": "نوع رابط الزر",
+                        "en": "Button link type"
+                    },
+                    "description": {
+                        "ar": "اختر وجهة الزر، أو «رابط مخصص» لكتابة رابطك بنفسك",
+                        "en": "Pick where the button goes, or “Custom link” to type your own"
+                    },
+                    "value": "custom",
+                    "options": [
+                        { "label": { "ar": "رابط مخصص", "en": "Custom link" }, "value": "custom" },
+                        { "label": { "ar": "تصنيف", "en": "Category" }, "value": "category" },
+                        { "label": { "ar": "منتج", "en": "Product" }, "value": "product" },
+                        { "label": { "ar": "كل المنتجات", "en": "All products" }, "value": "products" },
+                        { "label": { "ar": "الصفحة الرئيسية", "en": "Home" }, "value": "home" }
+                    ],
+                    "required": false
+                },
+                {
+                    "id": "slides.link_category",
+                    "type": "string",
+                    "format": "category",
+                    "label": {
+                        "ar": "التصنيف",
+                        "en": "Category"
+                    },
+                    "description": {
+                        "ar": "اختر التصنيف المطلوب",
+                        "en": "Select the category"
+                    },
+                    "required": false,
+                    "conditions": [
+                        {
+                            "id": "slides.link_type",
+                            "value": "category"
+                        }
+                    ]
+                },
+                {
+                    "id": "slides.link_product",
+                    "type": "string",
+                    "format": "product",
+                    "label": {
+                        "ar": "المنتج",
+                        "en": "Product"
+                    },
+                    "description": {
+                        "ar": "اختر المنتج المطلوب",
+                        "en": "Select the product"
+                    },
+                    "required": false,
+                    "conditions": [
+                        {
+                            "id": "slides.link_type",
+                            "value": "product"
+                        }
+                    ]
+                },
+                {
                     "id": "slides.button_url",
                     "type": "string",
                     "format": "text",
@@ -99,8 +161,18 @@
                         "ar": "رابط الزر",
                         "en": "Button link"
                     },
+                    "description": {
+                        "ar": "اكتب الرابط المطلوب (صفحة، رابط خارجي، إلخ)",
+                        "en": "Enter the URL (page, external link, etc.)"
+                    },
                     "required": false,
-                    "maxLength": 255
+                    "maxLength": 255,
+                    "conditions": [
+                        {
+                            "id": "slides.link_type",
+                            "value": "custom"
+                        }
+                    ]
                 },
                 {
                     "id": "slides.video",
@@ -179,17 +251,16 @@
                 {
                     "id": "slides.thumb_product",
                     "type": "string",
-                    "format": "text",
+                    "format": "product",
                     "label": {
-                        "ar": "بطاقة المنتج (رقم المنتج)",
-                        "en": "Product card (product ID)"
+                        "ar": "بطاقة المنتج",
+                        "en": "Product card"
                     },
                     "description": {
-                        "ar": "رقم المنتج من رابطه ‎/product/123‎ — لنوع «منتج»",
-                        "en": "The number from the product link /product/123 — for the “Product” card"
+                        "ar": "اختر المنتج للبطاقة الزجاجية — لنوع «منتج»",
+                        "en": "Select the product for the glass card — for the “Product” card"
                     },
-                    "required": false,
-                    "maxLength": 20
+                    "required": false
                 },
                 {
                     "id": "slides.thumb_category",

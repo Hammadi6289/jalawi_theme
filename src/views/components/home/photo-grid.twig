@@ -11,14 +11,16 @@
     | component.items[].image    | ?string | photo (else the category's own image)      |
     | component.items[].title    | ?string | caption — replaces the category's name     |
     | component.items[].url      | ?string | target when no category is picked          |
-    | component.items[].subs     | ?string | back-face links, one per line: Name | link  |
     | component.autoplay         | ?bool   | slide every 3s (default on)                |
+    | component.limit            | ?int    | how many categories to show (0/empty: all) |
+    | component.columns          | ?string | cards per row on large screens (default 4) |
+    | component.show_view_all    | ?bool   | show the "View all" link under the slider  |
     | position                   | int     |                                            |
 
     SDK parts: <falak-slider> (scrolling, loop, autoplay; no arrows) and the
     store's categories from falak.product.categories() — home.js fills names,
-    images and sub-categories (typed ones win), and, when the list is empty, builds the cards
-    for all main categories itself.
+    images and the back-face sub-categories (from the picked category), and, when
+    the list is empty, builds the cards for all main categories itself.
 
     Customizer bindings — full rules in README, "Customizer annotations".
     | Element          | Tag                                             |
@@ -30,6 +32,8 @@
     through its data-falak-field="items" tag.
 #}
 {% set items = component.items|default([]) %}
+{% set limit = component.limit|default(8) %}
+{% set columns = component.columns|default(4) %}
 {% set autoplay = component.autoplay is defined ? component.autoplay : true %}
 
 <section class="block block--photo-grid block--cats" id="photo-grid-{{ position }}" {{ falak_section() }}>
@@ -42,37 +46,48 @@
         {% endif %}
 
         {% if items|length %}
-            <falak-slider class="cats__slider" {{ autoplay ? 'auto-play' : '' }} auto-play-delay="3000" loop show-controls="false" static-when-single>
+            <falak-slider class="cats__slider" style="--cats-cols: {{ columns }};" {{ autoplay ? 'auto-play' : '' }} auto-play-delay="3000" loop show-controls="false" static-when-single>
                 {% for item in items %}
-                    {% set category_id = item.category|default(null) %}
-                    {% set href = category_id ? '/products?category_id[]=' ~ category_id : item.url|default('#') %}
-                    {% set image = item.image|default(null) %}
-                    {% if not image and not category_id %}{% set image = ('images/category-' ~ ((loop.index0 % 4) + 1) ~ '.jpg')|asset %}{% endif %}
-                    <div class="cat-card" data-reveal="slide-left" style="--reveal-delay: {{ 100 + loop.index0 * 80 }}ms;"
-                         {% if category_id %}data-category-id="{{ category_id }}"{% endif %}
-                         data-falak-field="items" data-falak-label="{{ trans('editor.field.items') }}" data-falak-bind="none">
-                        <div class="cat-card__inner">
-                            <a class="cat-card__front" href="{{ href }}" tabindex="-1" aria-hidden="true">
-                                {% if image %}<img src="{{ image }}" alt="" loading="lazy" data-cat-image data-custom>{% else %}<img alt="" loading="lazy" data-cat-image hidden>{% endif %}
-                            </a>
-                            <div class="cat-card__back">
-                                {% if image %}<img class="cat-card__back-img" src="{{ image }}" alt="" loading="lazy" data-cat-image data-custom>{% else %}<img class="cat-card__back-img" alt="" loading="lazy" data-cat-image hidden>{% endif %}
-                                <span class="cat-card__overlay" aria-hidden="true"></span>
-                                <a class="cat-card__cover" href="{{ href }}" tabindex="-1" aria-hidden="true"></a>
-                                <ul class="cat-card__subs" data-cat-subs{% if item.subs|default(null) %} data-subs="{{ item.subs }}"{% endif %}></ul>
+                    {% if not limit or loop.index <= limit %}
+                        {% set category_id = item.category|default(null) %}
+                        {% set href = category_id ? '/products?category_id[]=' ~ category_id : item.url|default('#') %}
+                        {% set image = item.image|default(null) %}
+                        {% if not image and not category_id %}{% set image = ('images/category-' ~ ((loop.index0 % 4) + 1) ~ '.jpg')|asset %}{% endif %}
+                        <div class="cat-card" data-reveal="slide-left" style="--reveal-delay: {{ 100 + loop.index0 * 80 }}ms;"
+                             {% if category_id %}data-category-id="{{ category_id }}"{% endif %}
+                             data-falak-field="items" data-falak-label="{{ trans('editor.field.items') }}" data-falak-bind="none">
+                            <div class="cat-card__inner">
+                                <a class="cat-card__front" href="{{ href }}" tabindex="-1" aria-hidden="true">
+                                    {% if image %}<img src="{{ image }}" alt="" loading="lazy" data-cat-image data-custom>{% else %}<img alt="" loading="lazy" data-cat-image hidden>{% endif %}
+                                </a>
+                                <div class="cat-card__back">
+                                    {% if image %}<img class="cat-card__back-img" src="{{ image }}" alt="" loading="lazy" data-cat-image data-custom>{% else %}<img class="cat-card__back-img" alt="" loading="lazy" data-cat-image hidden>{% endif %}
+                                    <span class="cat-card__overlay" aria-hidden="true"></span>
+                                    <a class="cat-card__cover" href="{{ href }}" tabindex="-1" aria-hidden="true"></a>
+                                    <ul class="cat-card__subs" data-cat-subs></ul>
+                                </div>
                             </div>
+                            <a class="cat-card__label" href="{{ href }}">
+                                <span class="cat-card__name" data-cat-name{{ item.title|default(null) ? ' data-custom' : '' }} data-falak-part="caption">{{ item.title|default('') }}</span>
+                                <svg class="cat-card__arrow" viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M5 12h14m-6-6 6 6-6 6"/></svg>
+                            </a>
                         </div>
-                        <a class="cat-card__label" href="{{ href }}">
-                            <span class="cat-card__name" data-cat-name{{ item.title|default(null) ? ' data-custom' : '' }} data-falak-part="caption">{{ item.title|default('') }}</span>
-                            <svg class="cat-card__arrow" viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M5 12h14m-6-6 6 6-6 6"/></svg>
-                        </a>
-                    </div>
+                    {% endif %}
                 {% endfor %}
             </falak-slider>
         {% else %}
             {# Empty list: home.js builds the cards (and the slider) from every
                main category in the store. #}
-            <div class="cats__auto" data-cats-auto{{ autoplay ? ' data-autoplay' : '' }}></div>
+            <div class="cats__auto" data-cats-auto{{ autoplay ? ' data-autoplay' : '' }} data-limit="{{ limit }}" data-columns="{{ columns }}"></div>
+        {% endif %}
+
+        {% if component.show_view_all %}
+            <div class="cats__actions" data-reveal="fade">
+                <a class="cats__view-all" href="/products">
+                    <span>{{ trans('common.view_all') }}</span>
+                    <svg class="cats__view-all-icon" viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M19 12H5m6-6-6 6 6 6"/></svg>
+                </a>
+            </div>
         {% endif %}
     </div>
 </section>

@@ -52,8 +52,16 @@
                     <div class="promo-tile__content" data-falak-part="content">
                         {% if banner.subtitle|default(null) %}<h2 class="promo-tile__subtitle" data-falak-part="subtitle">{{ banner.subtitle }}</h2>{% endif %}
                         {% if banner.title|default(null) %}<p class="promo-tile__title" data-falak-part="title">{{ banner.title }}</p>{% endif %}
-                        {% if banner.button_text|default(null) and banner.button_url|default(null) %}
-                            <a class="promo-tile__button" data-falak-part="button_text" href="{{ banner.button_url }}">{{ banner.button_text }}</a>
+                        {# Link type: a picked destination wins over the typed link. #}
+                        {% set btn_type = banner.link_type|default('custom') %}
+                        {% if btn_type is iterable %}{% set btn_type = btn_type|first %}{% endif %}
+                        {% set btn_url = banner.button_url|default(null) %}
+                        {% if btn_type == 'category' and banner.link_category|default(null) %}{% set btn_url = '/products?category_id[]=' ~ banner.link_category %}
+                        {% elseif btn_type == 'product' and banner.link_product|default(null) %}{% set btn_url = '/product/' ~ banner.link_product %}
+                        {% elseif btn_type == 'products' %}{% set btn_url = '/products' %}
+                        {% elseif btn_type == 'home' %}{% set btn_url = '/' %}{% endif %}
+                        {% if banner.button_text|default(null) and btn_url %}
+                            <a class="promo-tile__button" data-falak-part="button_text" href="{{ btn_url }}">{{ banner.button_text }}</a>
                         {% endif %}
                     </div>
                 </div>

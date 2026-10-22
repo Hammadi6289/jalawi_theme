@@ -10643,22 +10643,62 @@ html[lang="ar"] .has-reveal [data-reveal="slide-end"] {
 
 .cats__slider {
     --cats-gap: 15px;
+    /* Cards per row: the merchant's pick on large screens, capped at 3 below. */
+    --cats-visible: min(var(--cats-cols, 4), 3);
 }
 
 .cats__slider .f-slider__track {
     gap: var(--cats-gap);
-    grid-auto-columns: calc((100% - 2 * var(--cats-gap)) / 3);
+    grid-auto-columns: calc((100% - (var(--cats-visible) - 1) * var(--cats-gap)) / var(--cats-visible));
     padding-block-end: 0;
 }
 
 @media (min-width: 1280px) {
     .cats__slider {
         --cats-gap: 24px;
+        --cats-visible: var(--cats-cols, 4);
     }
+}
 
-    .cats__slider .f-slider__track {
-        grid-auto-columns: calc((100% - 3 * var(--cats-gap)) / 4);
-    }
+.cats__actions {
+    display: flex;
+    justify-content: center;
+    margin-block-start: clamp(1.25rem, 2.5vw, 2rem);
+}
+
+.cats__view-all {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    color: #1e1e1e;
+    font-size: 1rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.cats__view-all:hover {
+    color: var(--color-primary);
+}
+
+/* The arrow points toward the start of the line: left in RTL, right in LTR. */
+.cats__view-all-icon {
+    inline-size: 1.1rem;
+    block-size: 1.1rem;
+    transform: scaleX(-1);
+    transition: transform 0.2s ease;
+}
+
+[dir="rtl"] .cats__view-all-icon {
+    transform: none;
+}
+
+.cats__view-all:hover .cats__view-all-icon {
+    transform: scaleX(-1) translateX(-3px);
+}
+
+[dir="rtl"] .cats__view-all:hover .cats__view-all-icon {
+    transform: translateX(-3px);
 }
 
 .cat-card {
@@ -15821,65 +15861,9 @@ html[lang="ar"] #falak-search .f-search__list:not(:empty)::before {
     outline-offset: 3px;
 }
 
-.floating-actions__whatsapp {
-    background: #25d366;
-    color: #ffffff;
-    touch-action: none;
-    cursor: grab;
-    user-select: none;
-    -webkit-user-drag: none;
-}
-
-.floating-actions__whatsapp.is-placed {
-    position: fixed;
-    z-index: 91;
-    transition: left 0.25s ease, top 0.25s ease, transform 0.2s ease;
-}
-
-.floating-actions__whatsapp.is-dragging {
-    cursor: grabbing;
-    transition: none;
-    transform: scale(1.08);
-    box-shadow: 0 10px 24px rgba(16, 24, 40, 0.25);
-}
-
-.floating-actions__whatsapp svg {
-    inline-size: 1.9rem;
-    block-size: 1.9rem;
-    pointer-events: none;
-}
-
-/* The SDK's WhatsApp link (<falak-social>) fills the green circle. Until it
-   has rendered one (or when no WhatsApp account is set) the circle hides. */
-.floating-actions__whatsapp:not(:has(.f-social__link)) {
-    display: none;
-}
-
-.floating-actions__whatsapp .f-social,
-.floating-actions__whatsapp .f-social__list,
-.floating-actions__whatsapp .f-social__item {
-    display: contents;
-}
-
-.floating-actions__whatsapp .f-social__link {
-    position: absolute;
-    inset: 0;
-    display: grid;
-    place-items: center;
-    inline-size: auto;
-    block-size: auto;
-    padding: 0;
-    border: 0;
-    border-radius: 50%;
-    background: none;
-    color: #ffffff;
-    -webkit-user-drag: none;
-}
-
-.floating-actions__whatsapp .f-social__link:hover {
-    background: none;
-    color: #ffffff;
-    transform: none;
+#falak-whatsapp-button.is-bottom-right {
+    right: max(1rem, env(safe-area-inset-right));
+    bottom: calc(var(--falak-floating-offset, env(safe-area-inset-bottom, 0px)) + 5.5rem);
 }
 
 .floating-actions__top {
@@ -15937,9 +15921,9 @@ html[lang="ar"] #falak-search .f-search__list:not(:empty)::before {
         block-size: 3rem;
     }
 
-    .floating-actions__whatsapp svg {
-        inline-size: 1.6rem;
-        block-size: 1.6rem;
+    #falak-whatsapp-button.is-bottom-right {
+        right: max(0.75rem, env(safe-area-inset-right));
+        bottom: calc(var(--falak-floating-offset, env(safe-area-inset-bottom, 0px)) + 4.75rem);
     }
 }
 

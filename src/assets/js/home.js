@@ -145,10 +145,10 @@
             a.href = href;
         });
 
-        // Sub-categories typed in the section win over the category's own.
+        // The back face lists the picked category's own sub-categories.
         var subs = card.querySelector('[data-cat-subs]');
         var children = Array.isArray(category.children) ? category.children : [];
-        if (subs && !subs.hasAttribute('data-subs') && children.length) {
+        if (subs && children.length) {
             renderSubs(subs, children.map(function (child) {
                 return { name: categoryName(child), href: '/products?category_id[]=' + encodeURIComponent(child.id) };
             }));
@@ -164,18 +164,6 @@
         var card = list.closest('.cat-card');
         if (card) card.classList.toggle('has-subs', links.length > 0);
     }
-
-    // "Name | link" per line, as typed in the photo grid's Sub-categories.
-    document.querySelectorAll('[data-subs]').forEach(function (list) {
-        var links = list.getAttribute('data-subs').split(/\r?\n/).map(function (line) {
-            var cut = line.indexOf('|');
-            var name = (cut < 0 ? line : line.slice(0, cut)).trim();
-            var href = cut < 0 ? '' : line.slice(cut + 1).trim();
-            if (!href || /^\s*(javascript|data|vbscript):/i.test(href)) href = '#';
-            return { name: name, href: href };
-        }).filter(function (link) { return link.name; });
-        renderSubs(list, links);
-    });
 
     function catCardHtml(category, i) {
         var href = '/products?category_id[]=' + encodeURIComponent(category.id);
@@ -219,17 +207,20 @@
                 var roots = list.filter(function (c) { return c.parent_id === null || c.parent_id === undefined; });
                 autoCatHosts.forEach(function (host) {
                     if (!roots.length) return;
+                    var limit = parseInt(host.getAttribute('data-limit'), 10);
+                    var shown = limit > 0 ? roots.slice(0, limit) : roots;
                     // Built whole, then attached, so <falak-slider> finds its
                     // slides when it connects.
                     var slider = document.createElement('falak-slider');
                     slider.className = 'cats__slider';
+                    slider.style.setProperty('--cats-cols', host.getAttribute('data-columns') || '4');
                     if (host.hasAttribute('data-autoplay')) slider.setAttribute('auto-play', '');
                     slider.setAttribute('auto-play-delay', '3000');
                     slider.setAttribute('loop', '');
                     slider.setAttribute('show-controls', 'false');
                     slider.setAttribute('static-when-single', '');
-                    slider.innerHTML = roots.map(catCardHtml).join('');
-                    slider.querySelectorAll('.cat-card').forEach(function (card, i) { fillCatCard(card, roots[i]); });
+                    slider.innerHTML = shown.map(catCardHtml).join('');
+                    slider.querySelectorAll('.cat-card').forEach(function (card, i) { fillCatCard(card, shown[i]); });
                     host.appendChild(slider);
                 });
             }).catch(function () { /* cards keep the merchant's own names and photos */ });

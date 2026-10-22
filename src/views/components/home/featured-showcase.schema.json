@@ -181,6 +181,67 @@
             "required": false
         },
         {
+            "id": "center_link_type",
+            "type": "items",
+            "format": "dropdown-list",
+            "label": {
+                "ar": "نوع رابط الصورة الرئيسية",
+                "en": "Centerpiece link type"
+            },
+            "description": {
+                "ar": "اختر وجهة الصورة، أو «رابط مخصص» لكتابة رابطك بنفسك",
+                "en": "Pick where the image goes, or “Custom link” to type your own"
+            },
+            "value": "custom",
+            "options": [
+                { "label": { "ar": "رابط مخصص", "en": "Custom link" }, "value": "custom" },
+                { "label": { "ar": "تصنيف", "en": "Category" }, "value": "category" },
+                { "label": { "ar": "منتج", "en": "Product" }, "value": "product" },
+                { "label": { "ar": "كل المنتجات", "en": "All products" }, "value": "products" },
+                { "label": { "ar": "الصفحة الرئيسية", "en": "Home" }, "value": "home" }
+            ]
+        },
+        {
+            "id": "center_category",
+            "type": "string",
+            "format": "category",
+            "label": {
+                "ar": "تصنيف الصورة الرئيسية",
+                "en": "Centerpiece category"
+            },
+            "description": {
+                "ar": "اختر التصنيف المطلوب",
+                "en": "Select the category"
+            },
+            "required": false,
+            "conditions": [
+                {
+                    "id": "center_link_type",
+                    "value": "category"
+                }
+            ]
+        },
+        {
+            "id": "center_product",
+            "type": "string",
+            "format": "product",
+            "label": {
+                "ar": "منتج الصورة الرئيسية",
+                "en": "Centerpiece product"
+            },
+            "description": {
+                "ar": "اختر المنتج المطلوب",
+                "en": "Select the product"
+            },
+            "required": false,
+            "conditions": [
+                {
+                    "id": "center_link_type",
+                    "value": "product"
+                }
+            ]
+        },
+        {
             "id": "center_url",
             "type": "string",
             "format": "text",
@@ -188,8 +249,18 @@
                 "ar": "رابط الصورة الرئيسية",
                 "en": "Centerpiece link"
             },
+            "description": {
+                "ar": "اكتب الرابط المطلوب (صفحة، رابط خارجي، إلخ)",
+                "en": "Enter the URL (page, external link, etc.)"
+            },
             "required": false,
-            "value": "/"
+            "value": "/",
+            "conditions": [
+                {
+                    "id": "center_link_type",
+                    "value": "custom"
+                }
+            ]
         },
         {
             "id": "items",
@@ -344,6 +415,68 @@
                     "maxLength": 200
                 },
                 {
+                    "id": "items.link_type",
+                    "type": "items",
+                    "format": "dropdown-list",
+                    "label": {
+                        "ar": "نوع الرابط",
+                        "en": "Link type"
+                    },
+                    "description": {
+                        "ar": "اختر وجهة العنصر، أو «رابط مخصص» لكتابة رابطك بنفسك",
+                        "en": "Pick where the item goes, or “Custom link” to type your own"
+                    },
+                    "value": "custom",
+                    "options": [
+                        { "label": { "ar": "رابط مخصص", "en": "Custom link" }, "value": "custom" },
+                        { "label": { "ar": "تصنيف", "en": "Category" }, "value": "category" },
+                        { "label": { "ar": "منتج", "en": "Product" }, "value": "product" },
+                        { "label": { "ar": "كل المنتجات", "en": "All products" }, "value": "products" },
+                        { "label": { "ar": "الصفحة الرئيسية", "en": "Home" }, "value": "home" }
+                    ],
+                    "required": false
+                },
+                {
+                    "id": "items.link_category",
+                    "type": "string",
+                    "format": "category",
+                    "label": {
+                        "ar": "التصنيف",
+                        "en": "Category"
+                    },
+                    "description": {
+                        "ar": "اختر التصنيف المطلوب",
+                        "en": "Select the category"
+                    },
+                    "required": false,
+                    "conditions": [
+                        {
+                            "id": "items.link_type",
+                            "value": "category"
+                        }
+                    ]
+                },
+                {
+                    "id": "items.link_product",
+                    "type": "string",
+                    "format": "product",
+                    "label": {
+                        "ar": "المنتج",
+                        "en": "Product"
+                    },
+                    "description": {
+                        "ar": "اختر المنتج المطلوب",
+                        "en": "Select the product"
+                    },
+                    "required": false,
+                    "conditions": [
+                        {
+                            "id": "items.link_type",
+                            "value": "product"
+                        }
+                    ]
+                },
+                {
                     "id": "items.url",
                     "type": "string",
                     "format": "text",
@@ -351,7 +484,17 @@
                         "ar": "الرابط",
                         "en": "Link"
                     },
-                    "required": false
+                    "description": {
+                        "ar": "اكتب الرابط المطلوب (صفحة، رابط خارجي، إلخ)",
+                        "en": "Enter the URL (page, external link, etc.)"
+                    },
+                    "required": false,
+                    "conditions": [
+                        {
+                            "id": "items.link_type",
+                            "value": "custom"
+                        }
+                    ]
                 }
             ]
         }

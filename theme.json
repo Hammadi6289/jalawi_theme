@@ -568,6 +568,70 @@
                             "maxLength": 50
                         },
                         {
+                            "id": "mega_menu_cards.link_type",
+                            "type": "items",
+                            "format": "dropdown-list",
+                            "label": {
+                                "ar": "نوع الرابط",
+                                "en": "Link type"
+                            },
+                            "description": {
+                                "ar": "اختر وجهة البطاقة، أو «رابط مخصص» لكتابة رابطك بنفسك",
+                                "en": "Pick where the card goes, or “Custom link” to type your own"
+                            },
+                            "value": "custom",
+                            "options": [
+                                { "label": { "ar": "رابط مخصص", "en": "Custom link" }, "value": "custom" },
+                                { "label": { "ar": "تصنيف", "en": "Category" }, "value": "category" },
+                                { "label": { "ar": "منتج", "en": "Product" }, "value": "product" },
+                                { "label": { "ar": "كل المنتجات", "en": "All products" }, "value": "products" },
+                                { "label": { "ar": "الصفحة الرئيسية", "en": "Home" }, "value": "home" }
+                            ],
+                            "required": false
+                        },
+                        {
+                            "id": "mega_menu_cards.link_category",
+                            "type": "string",
+                            "format": "text",
+                            "label": {
+                                "ar": "رقم التصنيف",
+                                "en": "Category ID"
+                            },
+                            "description": {
+                                "ar": "الرقم من رابط التصنيف ‎?category_id[]=12‎ — يُستخدم عند اختيار نوع الرابط «تصنيف»",
+                                "en": "The number from the category link ?category_id[]=12 — used when the Link type is Category"
+                            },
+                            "required": false,
+                            "maxLength": 20,
+                            "conditions": [
+                                {
+                                    "id": "mega_menu_cards.link_type",
+                                    "value": "category"
+                                }
+                            ]
+                        },
+                        {
+                            "id": "mega_menu_cards.link_product",
+                            "type": "string",
+                            "format": "text",
+                            "label": {
+                                "ar": "رقم المنتج",
+                                "en": "Product ID"
+                            },
+                            "description": {
+                                "ar": "الرقم من رابط المنتج ‎/product/123‎ — يُستخدم عند اختيار نوع الرابط «منتج»",
+                                "en": "The number from the product link /product/123 — used when the Link type is Product"
+                            },
+                            "required": false,
+                            "maxLength": 20,
+                            "conditions": [
+                                {
+                                    "id": "mega_menu_cards.link_type",
+                                    "value": "product"
+                                }
+                            ]
+                        },
+                        {
                             "id": "mega_menu_cards.link",
                             "type": "string",
                             "format": "text",
@@ -576,11 +640,17 @@
                                 "en": "Link"
                             },
                             "description": {
-                                "ar": "رابط القسم أو الصفحة",
-                                "en": "Link to category or page"
+                                "ar": "اكتب الرابط المطلوب — يُستخدم عند اختيار «رابط مخصص»",
+                                "en": "Enter the URL — used when the Link type is Custom link"
                             },
                             "required": false,
-                            "maxLength": 255
+                            "maxLength": 255,
+                            "conditions": [
+                                {
+                                    "id": "mega_menu_cards.link_type",
+                                    "value": "custom"
+                                }
+                            ]
                         },
                         {
                             "id": "mega_menu_cards.image",
@@ -639,6 +709,70 @@
                             "maxLength": 40
                         },
                         {
+                            "id": "topnav_links.link_type",
+                            "type": "items",
+                            "format": "dropdown-list",
+                            "label": {
+                                "ar": "نوع الرابط",
+                                "en": "Link type"
+                            },
+                            "description": {
+                                "ar": "اختر وجهة الرابط، أو «رابط مخصص» لكتابة رابطك بنفسك",
+                                "en": "Pick where the link goes, or “Custom link” to type your own"
+                            },
+                            "value": "custom",
+                            "options": [
+                                { "label": { "ar": "رابط مخصص", "en": "Custom link" }, "value": "custom" },
+                                { "label": { "ar": "تصنيف", "en": "Category" }, "value": "category" },
+                                { "label": { "ar": "منتج", "en": "Product" }, "value": "product" },
+                                { "label": { "ar": "كل المنتجات", "en": "All products" }, "value": "products" },
+                                { "label": { "ar": "الصفحة الرئيسية", "en": "Home" }, "value": "home" }
+                            ],
+                            "required": false
+                        },
+                        {
+                            "id": "topnav_links.link_category",
+                            "type": "string",
+                            "format": "text",
+                            "label": {
+                                "ar": "رقم التصنيف",
+                                "en": "Category ID"
+                            },
+                            "description": {
+                                "ar": "الرقم من رابط التصنيف ‎?category_id[]=12‎ — يُستخدم عند اختيار نوع الرابط «تصنيف»",
+                                "en": "The number from the category link ?category_id[]=12 — used when the Link type is Category"
+                            },
+                            "required": false,
+                            "maxLength": 20,
+                            "conditions": [
+                                {
+                                    "id": "topnav_links.link_type",
+                                    "value": "category"
+                                }
+                            ]
+                        },
+                        {
+                            "id": "topnav_links.link_product",
+                            "type": "string",
+                            "format": "text",
+                            "label": {
+                                "ar": "رقم المنتج",
+                                "en": "Product ID"
+                            },
+                            "description": {
+                                "ar": "الرقم من رابط المنتج ‎/product/123‎ — يُستخدم عند اختيار نوع الرابط «منتج»",
+                                "en": "The number from the product link /product/123 — used when the Link type is Product"
+                            },
+                            "required": false,
+                            "maxLength": 20,
+                            "conditions": [
+                                {
+                                    "id": "topnav_links.link_type",
+                                    "value": "product"
+                                }
+                            ]
+                        },
+                        {
                             "id": "topnav_links.url",
                             "type": "string",
                             "format": "text",
@@ -647,11 +781,17 @@
                                 "en": "Link"
                             },
                             "description": {
-                                "ar": "مثال: /products أو /about",
-                                "en": "Example: /products or /about"
+                                "ar": "اكتب الرابط المطلوب (صفحة، رابط خارجي، إلخ) — يُستخدم عند اختيار «رابط مخصص»",
+                                "en": "Enter the URL (page, external link, etc.) — used when the Link type is Custom link"
                             },
-                            "required": true,
-                            "maxLength": 255
+                            "required": false,
+                            "maxLength": 255,
+                            "conditions": [
+                                {
+                                    "id": "topnav_links.link_type",
+                                    "value": "custom"
+                                }
+                            ]
                         },
                         {
                             "id": "topnav_links.visible",

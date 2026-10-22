@@ -33,7 +33,7 @@
 
     {% block styles %}{% endblock %}
     {# ?v= busts browser caches from before the dev no-cache header; bump on asset changes #}
-    <link rel="stylesheet" href="{{ 'styles/app.css'|asset }}?v=119">
+    <link rel="stylesheet" href="{{ 'styles/app.css'|asset }}?v=121">
 
     <style>
         :root {
@@ -152,13 +152,6 @@
     <falak-notifications position="top-end"></falak-notifications>
 
     <div class="floating-actions">
-        {# WhatsApp — rendered by the SDK's <falak-social> limited to WhatsApp:
-           it reads the store's social accounts (Design options → Social media
-           accounts → WhatsApp). The wrapper is only the draggable shell
-           (app.js) and stays hidden until the SDK has a link to put in it. #}
-        <div class="floating-actions__btn floating-actions__whatsapp" data-draggable-float>
-            <falak-social hide-title networks='["whatsapp"]'></falak-social>
-        </div>
 
         <button class="floating-actions__btn floating-actions__top" type="button" data-back-to-top aria-label="{{ trans('common.back_to_top') }}">
             <svg class="floating-actions__ring" viewBox="0 0 48 48" aria-hidden="true">
@@ -224,7 +217,7 @@
     {# platform injection: FalakSDK script + init #}
     {% hook 'body:end' %}
 
-    <script defer src="{{ 'js/app.js'|asset }}?v=43"></script>
+    <script defer src="{{ 'js/app.js'|asset }}?v=44"></script>
     <script defer src="{{ 'js/blog.js'|asset }}?v=4"></script>
     {% block scripts %}{% endblock %}
 </body>

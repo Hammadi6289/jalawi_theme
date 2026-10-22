@@ -53,6 +53,15 @@
                         {% set link_label = link_label[user.language.code]|default(link_label.ar|default(link_label.en|default(''))) %}
                     {% endif %}
                     {% set link_url = link.url|default(link['topnav_links.url']|default('/')) %}
+                    {# Link type: a picked destination wins over the typed link. #}
+                    {% set link_type = link.link_type|default(link['topnav_links.link_type']|default('custom')) %}
+                    {% if link_type is iterable %}{% set link_type = link_type|first %}{% endif %}
+                    {% set link_category = link.link_category|default(link['topnav_links.link_category']|default(null)) %}
+                    {% set link_product = link.link_product|default(link['topnav_links.link_product']|default(null)) %}
+                    {% if link_type == 'category' and link_category %}{% set link_url = '/products?category_id[]=' ~ link_category %}
+                    {% elseif link_type == 'product' and link_product %}{% set link_url = '/product/' ~ link_product %}
+                    {% elseif link_type == 'products' %}{% set link_url = '/products' %}
+                    {% elseif link_type == 'home' %}{% set link_url = '/' %}{% endif %}
                     {% set link_visible = link.visible is defined ? link.visible : (link['topnav_links.visible'] is defined ? link['topnav_links.visible'] : true) %}
                     {% if link_visible %}
                         <li class="mega-menu__card">
@@ -106,6 +115,15 @@
                         {% set tile_title = tile_title[user.language.code]|default(tile_title.ar|default(tile_title.en|default(''))) %}
                     {% endif %}
                     {% set tile_link = card.link|default(card['mega_menu_cards.link']|default('/products')) %}
+                    {# Link type: a picked destination wins over the typed link. #}
+                    {% set tile_type = card.link_type|default(card['mega_menu_cards.link_type']|default('custom')) %}
+                    {% if tile_type is iterable %}{% set tile_type = tile_type|first %}{% endif %}
+                    {% set tile_category = card.link_category|default(card['mega_menu_cards.link_category']|default(null)) %}
+                    {% set tile_product = card.link_product|default(card['mega_menu_cards.link_product']|default(null)) %}
+                    {% if tile_type == 'category' and tile_category %}{% set tile_link = '/products?category_id[]=' ~ tile_category %}
+                    {% elseif tile_type == 'product' and tile_product %}{% set tile_link = '/product/' ~ tile_product %}
+                    {% elseif tile_type == 'products' %}{% set tile_link = '/products' %}
+                    {% elseif tile_type == 'home' %}{% set tile_link = '/' %}{% endif %}
                     {% set tile_image = card.image|default(card['mega_menu_cards.image']|default(null)) %}
                     <a class="mega-menu__tile" href="{{ tile_link }}">
                         <span class="mega-menu__tile-media">

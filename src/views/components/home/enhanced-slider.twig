@@ -56,6 +56,13 @@
         <div slot="items">
             {% for slide in slides %}
                 {% set slide_link = slide.button_url|default(null) %}
+                {# Link type: a picked destination wins over the typed link. #}
+                {% set slide_link_type = slide.link_type|default('custom') %}
+                {% if slide_link_type is iterable %}{% set slide_link_type = slide_link_type|first %}{% endif %}
+                {% if slide_link_type == 'category' and slide.link_category|default(null) %}{% set slide_link = '/products?category_id[]=' ~ slide.link_category %}
+                {% elseif slide_link_type == 'product' and slide.link_product|default(null) %}{% set slide_link = '/product/' ~ slide.link_product %}
+                {% elseif slide_link_type == 'products' %}{% set slide_link = '/products' %}
+                {% elseif slide_link_type == 'home' %}{% set slide_link = '/' %}{% endif %}
                 <div class="hero-slider__slide{{ loop.first ? ' is-active' : '' }}" data-falak-field="slides" data-falak-label="{{ trans('editor.field.slides') }}" data-falak-bind="none">
                     {# A video link plays instead of the image (muted, looping, like
                        Jalawi); the image, when set, stays as its poster. Only the
@@ -109,7 +116,15 @@
                     {% set product_id = slide.thumb_product|default(null) %}
                     {% set category_id = slide.thumb_category|default(null) %}
                     {% set slide_video = slide.video|default(null) %}
-                    {% set card_link = slide.card_link|default(slide.button_url|default(null)) %}
+                    {# The button's resolved target (same Link type rules as above). #}
+                    {% set btn_link = slide.button_url|default(null) %}
+                    {% set btn_link_type = slide.link_type|default('custom') %}
+                    {% if btn_link_type is iterable %}{% set btn_link_type = btn_link_type|first %}{% endif %}
+                    {% if btn_link_type == 'category' and slide.link_category|default(null) %}{% set btn_link = '/products?category_id[]=' ~ slide.link_category %}
+                    {% elseif btn_link_type == 'product' and slide.link_product|default(null) %}{% set btn_link = '/product/' ~ slide.link_product %}
+                    {% elseif btn_link_type == 'products' %}{% set btn_link = '/products' %}
+                    {% elseif btn_link_type == 'home' %}{% set btn_link = '/' %}{% endif %}
+                    {% set card_link = slide.card_link|default(btn_link) %}
                     {% set card_title = slide.card_title|default(null) %}
                     {% set card_image = slide.thumb_image|default(null) %}
                     {% set card_type = slide.card_type|default('auto') %}

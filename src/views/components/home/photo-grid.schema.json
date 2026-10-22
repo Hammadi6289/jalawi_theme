@@ -126,11 +126,7 @@
                         "ar": "مكياج",
                         "en": "Makeup"
                     },
-                    "items.url": "/",
-                    "items.subs": {
-                        "ar": "أدوات المكياج | /\nمكياج الشفاه | /\nمكياج العيون | /",
-                        "en": "Makeup Tools | /\nLip Makeup | /\nEye Makeup | /"
-                    }
+                    "items.url": "/"
                 },
                 {
                     "items.category": null,
@@ -201,22 +197,67 @@
                     },
                     "required": false,
                     "maxLength": 500
+                }
+            ]
+        },
+        {
+            "id": "limit",
+            "type": "number",
+            "format": "integer",
+            "label": {
+                "ar": "عدد الفئات",
+                "en": "How many categories"
+            },
+            "description": {
+                "ar": "أقصى عدد من الفئات يُعرض في هذا القسم",
+                "en": "The most categories this section will show"
+            },
+            "required": false,
+            "min": 1,
+            "max": 24,
+            "value": 8
+        },
+        {
+            "id": "columns",
+            "type": "items",
+            "format": "dropdown-list",
+            "label": {
+                "ar": "عدد الأعمدة",
+                "en": "Columns"
+            },
+            "description": {
+                "ar": "على الشاشات الكبيرة فقط — تتكيف الشبكة تلقائياً على الجوال",
+                "en": "Large screens only — the grid adapts on mobile automatically"
+            },
+            "value": "4",
+            "options": [
+                {
+                    "label": {
+                        "ar": "عمودان",
+                        "en": "Two"
+                    },
+                    "value": "2"
                 },
                 {
-                    "id": "items.subs",
-                    "type": "string",
-                    "format": "textarea",
                     "label": {
-                        "ar": "الفئات الفرعية",
-                        "en": "Sub-categories"
+                        "ar": "ثلاثة أعمدة",
+                        "en": "Three"
                     },
-                    "description": {
-                        "ar": "تظهر خلف البطاقة. سطر لكل فئة: الاسم | الرابط. اتركه فارغًا لعرض الفئات الفرعية للفئة المختارة.",
-                        "en": "Shown on the back of the card. One per line: Name | link. Leave empty to use the picked category's own sub-categories."
+                    "value": "3"
+                },
+                {
+                    "label": {
+                        "ar": "أربعة أعمدة",
+                        "en": "Four"
                     },
-                    "multilanguage": true,
-                    "required": false,
-                    "maxLength": 1000
+                    "value": "4"
+                },
+                {
+                    "label": {
+                        "ar": "خمسة أعمدة",
+                        "en": "Five"
+                    },
+                    "value": "5"
                 }
             ]
         },
@@ -229,6 +270,20 @@
                 "en": "Move automatically"
             },
             "value": true
+        },
+        {
+            "id": "show_view_all",
+            "type": "boolean",
+            "format": "switch",
+            "label": {
+                "ar": "إظهار رابط عرض الكل",
+                "en": "Show the View all link"
+            },
+            "description": {
+                "ar": "رابط بسهم أسفل الفئات يفتح كل المنتجات",
+                "en": "A link with an arrow under the categories that opens all products"
+            },
+            "value": false
         }
     ]
 }
