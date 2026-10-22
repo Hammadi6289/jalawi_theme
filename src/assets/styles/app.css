@@ -18820,4 +18820,871 @@ body.mega-is-open {
     color: var(--falak-el-stat_label-color, revert);
 }
 
+/* ==========================================================================
+   Video Commerce block (falak-video-commerce)
+   Portrait video cards sourced from the dashboard's Video Commerce feature.
+   ========================================================================== */
+
+.block--video-commerce {
+    background: var(--color-bg, #ffffff);
+    color: var(--color-text, #111111);
+    padding-block: clamp(3rem, 6vw, 5rem);
+    margin-block: 0;
+}
+
+/* Title + subtitle */
+.block--video-commerce .block__title {
+    color: var(--color-text, #111111);
+    text-align: center;
+    margin-bottom: 1.75rem;
+}
+
+.block--video-commerce .block__title::after {
+    background: var(--color-primary);
+}
+
+.block--video-commerce .block__subtitle {
+    color: var(--color-text-muted, #666666);
+    text-align: center;
+    margin-top: -1rem;
+    margin-bottom: 2.25rem;
+    font-size: 0.95rem;
+}
+
+/* Grid -------------------------------------------------------------------- */
+.vc-grid {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: clamp(0.75rem, 2vw, 1.25rem);
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+}
+
+.vc-grid::-webkit-scrollbar { display: none; }
+
+@media (min-width: 768px) {
+    .vc-grid {
+        grid-template-columns: repeat(min(var(--vc-columns, 4), 3), 1fr);
+        overflow-x: visible;
+    }
+}
+
+@media (min-width: 1280px) {
+    .vc-grid {
+        grid-template-columns: repeat(var(--vc-columns, 4), 1fr);
+    }
+}
+
+/* Shimmer skeleton -------------------------------------------------------- */
+.vc-skeleton {
+    aspect-ratio: 9 / 16;
+    border-radius: 18px;
+    background: linear-gradient(
+        90deg,
+        rgba(0, 0, 0, 0.04) 0%,
+        rgba(0, 0, 0, 0.09) 40%,
+        rgba(0, 0, 0, 0.04) 80%
+    );
+    background-size: 200% 100%;
+    animation: vc-shimmer 1.5s ease-in-out infinite;
+}
+
+@keyframes vc-shimmer {
+    0%   { background-position: 200% center; }
+    100% { background-position: -200% center; }
+}
+
+/* Video card in grid ------------------------------------------------------ */
+.vc-card {
+    position: relative;
+    aspect-ratio: 9 / 16;
+    border-radius: 18px;
+    overflow: hidden;
+    background: #14161a;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.10);
+    transform: translateZ(0);
+    transition: transform 0.35s ease, box-shadow 0.35s ease;
+    cursor: pointer;
+    list-style: none;
+}
+
+.vc-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 16px 36px rgba(0, 0, 0, 0.22);
+}
+
+/* The clip */
+.vc-card__video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.6s ease;
+    pointer-events: none;
+}
+
+.vc-card:hover .vc-card__video {
+    transform: scale(1.04);
+}
+
+/* Gradient scrim — bottom-heavy for readability */
+.vc-card__scrim {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        to top,
+        rgba(8, 8, 10, 0.90) 0%,
+        rgba(8, 8, 10, 0.40) 40%,
+        transparent 100%
+    );
+    pointer-events: none;
+}
+
+/* Badge pill (top-start) */
+.vc-card__badge {
+    position: absolute;
+    inset-block-start: 0.85rem;
+    inset-inline-start: 0.85rem;
+    padding: 0.25rem 0.75rem;
+    border-radius: 999px;
+    background: var(--color-primary);
+    color: #ffffff;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    line-height: 1.4;
+    z-index: 3;
+    pointer-events: none;
+}
+
+/* Product info overlay (bottom) */
+.vc-card__info {
+    position: absolute;
+    inset-inline: 0;
+    inset-block-end: 0;
+    padding: 1rem 1rem 0.85rem;
+    z-index: 3;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+}
+
+.vc-card__name {
+    font-size: clamp(0.85rem, 2vw, 0.98rem);
+    font-weight: 600;
+    color: #ffffff;
+    line-height: 1.3;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-decoration: none;
+}
+
+.vc-card__name:hover { text-decoration: underline; }
+
+.vc-card__price {
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.95);
+}
+
+.vc-card__price del {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.6);
+    margin-inline-start: 0.35rem;
+}
+
+/* Cart / wishlist actions row - strictly matched identical heights (38px) */
+.vc-card__actions {
+    display: flex !important;
+    align-items: stretch !important;
+    gap: 0.5rem !important;
+    width: 100% !important;
+    height: 38px !important;
+    min-height: 38px !important;
+    max-height: 38px !important;
+    margin-block-start: 0.45rem !important;
+    box-sizing: border-box !important;
+}
+
+.vc-card__actions falak-add-product-button {
+    flex: 1 1 auto !important;
+    height: 38px !important;
+    min-height: 38px !important;
+    max-height: 38px !important;
+    display: flex !important;
+    align-items: stretch !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.vc-card__actions falak-wishlist-button {
+    flex: 0 0 38px !important;
+    width: 38px !important;
+    min-width: 38px !important;
+    max-width: 38px !important;
+    height: 38px !important;
+    min-height: 38px !important;
+    max-height: 38px !important;
+    display: flex !important;
+    align-items: stretch !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.vc-card__actions falak-add-product-button form,
+.vc-card__actions falak-wishlist-button form {
+    display: flex !important;
+    width: 100% !important;
+    height: 38px !important;
+    min-height: 38px !important;
+    max-height: 38px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.vc-card__actions falak-add-product-button button,
+.vc-card__actions .btn--card-add,
+.vc-card__actions .f-add-product__button {
+    width: 100% !important;
+    height: 38px !important;
+    min-height: 38px !important;
+    max-height: 38px !important;
+    line-height: 36px !important;
+    box-sizing: border-box !important;
+    border-radius: 6px !important;
+    font-size: 0.82rem !important;
+    font-weight: 600 !important;
+    padding: 0 0.75rem !important;
+    margin: 0 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    border: 1px solid transparent !important;
+    vertical-align: middle !important;
+}
+
+/* Wishlist button: strictly identical height (38px) with clear white heart */
+.vc-card__actions falak-wishlist-button button,
+.vc-card__actions falak-wishlist-button .f-wishlist__button,
+.vc-card__actions .vc-card__wishlist-btn {
+    width: 38px !important;
+    height: 38px !important;
+    min-width: 38px !important;
+    max-width: 38px !important;
+    min-height: 38px !important;
+    max-height: 38px !important;
+    line-height: 36px !important;
+    box-sizing: border-box !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border-radius: 6px !important;
+    background: rgba(255, 255, 255, 0.22) !important;
+    border: 1px solid rgba(255, 255, 255, 0.45) !important;
+    color: #ffffff !important;
+    cursor: pointer !important;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25) !important;
+    transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.15s ease !important;
+    vertical-align: middle !important;
+}
+
+.vc-card__actions falak-wishlist-button button:hover,
+.vc-card__actions falak-wishlist-button .f-wishlist__button:hover,
+.vc-card__actions .vc-card__wishlist-btn:hover {
+    background: rgba(255, 255, 255, 0.38) !important;
+    transform: scale(1.05) !important;
+}
+
+.vc-card__actions falak-wishlist-button svg,
+.vc-card__actions falak-wishlist-button .f-wishlist__icon,
+.vc-card__actions .vc-card__wishlist-btn svg,
+.vc-card__actions falak-wishlist-button button svg,
+.vc-card__actions .vc-heart-icon {
+    width: 20px !important;
+    height: 20px !important;
+    min-width: 20px !important;
+    min-height: 20px !important;
+    stroke: #ffffff !important;
+    stroke-width: 2px !important;
+    fill: none !important;
+    color: #ffffff !important;
+    display: block !important;
+    margin: auto !important;
+}
+
+.vc-card__actions falak-wishlist-button svg path,
+.vc-card__actions falak-wishlist-button .f-wishlist__icon path,
+.vc-card__actions .vc-card__wishlist-btn svg path,
+.vc-card__actions falak-wishlist-button button svg path,
+.vc-card__actions .vc-heart-icon path {
+    stroke: #ffffff !important;
+    stroke-width: 2px !important;
+    color: #ffffff !important;
+}
+
+.vc-card__actions falak-wishlist-button button.is-added svg,
+.vc-card__actions falak-wishlist-button .f-wishlist__button.is-added svg,
+.vc-card__actions .vc-card__wishlist-btn.is-added svg,
+.vc-card__actions falak-wishlist-button button.is-added .vc-heart-icon {
+    fill: #ff4d6d !important;
+    stroke: #ff4d6d !important;
+}
+
+.vc-card__actions falak-wishlist-button button.is-added svg path,
+.vc-card__actions falak-wishlist-button .f-wishlist__button.is-added svg path,
+.vc-card__actions .vc-card__wishlist-btn.is-added svg path,
+.vc-card__actions falak-wishlist-button button.is-added .vc-heart-icon path {
+    fill: #ff4d6d !important;
+    stroke: #ff4d6d !important;
+}
+
+/* ==========================================================================
+   Video Commerce Overlay Modal & Carousel Slider
+   ========================================================================== */
+
+.vc-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 999999;
+    display: none !important;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none !important;
+    transition: opacity 0.26s ease, visibility 0.26s ease;
+}
+
+.vc-overlay.is-open {
+    display: flex !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+}
+
+/* Dark dimmed backdrop with blur */
+.vc-overlay__backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(12, 14, 18, 0.88);
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+}
+
+/* Top bar holding Sound (top-start) & Close (top-end) chips */
+.vc-overlay__top-bar {
+    position: absolute;
+    top: max(1.5rem, calc((100vh - min(84vh, 660px)) / 2 + 1rem));
+    left: 50%;
+    transform: translateX(-50%);
+    width: min(88vw, 380px);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-inline: 1rem;
+    box-sizing: border-box;
+    z-index: 50;
+    pointer-events: none;
+}
+
+.vc-overlay__top-bar .vc-overlay__chip {
+    pointer-events: auto;
+    position: static !important;
+}
+
+/* Stage wrapper holding the carousel and arrows */
+.vc-overlay__stage {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    max-width: 1200px;
+    padding: 1.5rem 1rem;
+    box-sizing: border-box;
+}
+
+/* Round white navigation arrow buttons (desktop only) */
+.vc-overlay__arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: #ffffff;
+    color: #1a1a1a;
+    border: none;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.40);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 30;
+    padding: 0;
+    transition: transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.vc-overlay__arrow:hover {
+    transform: translateY(-50%) scale(1.08);
+    background: #f8f8f8;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+}
+
+.vc-overlay__arrow:active {
+    transform: translateY(-50%) scale(0.95);
+}
+
+.vc-overlay__arrow--prev {
+    inset-inline-start: clamp(0.75rem, 4vw, 3rem);
+}
+
+.vc-overlay__arrow--next {
+    inset-inline-end: clamp(0.75rem, 4vw, 3rem);
+}
+
+.vc-overlay__arrow svg {
+    width: 22px;
+    height: 22px;
+    stroke: currentColor;
+    display: block;
+}
+
+/* Reel container */
+.vc-overlay__reel {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+}
+
+/* Slide in desktop overlay */
+.vc-overlay__slide {
+    position: absolute;
+    width: min(88vw, 380px);
+    height: min(84vh, 660px);
+    aspect-ratio: 9 / 16;
+    border-radius: 18px;
+    overflow: hidden;
+    background: #000000;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7);
+    opacity: 0;
+    visibility: hidden;
+    transform: scale(0.85);
+    pointer-events: none;
+    transition: transform 0.38s cubic-bezier(0.25, 1, 0.5, 1),
+                opacity 0.38s ease,
+                visibility 0.38s ease,
+                filter 0.38s ease;
+}
+
+/* Active central slide */
+.vc-overlay__slide.is-active {
+    position: relative;
+    opacity: 1;
+    visibility: visible;
+    transform: scale(1) translateX(0);
+    z-index: 10;
+    pointer-events: auto;
+}
+
+/* Adjacent preview slides on desktop */
+@media (min-width: 900px) {
+    .vc-overlay__slide.is-prev {
+        opacity: 0.35;
+        visibility: visible;
+        transform: translateX(-108%) scale(0.84);
+        filter: blur(1.5px);
+        z-index: 4;
+        cursor: pointer;
+        pointer-events: auto;
+    }
+
+    .vc-overlay__slide.is-next {
+        opacity: 0.35;
+        visibility: visible;
+        transform: translateX(108%) scale(0.84);
+        filter: blur(1.5px);
+        z-index: 4;
+        cursor: pointer;
+        pointer-events: auto;
+    }
+
+    [dir="rtl"] .vc-overlay__slide.is-prev {
+        transform: translateX(108%) scale(0.84);
+    }
+    [dir="rtl"] .vc-overlay__slide.is-next {
+        transform: translateX(-108%) scale(0.84);
+    }
+}
+
+/* Slide video media */
+.vc-overlay__media {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    background: #000;
+}
+
+.vc-overlay__video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+/* Floating round white chips (sound & close) */
+.vc-overlay__chip {
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    min-height: 40px;
+    border-radius: 50%;
+    background: #ffffff;
+    color: #111111;
+    border: none;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 35;
+    padding: 0;
+    transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.vc-overlay__chip:hover {
+    transform: scale(1.1);
+    background: #f4f4f4;
+}
+
+.vc-overlay__chip svg {
+    width: 20px;
+    height: 20px;
+    stroke: currentColor;
+    display: block;
+}
+
+/* Scrim & Product Info inside card */
+.vc-overlay__scrim {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        to top,
+        rgba(0, 0, 0, 0.94) 0%,
+        rgba(0, 0, 0, 0.60) 32%,
+        rgba(0, 0, 0, 0.20) 55%,
+        transparent 100%
+    );
+    pointer-events: none;
+    z-index: 5;
+}
+
+.vc-overlay__info {
+    position: absolute;
+    inset-inline: 0;
+    inset-block-end: 0;
+    padding: 1.25rem 1.25rem 1.25rem;
+    z-index: 15;
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+}
+
+.vc-overlay__name {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #ffffff;
+    line-height: 1.3;
+    text-decoration: none;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    margin: 0;
+}
+
+.vc-overlay__name:hover {
+    text-decoration: underline;
+}
+
+.vc-overlay__price {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: #ffffff;
+    margin-block-end: 0.4rem;
+}
+
+.vc-overlay__price del {
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.6);
+    margin-inline-start: 0.4rem;
+}
+
+/* Overlay Actions row - strictly matched identical heights (46px) */
+.vc-overlay__actions {
+    display: flex !important;
+    align-items: stretch !important;
+    gap: 0.65rem !important;
+    width: 100% !important;
+    height: 46px !important;
+    min-height: 46px !important;
+    max-height: 46px !important;
+    box-sizing: border-box !important;
+}
+
+.vc-overlay__actions falak-add-product-button {
+    flex: 1 1 auto !important;
+    height: 46px !important;
+    min-height: 46px !important;
+    max-height: 46px !important;
+    display: flex !important;
+    align-items: stretch !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.vc-overlay__actions falak-wishlist-button {
+    flex: 0 0 46px !important;
+    width: 46px !important;
+    min-width: 46px !important;
+    max-width: 46px !important;
+    height: 46px !important;
+    min-height: 46px !important;
+    max-height: 46px !important;
+    display: flex !important;
+    align-items: stretch !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.vc-overlay__actions falak-add-product-button form,
+.vc-overlay__actions falak-wishlist-button form {
+    display: flex !important;
+    width: 100% !important;
+    height: 46px !important;
+    min-height: 46px !important;
+    max-height: 46px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.vc-overlay__actions falak-add-product-button button,
+.vc-overlay__actions .vc-overlay__add-btn,
+.vc-overlay__actions .f-add-product__button {
+    width: 100% !important;
+    height: 46px !important;
+    min-height: 46px !important;
+    max-height: 46px !important;
+    line-height: 44px !important;
+    box-sizing: border-box !important;
+    border-radius: 8px !important;
+    font-size: 0.95rem !important;
+    font-weight: 600 !important;
+    padding: 0 1.25rem !important;
+    margin: 0 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    border: 1px solid transparent !important;
+    vertical-align: middle !important;
+}
+
+/* Overlay Wishlist button - identical 46px height and sharp white heart */
+.vc-overlay__actions falak-wishlist-button button,
+.vc-overlay__actions falak-wishlist-button .f-wishlist__button,
+.vc-overlay__actions .vc-overlay__wishlist-btn {
+    width: 46px !important;
+    height: 46px !important;
+    min-width: 46px !important;
+    max-width: 46px !important;
+    min-height: 46px !important;
+    max-height: 46px !important;
+    line-height: 44px !important;
+    box-sizing: border-box !important;
+    border-radius: 8px !important;
+    background: rgba(255, 255, 255, 0.22) !important;
+    border: 1px solid rgba(255, 255, 255, 0.45) !important;
+    color: #ffffff !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    cursor: pointer !important;
+    transition: background-color 0.2s ease, transform 0.15s ease !important;
+    vertical-align: middle !important;
+}
+
+.vc-overlay__actions falak-wishlist-button button:hover,
+.vc-overlay__actions falak-wishlist-button .f-wishlist__button:hover,
+.vc-overlay__actions .vc-overlay__wishlist-btn:hover {
+    background: rgba(255, 255, 255, 0.35) !important;
+    transform: scale(1.05) !important;
+}
+
+.vc-overlay__actions falak-wishlist-button svg,
+.vc-overlay__actions falak-wishlist-button .f-wishlist__icon,
+.vc-overlay__actions .vc-overlay__wishlist-btn svg,
+.vc-overlay__actions falak-wishlist-button button svg,
+.vc-overlay__actions .vc-heart-icon {
+    width: 22px !important;
+    height: 22px !important;
+    min-width: 22px !important;
+    min-height: 22px !important;
+    stroke: #ffffff !important;
+    stroke-width: 2px !important;
+    fill: none !important;
+    color: #ffffff !important;
+    display: block !important;
+    margin: auto !important;
+}
+
+.vc-overlay__actions falak-wishlist-button svg path,
+.vc-overlay__actions falak-wishlist-button .f-wishlist__icon path,
+.vc-overlay__actions .vc-overlay__wishlist-btn svg path,
+.vc-overlay__actions falak-wishlist-button button svg path,
+.vc-overlay__actions .vc-heart-icon path {
+    stroke: #ffffff !important;
+    stroke-width: 2px !important;
+    color: #ffffff !important;
+}
+
+.vc-overlay__actions falak-wishlist-button button.is-added svg,
+.vc-overlay__actions falak-wishlist-button .f-wishlist__button.is-added svg,
+.vc-overlay__actions .vc-overlay__wishlist-btn.is-added svg,
+.vc-overlay__actions falak-wishlist-button button.is-added .vc-heart-icon {
+    fill: #ff4d6d !important;
+    stroke: #ff4d6d !important;
+}
+
+.vc-overlay__actions falak-wishlist-button button.is-added svg path,
+.vc-overlay__actions falak-wishlist-button .f-wishlist__button.is-added svg path,
+.vc-overlay__actions .vc-overlay__wishlist-btn.is-added svg path,
+.vc-overlay__actions falak-wishlist-button button.is-added .vc-heart-icon path {
+    fill: #ff4d6d !important;
+    stroke: #ff4d6d !important;
+}
+
+/* ==========================================================================
+   Mobile Fullscreen Vertical Reels Mode (Instagram / TikTok style)
+   ========================================================================== */
+
+.vc-overlay:not(.is-open) * {
+    pointer-events: none !important;
+}
+
+@media (max-width: 767px) {
+    .vc-overlay {
+        background: #000000;
+    }
+
+    .vc-overlay:not(.is-open) {
+        display: none !important;
+        pointer-events: none !important;
+        visibility: hidden !important;
+    }
+
+    .vc-overlay:not(.is-open) * {
+        pointer-events: none !important;
+        visibility: hidden !important;
+    }
+
+    .vc-overlay__backdrop {
+        display: none;
+    }
+
+    .vc-overlay__top-bar {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        transform: none !important;
+        width: 100vw !important;
+        max-width: none !important;
+        padding-top: max(1rem, env(safe-area-inset-top, 0px)) !important;
+        padding-inline: 1rem !important;
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+        z-index: 50 !important;
+        pointer-events: none !important;
+    }
+
+    .vc-overlay__top-bar .vc-overlay__chip {
+        pointer-events: auto !important;
+        position: static !important;
+    }
+
+    .vc-overlay__stage {
+        padding: 0 !important;
+        width: 100vw !important;
+        height: 100dvh !important;
+        max-width: none !important;
+        overflow: hidden !important;
+    }
+
+    /* Hide horizontal slider arrow buttons completely on mobile */
+    .vc-overlay__arrow {
+        display: none !important;
+    }
+
+    /* Mobile reel: vertical scroll-snap container (Instagram Reels / TikTok downward scroll) */
+    .vc-overlay__reel {
+        width: 100vw !important;
+        height: 100dvh !important;
+        overflow-y: scroll !important;
+        overflow-x: hidden !important;
+        scroll-snap-type: y mandatory !important;
+        overscroll-behavior-y: contain !important;
+        -webkit-overflow-scrolling: touch !important;
+        scrollbar-width: none !important;
+        display: block !important;
+    }
+
+    .vc-overlay__reel::-webkit-scrollbar {
+        display: none !important;
+    }
+
+    /* Fullscreen vertical slides covering 100vw x 100dvh */
+    .vc-overlay__slide {
+        position: relative !important;
+        width: 100vw !important;
+        height: 100dvh !important;
+        min-height: 100dvh !important;
+        max-height: 100dvh !important;
+        border-radius: 0 !important;
+        box-shadow: none !important;
+        scroll-snap-align: start !important;
+        scroll-snap-stop: always !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+        transform: none !important;
+        filter: none !important;
+        pointer-events: auto !important;
+        margin: 0 !important;
+    }
+
+    /* Safe area padding on mobile footer info */
+    .vc-overlay__info {
+        padding-inline: 1.25rem !important;
+        padding-block-end: max(1.5rem, calc(env(safe-area-inset-bottom, 0px) + 1.25rem)) !important;
+    }
+}
 

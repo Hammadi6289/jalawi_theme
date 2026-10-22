@@ -1,0 +1,77 @@
+{#
+    Video Commerce  products flagged in the dashboard's Video Commerce section.
+
+    The clips are NOT typed into the customizer. The merchant enables Video
+    Commerce on a product in the dashboard and uploads the clip there. The
+    endpoint GET /storefront/videoCommerceProducts returns exactly those
+    products. app.js fetches them and builds one <custom-falak-product-card>
+    per product inside [data-vc-grid] the same card every other section uses,
+    which already prefers a product's clip over its still image.
+
+    That endpoint is gated on the shop setting `enable_video_commerce`; when
+    Video Commerce is off it answers 404 and app.js hides the whole section
+    rather than leaving an empty headed band.
+
+    The section starts `hidden` so it is invisible until the fetch completes
+    (or fails). Shimmer tiles fill the grid while the fetch is in flight: their
+    count matches `limit` so the page height does not jump on load.
+
+    | component.title       | ?string | section heading, localized                     |
+    | component.subtitle    | ?string | sub-heading under the title                    |
+    | component.limit       | ?int    | max products to show (default 4)               |
+    | component.columns     | ?string | cards per row on large screens (default "4")   |
+    | component.badge_text  | ?string | pill overlaid on each clip (empty = hidden)    |
+    | component.show_badge  | ?bool   | master toggle for the badge pill               |
+    | component.playback    | ?string | "inview" or "hover" (default "inview")         |
+    | component.show_actions| ?bool   | cart + wishlist buttons under each clip        |
+    | position              | int     |                                                |
+
+    Customizer bindings:
+    | Element          | Tag                       |
+    | h2.block__title  | data-falak-field="title"  |
+    | p.block__subtitle| data-falak-field="subtitle"|
+
+    NOTE: `show_badge|default(true)` fires on *empty* values, not only on
+    undefined — so a merchant who switches the toggle off would get `true`
+    back. The explicit "not defined" test below avoids that trap.
+#}
+{% set show_badge   = component.show_badge   is not defined or component.show_badge %}
+{% set show_actions = component.show_actions is not defined or component.show_actions %}
+{% set limit_count  = (component.limit|default(4) > 0) ? component.limit|default(4) : 4 %}
+
+<section class="block block--video-commerce" id="video-commerce-{{ position }}"
+         data-video-commerce
+         data-limit="{{ limit_count }}"
+         data-badge="{{ show_badge ? component.badge_text|default('') : '' }}"
+         data-playback="{{ component.playback|default('inview') }}"
+         data-actions="{{ show_actions ? '1' : '0' }}"
+         hidden {{ falak_section() }}>
+    <div class="container">
+
+        <div class="block-vc__head" data-reveal="fade">
+            {% if component.title %}
+                <h2 class="block__title"
+                    data-falak-field="title"
+                    data-falak-label="{{ trans('editor.field.title') }}">{{ component.title }}</h2>
+            {% endif %}
+            {% if component.subtitle %}
+                <p class="block__subtitle"
+                   data-falak-field="subtitle"
+                   data-falak-label="{{ trans('editor.field.description') }}">{{ component.subtitle }}</p>
+            {% endif %}
+        </div>
+
+        {# Shimmer placeholders replaced by real cards once the fetch lands.
+           Count matches `limit` so the grid keeps the right height while
+           loading and nothing below it reflows. app.js clears them on success
+           or hides the whole section on 404. #}
+        <ul class="vc-grid"
+            data-vc-grid
+            style="--vc-columns: {{ component.columns|default('4') }}">
+            {% for i in range(1, limit_count) %}
+                <li class="vc-skeleton" aria-hidden="true"></li>
+            {% endfor %}
+        </ul>
+
+    </div>
+</section>

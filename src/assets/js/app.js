@@ -1831,6 +1831,645 @@
     enhanceProductSingle();
     enhanceCustomerPages();
     enhanceCartPage();
+
+    /* ------------------------------------------------ video commerce */
+    // Reads from [data-video-commerce] sections. Each section declares:
+    //   data-limit      how many products to pull (default 4)
+    //   data-badge      pill text (empty string = hidden)
+    //   data-playback   "inview" | "hover"
+    //   data-actions    "1" = render cart + wishlist buttons
+    //
+    // Endpoint: GET /api/storefront/videoCommerceProducts returns products
+    // flagged with `is_video_commerce` in the store dashboard.
+    //
+    // Clicking product name goes to /product/:id.
+    // Clicking video/image opens the fullscreen overlay carousel slider (matching overlay.png).
+    // Overlay features: white circular sound toggle (top-start), close (top-end),
+    // next/prev arrows, adjacent dimmed preview cards, and bottom buy action.
+
+    function videoCommerce() {
+        var isEditor = (function () {
+            try {
+                if (window.parent && window.parent !== window) return true;
+            } catch (e) {
+                return true;
+            }
+            if (document.querySelector('[data-falak-editor]') || document.body.hasAttribute('data-falak-editor')) return true;
+            if (window.location.search && /[?&](preview|draft|editor)\b/i.test(window.location.search)) return true;
+            return false;
+        })();
+
+        var SOUND_ON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>';
+        var SOUND_OFF = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><line x1="23" y1="9" x2="17" y2="15"></line><line x1="17" y1="9" x2="23" y2="15"></line></svg>';
+        var CHEVRON_LEFT = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>';
+        var CHEVRON_RIGHT = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>';
+        var CLOSE_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>';
+        var HEART_ICON = '<svg class="vc-heart-icon" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>';
+
+        function escHtml(str) {
+            return String(str == null ? '' : str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;');
+        }
+
+        function formatMoney(amount, currency) {
+            if (window.falak && typeof window.falak.money === 'function') {
+                return window.falak.money(amount, currency);
+            }
+            var num = Number(amount);
+            var formatted = Number.isFinite(num) ? num.toFixed(2) : String(amount);
+            return currency ? (formatted + ' ' + currency) : formatted;
+        }
+
+        /* --------------------------- Overlay modal & slider state --------------------------- */
+        var overlayEl = null;
+        var overlayIndex = 0;
+        var overlayProducts = [];
+        var isMuted = true; // start muted per browser autoplay policy
+        var mobileObserver = null;
+
+        function ensureWishlistHearts(container) {
+            if (!container) return;
+            var hosts = container.querySelectorAll('falak-wishlist-button');
+            hosts.forEach(function (host) {
+                var btn = host.querySelector('button');
+                if (!btn) {
+                    btn = document.createElement('button');
+                    btn.type = 'button';
+                    btn.className = host.closest('.vc-overlay__actions')
+                        ? 'btn btn--card-icon vc-overlay__wishlist-btn'
+                        : 'btn btn--card-icon vc-card__wishlist-btn';
+                    btn.setAttribute('aria-label', 'Wishlist');
+                    host.appendChild(btn);
+                }
+                var svg = btn.querySelector('svg');
+                if (!svg || !svg.querySelector('path')) {
+                    btn.innerHTML = HEART_ICON;
+                } else {
+                    svg.classList.add('vc-heart-icon');
+                    svg.setAttribute('viewBox', '0 0 24 24');
+                    svg.setAttribute('width', host.closest('.vc-overlay__actions') ? '22' : '20');
+                    svg.setAttribute('height', host.closest('.vc-overlay__actions') ? '22' : '20');
+                    svg.style.stroke = btn.classList.contains('is-added') ? '#ff4d6d' : '#ffffff';
+                    svg.style.strokeWidth = '2px';
+                    svg.style.fill = btn.classList.contains('is-added') ? '#ff4d6d' : 'none';
+                    svg.style.display = 'block';
+                }
+            });
+        }
+
+        function ensureOverlay() {
+            if (overlayEl) return overlayEl;
+
+            overlayEl = document.createElement('div');
+            overlayEl.className = 'vc-overlay';
+            overlayEl.id = 'vc-overlay';
+            overlayEl.setAttribute('role', 'dialog');
+            overlayEl.setAttribute('aria-modal', 'true');
+            overlayEl.setAttribute('aria-hidden', 'true');
+
+            var isRtl = document.documentElement.dir === 'rtl';
+
+            overlayEl.innerHTML =
+                '<div class="vc-overlay__backdrop" data-vc-close></div>' +
+                '<div class="vc-overlay__top-bar">' +
+                    '<button type="button" class="vc-overlay__chip vc-overlay__chip--sound" data-vc-sound aria-label="Toggle sound">' +
+                        (isMuted ? SOUND_OFF : SOUND_ON) +
+                    '</button>' +
+                    '<button type="button" class="vc-overlay__chip vc-overlay__chip--close" data-vc-close aria-label="Close">' +
+                        CLOSE_ICON +
+                    '</button>' +
+                '</div>' +
+                '<div class="vc-overlay__stage">' +
+                    '<button type="button" class="vc-overlay__arrow vc-overlay__arrow--prev" data-vc-prev aria-label="Previous">' +
+                        (isRtl ? CHEVRON_RIGHT : CHEVRON_LEFT) +
+                    '</button>' +
+                    '<div class="vc-overlay__reel" data-vc-reel></div>' +
+                    '<button type="button" class="vc-overlay__arrow vc-overlay__arrow--next" data-vc-next aria-label="Next">' +
+                        (isRtl ? CHEVRON_LEFT : CHEVRON_RIGHT) +
+                    '</button>' +
+                '</div>';
+
+            document.body.appendChild(overlayEl);
+
+            overlayEl.addEventListener('click', function (e) {
+                if (
+                    e.target.closest('[data-vc-close]') ||
+                    e.target === overlayEl ||
+                    e.target.classList.contains('vc-overlay__backdrop') ||
+                    e.target.classList.contains('vc-overlay__stage') ||
+                    e.target.classList.contains('vc-overlay__reel')
+                ) {
+                    closeOverlay();
+                    return;
+                }
+                if (e.target.closest('[data-vc-prev]')) {
+                    goToSlide(overlayIndex - 1);
+                    return;
+                }
+                if (e.target.closest('[data-vc-next]')) {
+                    goToSlide(overlayIndex + 1);
+                    return;
+                }
+                if (e.target.closest('[data-vc-sound]')) {
+                    toggleSound();
+                    return;
+                }
+                var clickedSlide = e.target.closest('.vc-overlay__slide');
+                if (clickedSlide && !clickedSlide.classList.contains('is-active') && window.innerWidth > 767) {
+                    var idx = parseInt(clickedSlide.getAttribute('data-index'), 10);
+                    if (!isNaN(idx)) goToSlide(idx);
+                }
+            });
+
+            document.addEventListener('keydown', function (e) {
+                if (!overlayEl || !overlayEl.classList.contains('is-open')) return;
+                if (e.key === 'Escape') {
+                    closeOverlay();
+                } else if (e.key === 'ArrowLeft') {
+                    document.documentElement.dir === 'rtl' ? goToSlide(overlayIndex + 1) : goToSlide(overlayIndex - 1);
+                } else if (e.key === 'ArrowRight') {
+                    document.documentElement.dir === 'rtl' ? goToSlide(overlayIndex - 1) : goToSlide(overlayIndex + 1);
+                } else if (e.key === 'ArrowUp') {
+                    goToSlide(overlayIndex - 1);
+                } else if (e.key === 'ArrowDown') {
+                    goToSlide(overlayIndex + 1);
+                }
+            });
+
+            return overlayEl;
+        }
+
+        function renderOverlaySlides() {
+            var reel = overlayEl.querySelector('[data-vc-reel]');
+            if (!reel) return;
+
+            reel.innerHTML = '';
+            var isAr = document.documentElement.dir === 'rtl' || (window.falak && window.falak.lang && window.falak.lang.locale === 'ar');
+
+            overlayProducts.forEach(function (product, i) {
+                var clip      = product.video_url || product.clip_url || product.video || '';
+                var poster    = product.video_thumbnail_url || (product.images && product.images[0] && product.images[0].url) || product.image_url || product.image || '';
+                var name      = (isAr && product.name_ar) ? product.name_ar : (product.name || product.title || '');
+                var href      = '/product/' + encodeURIComponent(product.id);
+                var priceHtml = '';
+
+                var priceCents = product.price !== undefined ? product.price : (product.price_cents !== undefined ? product.price_cents : null);
+                var saleCents  = product.discount_price !== undefined ? product.discount_price : (product.discount_price_cents !== undefined ? product.discount_price_cents : null);
+                var curr       = product.currency || '';
+
+                if (priceCents !== null && priceCents !== '') {
+                    var pNum = Number(priceCents);
+                    var sNum = Number(saleCents);
+                    if (saleCents !== null && Number.isFinite(sNum) && sNum > 0 && sNum < pNum) {
+                        priceHtml = '<div class="vc-overlay__price"><strong>' + escHtml(formatMoney(sNum, curr)) + '</strong> <del>' + escHtml(formatMoney(pNum, curr)) + '</del></div>';
+                    } else {
+                        priceHtml = '<div class="vc-overlay__price"><strong>' + escHtml(formatMoney(pNum, curr)) + '</strong></div>';
+                    }
+                }
+
+                var slide = document.createElement('div');
+                slide.className = 'vc-overlay__slide';
+                slide.setAttribute('data-index', String(i));
+
+                var videoTag = clip
+                    ? '<video class="vc-overlay__video" src="' + escHtml(clip) + '" poster="' + escHtml(poster) + '" playsinline loop muted preload="auto"></video>'
+                    : '<img class="vc-overlay__video" src="' + escHtml(poster) + '" alt="" loading="lazy">';
+
+                slide.innerHTML =
+                    '<div class="vc-overlay__media">' + videoTag + '</div>' +
+                    '<div class="vc-overlay__scrim"></div>' +
+                    '<div class="vc-overlay__info">' +
+                        '<a class="vc-overlay__name" href="' + escHtml(href) + '">' + escHtml(name) + '</a>' +
+                        priceHtml +
+                        '<div class="vc-overlay__actions">' +
+                            '<falak-add-product-button product-id="' + escHtml(product.id) + '" button-class="btn btn--primary vc-overlay__add-btn"></falak-add-product-button>' +
+                            '<falak-wishlist-button product-id="' + escHtml(product.id) + '" button-class="btn btn--card-icon vc-overlay__wishlist-btn"></falak-wishlist-button>' +
+                        '</div>' +
+                    '</div>';
+
+                reel.appendChild(slide);
+            });
+
+            // Show or hide arrows if only 1 product on desktop
+            var prevBtn = overlayEl.querySelector('[data-vc-prev]');
+            var nextBtn = overlayEl.querySelector('[data-vc-next]');
+            if (prevBtn && nextBtn) {
+                var hasMultiple = overlayProducts.length > 1;
+                prevBtn.style.display = hasMultiple ? 'flex' : 'none';
+                nextBtn.style.display = hasMultiple ? 'flex' : 'none';
+            }
+        }
+
+        function setupMobileScrollObserver() {
+            if (mobileObserver) {
+                mobileObserver.disconnect();
+                mobileObserver = null;
+            }
+            var reel = overlayEl.querySelector('[data-vc-reel]');
+            if (!reel) return;
+
+            mobileObserver = new IntersectionObserver(function (entries) {
+                entries.forEach(function (entry) {
+                    if (entry.isIntersecting && entry.intersectionRatio >= 0.55) {
+                        var idx = parseInt(entry.target.getAttribute('data-index'), 10);
+                        if (!isNaN(idx) && idx !== overlayIndex) {
+                            overlayIndex = idx;
+                            playActiveSlide(idx);
+                        }
+                    }
+                });
+            }, {
+                root: reel,
+                threshold: 0.55
+            });
+
+            var slides = reel.querySelectorAll('.vc-overlay__slide');
+            slides.forEach(function (s) {
+                mobileObserver.observe(s);
+            });
+        }
+
+        function playActiveSlide(idx) {
+            var slides = overlayEl.querySelectorAll('.vc-overlay__slide');
+            var isDesktop = window.innerWidth > 767;
+            var count = slides.length;
+            if (!count) return;
+
+            var prevIdx = (idx - 1 + count) % count;
+            var nextIdx = (idx + 1) % count;
+
+            slides.forEach(function (slide, i) {
+                var vid = slide.querySelector('video');
+                if (i === idx) {
+                    slide.classList.add('is-active');
+                    slide.classList.remove('is-prev', 'is-next');
+                    if (vid) {
+                        vid.muted = isMuted;
+                        var p = vid.play();
+                        if (p && p.catch) p.catch(function () {});
+                    }
+                    ensureWishlistHearts(slide);
+                } else {
+                    slide.classList.remove('is-active');
+                    if (isDesktop) {
+                        if (count > 1 && i === prevIdx) {
+                            slide.classList.add('is-prev');
+                            slide.classList.remove('is-next');
+                        } else if (count > 1 && i === nextIdx) {
+                            slide.classList.add('is-next');
+                            slide.classList.remove('is-prev');
+                        } else {
+                            slide.classList.remove('is-prev', 'is-next');
+                        }
+                    } else {
+                        slide.classList.remove('is-prev', 'is-next');
+                    }
+                    if (vid) {
+                        vid.pause();
+                        vid.currentTime = 0;
+                    }
+                }
+            });
+
+            updateSoundButtons();
+        }
+
+        function updateSlideClasses() {
+            playActiveSlide(overlayIndex);
+        }
+
+        function updateSoundButtons() {
+            if (!overlayEl) return;
+            var soundBtns = overlayEl.querySelectorAll('[data-vc-sound]');
+            soundBtns.forEach(function (btn) {
+                btn.innerHTML = isMuted ? SOUND_OFF : SOUND_ON;
+                btn.setAttribute('aria-label', isMuted ? 'Unmute' : 'Mute');
+            });
+        }
+
+        function toggleSound() {
+            isMuted = !isMuted;
+            var activeSlide = overlayEl.querySelector('.vc-overlay__slide.is-active');
+            if (activeSlide) {
+                var vid = activeSlide.querySelector('video');
+                if (vid) vid.muted = isMuted;
+            }
+            updateSoundButtons();
+        }
+
+        function goToSlide(newIdx) {
+            var count = overlayProducts.length;
+            if (!count) return;
+            overlayIndex = (newIdx + count) % count;
+
+            if (window.innerWidth <= 767) {
+                var reel = overlayEl.querySelector('[data-vc-reel]');
+                var slides = reel ? reel.querySelectorAll('.vc-overlay__slide') : [];
+                if (slides[overlayIndex]) {
+                    slides[overlayIndex].scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            } else {
+                updateSlideClasses();
+            }
+        }
+
+        function openOverlay(startIndex, products) {
+            ensureOverlay();
+            if (products && products.length) {
+                overlayProducts = products;
+            }
+            if (!overlayProducts || !overlayProducts.length) return;
+
+            overlayIndex = Math.max(0, Math.min(startIndex || 0, overlayProducts.length - 1));
+
+            // Pause all preview videos on the page
+            document.querySelectorAll('.vc-card video').forEach(function (v) {
+                try { v.pause(); } catch (e) {}
+            });
+
+            renderOverlaySlides();
+
+            overlayEl.classList.add('is-open');
+            overlayEl.setAttribute('aria-hidden', 'false');
+            document.body.style.overflow = 'hidden';
+
+            var isMobile = window.innerWidth <= 767;
+
+            if (isMobile) {
+                requestAnimationFrame(function () {
+                    var reel = overlayEl.querySelector('[data-vc-reel]');
+                    var slides = reel ? reel.querySelectorAll('.vc-overlay__slide') : [];
+                    if (slides[overlayIndex]) {
+                        slides[overlayIndex].scrollIntoView({ behavior: 'instant', block: 'start' });
+                    }
+                    setupMobileScrollObserver();
+                });
+            }
+
+            playActiveSlide(overlayIndex);
+
+            ensureWishlistHearts(overlayEl);
+            setTimeout(function () { ensureWishlistHearts(overlayEl); }, 100);
+            setTimeout(function () { ensureWishlistHearts(overlayEl); }, 350);
+        }
+
+        function closeOverlay() {
+            if (!overlayEl) return;
+            if (mobileObserver) {
+                mobileObserver.disconnect();
+                mobileObserver = null;
+            }
+            overlayEl.classList.remove('is-open');
+            overlayEl.setAttribute('aria-hidden', 'true');
+            document.body.style.overflow = '';
+
+            // Pause and reset all overlay videos
+            overlayEl.querySelectorAll('video').forEach(function (v) {
+                try {
+                    v.pause();
+                    v.currentTime = 0;
+                } catch (e) {}
+            });
+
+            // Remove active classes
+            overlayEl.querySelectorAll('.vc-overlay__slide').forEach(function (s) {
+                s.classList.remove('is-active', 'is-prev', 'is-next');
+            });
+
+            // Empty the reel so no old slides or videos linger in memory
+            var reel = overlayEl.querySelector('[data-vc-reel]');
+            if (reel) reel.innerHTML = '';
+        }
+
+        /* --------------------------- Grid Card Builder --------------------------- */
+        function buildCard(product, section, index, allProductsList) {
+            var badge     = section.getAttribute('data-badge') || '';
+            var actions   = section.getAttribute('data-actions') === '1';
+            var clip      = product.video_url || product.clip_url || product.video || '';
+            var poster    = product.video_thumbnail_url || (product.images && product.images[0] && product.images[0].url) || product.image_url || product.image || '';
+            var isAr      = document.documentElement.dir === 'rtl' || (window.falak && window.falak.lang && window.falak.lang.locale === 'ar');
+            var name      = (isAr && product.name_ar) ? product.name_ar : (product.name || product.title || '');
+            var href      = '/product/' + encodeURIComponent(product.id);
+            var priceHtml = '';
+
+            var priceCents = product.price !== undefined ? product.price : (product.price_cents !== undefined ? product.price_cents : null);
+            var saleCents  = product.discount_price !== undefined ? product.discount_price : (product.discount_price_cents !== undefined ? product.discount_price_cents : null);
+            var curr       = product.currency || '';
+
+            if (priceCents !== null && priceCents !== '') {
+                var pNum = Number(priceCents);
+                var sNum = Number(saleCents);
+                if (saleCents !== null && Number.isFinite(sNum) && sNum > 0 && sNum < pNum) {
+                    priceHtml = '<span class="vc-card__price"><strong>' + escHtml(formatMoney(sNum, curr)) + '</strong> <del>' + escHtml(formatMoney(pNum, curr)) + '</del></span>';
+                } else {
+                    priceHtml = '<span class="vc-card__price"><strong>' + escHtml(formatMoney(pNum, curr)) + '</strong></span>';
+                }
+            }
+
+            var actionsHtml = '';
+            if (actions) {
+                actionsHtml = '<div class="vc-card__actions">' +
+                    '<falak-add-product-button product-id="' + escHtml(product.id) + '" button-class="btn btn--primary btn--card-add" button-size="sm"></falak-add-product-button>' +
+                    '<falak-wishlist-button product-id="' + escHtml(product.id) + '" button-class="btn btn--card-icon vc-card__wishlist-btn"></falak-wishlist-button>' +
+                    '</div>';
+            }
+
+            var badgeHtml = badge
+                ? '<span class="vc-card__badge">' + escHtml(badge) + '</span>'
+                : '';
+
+            var videoEl = clip
+                ? '<video class="vc-card__video" src="' + escHtml(clip) + '" poster="' + escHtml(poster) + '" muted playsinline preload="none" loop disablepictureinpicture aria-hidden="true" tabindex="-1"></video>'
+                : '<img class="vc-card__video" src="' + escHtml(poster) + '" alt="" loading="lazy">';
+
+            var li = document.createElement('li');
+            li.className = 'vc-card';
+            li.setAttribute('data-vc-card', '');
+            li.setAttribute('data-vc-index', String(index));
+            li.innerHTML =
+                videoEl +
+                '<div class="vc-card__scrim" aria-hidden="true"></div>' +
+                badgeHtml +
+                '<div class="vc-card__info">' +
+                    '<a class="vc-card__name" href="' + escHtml(href) + '">' + escHtml(name) + '</a>' +
+                    priceHtml +
+                    actionsHtml +
+                '</div>';
+
+            // Clicking title or actions lets those actions execute.
+            // Clicking the image/video/card surface opens the fullscreen overlay slider!
+            li.addEventListener('click', function (e) {
+                if (e.target.closest('a')) return; // Go to product page
+                if (e.target.closest('button, falak-add-product-button, falak-wishlist-button')) return; // Action buttons
+                e.preventDefault();
+                openOverlay(index, allProductsList);
+            });
+
+            // Ensure wishlist icon is injected if the SDK renders an empty button
+            ensureWishlistHearts(li);
+            setTimeout(function () {
+                ensureWishlistHearts(li);
+            }, 180);
+
+            return li;
+        }
+
+        // Delegated click listener on document as a safety fallback for any dynamic card clicks
+        document.addEventListener('click', function (e) {
+            var card = e.target.closest('.vc-card');
+            if (!card) return;
+            if (e.target.closest('a, button, falak-add-product-button, falak-wishlist-button')) return;
+            var idx = parseInt(card.getAttribute('data-vc-index'), 10);
+            if (!isNaN(idx) && overlayProducts && overlayProducts.length) {
+                e.preventDefault();
+                openOverlay(idx, overlayProducts);
+            }
+        });
+
+        function wireCard(li, playback) {
+            var video = li.querySelector('.vc-card__video');
+            if (!video || video.tagName !== 'VIDEO') return;
+
+            function play() {
+                var p = video.play();
+                if (p && p.catch) p.catch(function () {});
+                li.classList.add('is-playing');
+            }
+            function pause() {
+                video.pause();
+                li.classList.remove('is-playing');
+            }
+
+            var isMobile = window.matchMedia('(pointer: coarse)').matches;
+
+            if (playback === 'hover' && !isMobile) {
+                li.addEventListener('pointerenter', play);
+                li.addEventListener('pointerleave', pause);
+            } else {
+                // inview (default and mobile fallback)
+                var obs = new IntersectionObserver(function (entries) {
+                    entries.forEach(function (entry) {
+                        if (entry.isIntersecting) { play(); } else { pause(); }
+                    });
+                }, { threshold: 0.3 });
+                obs.observe(li);
+            }
+        }
+
+        function fetchProducts() {
+            if (window.falak && window.falak.api && typeof window.falak.api.request === 'function') {
+                return window.falak.api.withoutNotifier(function () {
+                    return window.falak.api.request('videoCommerceProducts');
+                }).then(function (res) {
+                    return Array.isArray(res) ? res : (res && res.data) || [];
+                }).catch(function () {
+                    return fetchRaw();
+                });
+            }
+            return fetchRaw();
+        }
+
+        function fetchRaw() {
+            return fetch('/api/storefront/videoCommerceProducts', {
+                credentials: 'same-origin',
+                headers: { 'Accept': 'application/json' }
+            }).then(function (res) {
+                if (res.status === 404) return [];
+                if (!res.ok) throw new Error('vc: ' + res.status);
+                return res.json();
+            }).then(function (data) {
+                return Array.isArray(data) ? data : (data && data.data) || [];
+            });
+        }
+
+        function initSections() {
+            var sections = document.querySelectorAll('[data-video-commerce]');
+            if (!sections.length) return;
+
+            // Immediately reveal skeleton placeholders while loading
+            sections.forEach(function (sec) {
+                sec.removeAttribute('hidden');
+            });
+
+            fetchProducts().then(function (products) {
+                sections.forEach(function (section) {
+                    var limit    = parseInt(section.getAttribute('data-limit'), 10) || 4;
+                    var playback = section.getAttribute('data-playback') || 'inview';
+                    var grid     = section.querySelector('[data-vc-grid]');
+                    if (!grid) return;
+
+                    var slice = products.slice(0, limit);
+
+                    if (!slice.length) {
+                        if (isEditor) {
+                            var isAr = document.documentElement.dir === 'rtl';
+                            grid.innerHTML = '<li style="grid-column: 1 / -1; list-style: none; padding: 2.5rem 1.5rem; text-align: center; border: 1px dashed rgba(0,0,0,0.2); border-radius: 14px; background: rgba(0,0,0,0.02);">' +
+                                '<div style="font-size: 1.05rem; font-weight: 600; color: #111; margin-bottom: 0.4rem;">' + (isAr ? 'التجارة بالفيديو' : 'Video Commerce') + '</div>' +
+                                '<div style="font-size: 0.85rem; color: #666;">' + (isAr ? 'لم تتم إضافة أي منتجات فيديو بعد من لوحة التحكم.' : 'No video commerce products added yet in the dashboard.') + '</div>' +
+                                '</li>';
+                            section.removeAttribute('hidden');
+                        } else {
+                            section.hidden = true;
+                        }
+                        return;
+                    }
+
+                    grid.innerHTML = ''; // remove shimmer skeletons
+                    slice.forEach(function (product, idx) {
+                        var li = buildCard(product, section, idx, slice);
+                        grid.appendChild(li);
+                        wireCard(li, playback);
+                    });
+
+                    section.removeAttribute('hidden');
+                });
+            }).catch(function () {
+                sections.forEach(function (sec) {
+                    if (isEditor) {
+                        sec.removeAttribute('hidden');
+                    } else {
+                        sec.hidden = true;
+                    }
+                });
+            });
+        }
+
+        if (window.falak && typeof window.falak.onReady === 'function') {
+            window.falak.onReady(initSections);
+        } else if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initSections);
+        } else {
+            initSections();
+        }
+
+        // MutationObserver to automatically catch newly inserted blocks in customizer preview
+        try {
+            var pendingSweep = null;
+            new MutationObserver(function (mutations) {
+                var hasNew = false;
+                for (var i = 0; i < mutations.length; i++) {
+                    if (mutations[i].addedNodes && mutations[i].addedNodes.length) {
+                        hasNew = true;
+                        break;
+                    }
+                }
+                if (hasNew) {
+                    if (pendingSweep) clearTimeout(pendingSweep);
+                    pendingSweep = setTimeout(function () {
+                        if (document.querySelector('[data-video-commerce] .vc-skeleton')) {
+                            initSections();
+                        }
+                    }, 150);
+                }
+            }).observe(document.body, { childList: true, subtree: true });
+        } catch (e) {}
+    }
+
+    videoCommerce();
 })();
+
 
 
