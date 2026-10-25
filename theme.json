@@ -822,6 +822,23 @@
                             "topnav_links.visible": true
                         }
                     ]
+                },
+                {
+                    "id": "categories_bar_limit",
+                    "type": "number",
+                    "format": "integer",
+                    "label": {
+                        "ar": "عدد تصنيفات الشريط الظاهرة على سطح المكتب",
+                        "en": "Visible categories in bar (desktop)"
+                    },
+                    "description": {
+                        "ar": "الحد الأقصى لعدد التصنيفات الظاهرة قبل جمع الباقي في قائمة «المزيد» (لا يؤثر على الجوال)",
+                        "en": "Maximum categories shown before collapsing remaining items into 'More' dropdown (desktop only)"
+                    },
+                    "required": false,
+                    "min": 2,
+                    "max": 25,
+                    "value": 7
                 }
             ]
         },
@@ -1014,20 +1031,32 @@
                     "type": "string",
                     "format": "text",
                     "label": {
-                        "ar": "عنوان النشرة البريدية",
-                        "en": "Newsletter heading"
+                        "ar": "عنوان النشرة البريدية في الفوتر",
+                        "en": "Footer newsletter heading"
                     },
                     "description": {
-                        "ar": "اتركه فارغاً لاستخدام النص الافتراضي للقالب",
-                        "en": "Leave empty to use the theme default"
+                        "ar": "اتركه فارغاً لاستخدام بيانات النشرة البريدية من لوحة تحكم المتجر",
+                        "en": "Leave empty to use newsletter data from store dashboard"
                     },
                     "multilanguage": true,
                     "required": false,
-                    "maxLength": 120,
-                    "value": {
-                        "ar": "سجّل بريدك الإلكتروني واحصل على آخر الأخبار والعروض الخاصة.",
-                        "en": "Register your email address and receive the latest news and special offers."
-                    }
+                    "maxLength": 120
+                },
+                {
+                    "id": "footer_newsletter_description",
+                    "type": "string",
+                    "format": "text",
+                    "label": {
+                        "ar": "وصف النشرة البريدية في الفوتر",
+                        "en": "Footer newsletter description"
+                    },
+                    "description": {
+                        "ar": "اتركه فارغاً لاستخدام وصف النشرة من لوحة تحكم المتجر",
+                        "en": "Leave empty to use newsletter description from store dashboard"
+                    },
+                    "multilanguage": true,
+                    "required": false,
+                    "maxLength": 160
                 },
                 {
                     "id": "footer_gallery_title",

@@ -102,11 +102,20 @@
            own field, button and aria-live status line, validates in the
            store's language, and posts through falak.newsletter.subscribe().
            The theme only skins it. #}
-        {% if theme.settings.get('footer_newsletter_enabled', true) %}
+        {% set store_nl = store.settings.newsletter|default(store.newsletter)|default({}) %}
+        {% set store_nl_enabled = store.settings.newsletter_enabled is defined ? store.settings.newsletter_enabled : (store_nl.enabled is defined ? store_nl.enabled : true) %}
+        {% if store_nl_enabled and theme.settings.get('footer_newsletter_enabled', true) %}
             <div class="container site-footer__newsletter" data-reveal="slide-up" style="--reveal-delay: 120ms;">
-                <h2 class="site-footer__newsletter-title">
-                    {{ theme.settings.get('footer_newsletter_title')|default(trans('footer.newsletter')) }}
-                </h2>
+                {% set footer_nl_title = theme.settings.get('footer_newsletter_title')|default(store.settings.newsletter_title)|default(store_nl.title)|default(trans('footer.newsletter')) %}
+                {% if footer_nl_title %}
+                    <h2 class="site-footer__newsletter-title">
+                        {{ footer_nl_title }}
+                    </h2>
+                {% endif %}
+                {% set footer_nl_desc = theme.settings.get('footer_newsletter_description')|default(store.settings.newsletter_description)|default(store.settings.newsletter_subtitle)|default(store_nl.description)|default(store_nl.subtitle) %}
+                {% if footer_nl_desc %}
+                    <p class="site-footer__newsletter-desc">{{ footer_nl_desc }}</p>
+                {% endif %}
                 <falak-newsletter class="site-footer__newsletter-form"></falak-newsletter>
             </div>
         {% endif %}

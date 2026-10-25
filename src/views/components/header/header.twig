@@ -153,17 +153,46 @@
     </div>
 
     {% if menus.categories_menu|default([])|length > 0 %}
+        {% set desktop_cat_limit = theme.settings.get('categories_bar_limit', 7)|default(7)|number_format %}
+        {% if desktop_cat_limit < 2 %}{% set desktop_cat_limit = 7 %}{% endif %}
+        {% set total_cats = menus.categories_menu|length %}
+        {% set overflow_count = total_cats - desktop_cat_limit %}
+
         <div class="site-header__navbar">
             <div class="container">
-                <nav class="cat-bar" aria-label="{{ trans('common.categories') }}">
+                <nav class="cat-bar" aria-label="{{ trans('common.categories') }}" data-cat-bar data-desktop-limit="{{ desktop_cat_limit }}">
                     <ul>
                         {% for item in menus.categories_menu %}
-                            <li>
+                            {% set is_overflow = loop.index > desktop_cat_limit %}
+                            <li class="cat-bar__item{{ is_overflow ? ' cat-bar__item--overflow' : '' }}" data-cat-item>
                                 <a href="{{ item.url }}"{{ item.is_new_tab ? ' target="_blank" rel="noopener"' : '' }}>
                                     {{ item.title }}
                                 </a>
                             </li>
                         {% endfor %}
+
+                        {% if overflow_count > 0 %}
+                            <li class="cat-bar__more" data-cat-more>
+                                <button type="button" class="cat-bar__more-btn" data-cat-more-btn aria-expanded="false" aria-haspopup="true">
+                                    <span class="cat-bar__more-label">
+                                        <span class="cat-bar__more-text">{{ trans('common.more') }}</span>
+                                        <span class="cat-bar__more-count" data-cat-more-count>{{ overflow_count }}</span>
+                                    </span>
+                                    <svg class="cat-bar__more-icon" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                        <polyline points="6 9 12 15 18 9"></polyline>
+                                    </svg>
+                                </button>
+                                <div class="cat-bar__dropdown" data-cat-dropdown role="menu">
+                                    {% for item in menus.categories_menu %}
+                                        {% if loop.index > desktop_cat_limit %}
+                                            <a class="cat-bar__dropdown-item" href="{{ item.url }}"{{ item.is_new_tab ? ' target="_blank" rel="noopener"' : '' }} role="menuitem" data-cat-dropdown-item>
+                                                {{ item.title }}
+                                            </a>
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                            </li>
+                        {% endif %}
                     </ul>
                 </nav>
             </div>

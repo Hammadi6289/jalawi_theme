@@ -162,7 +162,7 @@
                     <span class="product-single__sku-value" data-product-sku-value>{{ product.sku|default(product.code) }}</span>
                 </div>
 
-                {# Compare & Share row (directly follows buy box, matching reference theme) #}
+                {# Compare, Copy Slug & Share row (directly follows buy box, matching reference theme) #}
                 <div class="product-single__actions-row">
                     {% if theme.settings.get('compare_enabled', true) %}
                         <button class="product-single__compare" type="button" data-compare-toggle="{{ product.id }}" aria-pressed="false">
@@ -172,6 +172,14 @@
                             <span>{{ trans('compare.add') }}</span>
                         </button>
                     {% endif %}
+
+                    <button class="product-single__copy-link product-single__copy-slug" type="button" data-copy-link data-copy-url="{{ product.url|default('') }}" aria-label="{{ trans('product.copy_link') }}" title="{{ trans('product.copy_link') }}">
+                        <svg class="product-single__copy-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+                            <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+                        </svg>
+                        <span class="product-single__copy-text" data-copy-text data-label-copy="{{ trans('product.copy_link') }}" data-label-copied="{{ trans('common.copied') }}">{{ trans('product.copy_link') }}</span>
+                    </button>
 
                     <falak-social mode="share" class="product-single__share"
                                   share-text="{{ product.name }}"></falak-social>

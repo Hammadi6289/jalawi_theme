@@ -27,27 +27,37 @@
 
     Styleable parts: `box` on .newsletter.
 #}
+{% set store_nl = store.settings.newsletter|default(store.newsletter)|default({}) %}
+{% set is_nl_enabled = store.settings.newsletter_enabled is defined ? store.settings.newsletter_enabled : (store_nl.enabled is defined ? store_nl.enabled : true) %}
+
+{% if is_nl_enabled %}
 <section class="block block--newsletter" id="newsletter-{{ position }}" {{ falak_section() }}>
     <div class="container">
         <div class="newsletter" data-reveal="slide-up" style="--reveal-delay: 100ms;" data-falak-part="box">
-            {% if component.title %}
-                <h2 class="block__title" data-falak-field="title" data-falak-label="{{ trans('editor.field.title') }}">{{ component.title }}</h2>
+            {% set nl_title = component.title|default(store.settings.newsletter_title)|default(store_nl.title)|default(trans('footer.newsletter')) %}
+            {% set nl_subtitle = component.subtitle|default(store.settings.newsletter_description)|default(store.settings.newsletter_subtitle)|default(store_nl.description)|default(store_nl.subtitle) %}
+            {% set nl_button_text = component.button_text|default(store.settings.newsletter_button_text)|default(store_nl.button_text) %}
+            {% set nl_note = component.note|default(store.settings.newsletter_note)|default(store_nl.note) %}
+
+            {% if nl_title %}
+                <h2 class="block__title" data-falak-field="title" data-falak-label="{{ trans('editor.field.title') }}">{{ nl_title }}</h2>
             {% endif %}
 
-            {% if component.subtitle %}
-                <p class="block__subtitle" data-falak-field="subtitle" data-falak-label="{{ trans('editor.field.description') }}">{{ component.subtitle }}</p>
+            {% if nl_subtitle %}
+                <p class="block__subtitle" data-falak-field="subtitle" data-falak-label="{{ trans('editor.field.description') }}">{{ nl_subtitle }}</p>
             {% endif %}
 
             <falak-newsletter class="newsletter__form"
-                              {% if component.button_text %}button-text="{{ component.button_text }}"{% endif %}
+                              {% if nl_button_text %}button-text="{{ nl_button_text }}"{% endif %}
                               data-falak-field="button_text"
                               data-falak-label="{{ trans('editor.field.button') }}"
                               data-falak-bind="attr:button-text"
                               data-falak-bound></falak-newsletter>
 
-            {% if component.note %}
-                <p class="newsletter__note" data-falak-field="note" data-falak-label="{{ trans('editor.field.text') }}">{{ component.note }}</p>
+            {% if nl_note %}
+                <p class="newsletter__note" data-falak-field="note" data-falak-label="{{ trans('editor.field.text') }}">{{ nl_note }}</p>
             {% endif %}
         </div>
     </div>
 </section>
+{% endif %}

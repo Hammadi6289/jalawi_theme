@@ -1662,6 +1662,17 @@
                     }
                 }
 
+                // Sync Product URL / Link
+                var copyLinkBtn = productSingle.querySelector('[data-copy-link], [data-copy-slug]');
+                if (copyLinkBtn) {
+                    if (p.url) {
+                        copyLinkBtn.setAttribute('data-copy-url', p.url);
+                    } else if (p.slug) {
+                        copyLinkBtn.setAttribute('data-copy-url', '/product/' + p.slug);
+                        copyLinkBtn.setAttribute('data-copy-slug', p.slug);
+                    }
+                }
+
                 // Sync Detailed Description
                 var detailedDescEl = productSingle.querySelector('[data-product-detailed-desc]');
                 var detailed = p.detailed_description || p.detail_description || p.details || p.long_description || p.description_detail;
@@ -1738,6 +1749,130 @@
                 });
             }
         });
+
+        // 5. Copy Product URL / Link button click handler
+        document.addEventListener('click', function (e) {
+            var btn = e.target.closest('[data-copy-link], [data-copy-slug]');
+            if (!btn) return;
+
+            var copyUrl = btn.getAttribute('data-copy-url');
+            if (!copyUrl || copyUrl === '/') {
+                copyUrl = window.location.href;
+            } else if (copyUrl.indexOf('http://') !== 0 && copyUrl.indexOf('https://') !== 0) {
+                var origin = window.location.origin || (window.location.protocol + '//' + window.location.host);
+                copyUrl = origin + (copyUrl.indexOf('/') === 0 ? '' : '/') + copyUrl;
+            }
+
+            var textSpan = btn.querySelector('[data-copy-text]');
+            var defaultText = textSpan ? (textSpan.getAttribute('data-label-copy') || textSpan.textContent) : '';
+            var copiedText = textSpan ? (textSpan.getAttribute('data-label-copied') || 'Copied') : 'Copied';
+
+            function copyFallback(str) {
+                try {
+                    var el = document.createElement('textarea');
+                    el.value = str;
+                    el.setAttribute('readonly', '');
+                    el.style.position = 'fixed';
+                    el.style.left = '-9999px';
+                    document.body.appendChild(el);
+                    el.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(el);
+                    return true;
+                } catch (err) {
+                    return false;
+                }
+            }
+
+            function onCopied() {
+                btn.classList.add('is-copied');
+                if (textSpan) textSpan.textContent = copiedText;
+                var isAr = document.documentElement.lang === 'ar' || document.documentElement.dir === 'rtl';
+                if (typeof showToast === 'function') {
+                    showToast(isAr ? 'تم نسخ رابط المنتج إلى الحافظة' : 'Product link copied to clipboard', 'success');
+                }
+                setTimeout(function () {
+                    btn.classList.remove('is-copied');
+                    if (textSpan) textSpan.textContent = defaultText;
+                }, 2000);
+            }
+
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(copyUrl).then(onCopied).catch(function () {
+                    if (copyFallback(copyUrl)) onCopied();
+                });
+            } else {
+                if (copyFallback(copyUrl)) onCopied();
+            }
+        });
+    }
+
+    /* Categories bar desktop overflow dropdown handler */
+    function initCategoriesBar() {
+        var catBar = document.querySelector('[data-cat-bar]');
+        if (!catBar) return;
+
+        var moreWrap = catBar.querySelector('[data-cat-more]');
+        var moreBtn = catBar.querySelector('[data-cat-more-btn]');
+        var dropdown = catBar.querySelector('[data-cat-dropdown]');
+        if (!moreWrap || !moreBtn || !dropdown) return;
+
+        moreBtn.addEventListener('click', function (e) {
+            e.stopPropagation();
+            var isOpen = moreWrap.classList.toggle('is-open');
+            moreBtn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+        });
+
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape' && moreWrap.classList.contains('is-open')) {
+                moreWrap.classList.remove('is-open');
+                moreBtn.setAttribute('aria-expanded', 'false');
+                moreBtn.focus();
+            }
+        });
+
+        document.addEventListener('click', function (e) {
+            if (!moreWrap.contains(e.target)) {
+                moreWrap.classList.remove('is-open');
+                moreBtn.setAttribute('aria-expanded', 'false');
+            }
+        });
+    }
+
+    /* Newsletter dashboard dynamic data hydration */
+    function enhanceNewsletter() {
+        var storeSettings = (window.falak && window.falak.store && window.falak.store.settings) || (window.store && window.store.settings);
+        if (!storeSettings) return;
+
+        var nl = storeSettings.newsletter || {};
+        var isEnabled = storeSettings.newsletter_enabled !== undefined ? storeSettings.newsletter_enabled : nl.enabled;
+        if (isEnabled === false) {
+            document.querySelectorAll('.block--newsletter, .site-footer__newsletter').forEach(function (el) {
+                if (!document.body.classList.contains('is-editor') && !window.falakEditor) {
+                    el.hidden = true;
+                }
+            });
+            return;
+        }
+
+        var title = storeSettings.newsletter_title || nl.title;
+        var subtitle = storeSettings.newsletter_description || storeSettings.newsletter_subtitle || nl.description || nl.subtitle;
+
+        if (title) {
+            document.querySelectorAll('.block--newsletter .block__title, .site-footer__newsletter-title').forEach(function (el) {
+                if (!el.textContent.trim()) {
+                    el.textContent = title;
+                }
+            });
+        }
+
+        if (subtitle) {
+            document.querySelectorAll('.block--newsletter .block__subtitle, .site-footer__newsletter-desc').forEach(function (el) {
+                if (!el.textContent.trim()) {
+                    el.textContent = subtitle;
+                }
+            });
+        }
     }
 
     /* Customer area enhancements: dynamic theme-primary illustration hydration */
@@ -1831,6 +1966,8 @@
     enhanceProductSingle();
     enhanceCustomerPages();
     enhanceCartPage();
+    initCategoriesBar();
+    enhanceNewsletter();
 
     /* ------------------------------------------------ video commerce */
     // Reads from [data-video-commerce] sections. Each section declares:

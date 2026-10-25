@@ -61,13 +61,13 @@
                 "ar": "عنوان القسم",
                 "en": "Section title"
             },
+            "description": {
+                "ar": "اتركه فارغاً لاستخدام عنوان النشرة البريدية من لوحة تحكم المتجر",
+                "en": "Leave empty to use newsletter title from store dashboard"
+            },
             "multilanguage": true,
             "required": false,
-            "maxLength": 100,
-            "value": {
-                "ar": "النشرة البريدية",
-                "en": "Join our newsletter"
-            }
+            "maxLength": 100
         },
         {
             "id": "subtitle",
@@ -77,13 +77,13 @@
                 "ar": "نص فرعي",
                 "en": "Subtitle"
             },
+            "description": {
+                "ar": "اتركه فارغاً لاستخدام وصف النشرة البريدية من لوحة تحكم المتجر",
+                "en": "Leave empty to use newsletter description from store dashboard"
+            },
             "multilanguage": true,
             "required": false,
-            "maxLength": 160,
-            "value": {
-                "ar": "اشترك لتصلك أحدث المنتجات والعروض",
-                "en": "Subscribe for new arrivals and offers"
-            }
+            "maxLength": 160
         },
         {
             "id": "button_text",

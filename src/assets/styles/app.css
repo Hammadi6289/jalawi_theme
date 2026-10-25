@@ -7809,6 +7809,7 @@ falak-announcement:not(.f-announce--scroll) .f-announce__inner {
 
 .cat-bar ul {
     display: flex;
+    align-items: center;
     justify-content: center;
     gap: 0.25rem;
     list-style: none;
@@ -7816,6 +7817,7 @@ falak-announcement:not(.f-announce--scroll) .f-announce__inner {
     padding: 0;
     overflow-x: auto;
     scrollbar-width: none;
+    position: relative;
 }
 
 .cat-bar ul::-webkit-scrollbar {
@@ -7844,6 +7846,132 @@ falak-announcement:not(.f-announce--scroll) .f-announce__inner {
 .cat-bar img {
     border-radius: 4px;
     object-fit: cover;
+}
+
+/* Categories bar desktop overflow "More {N} ⌵" dropdown */
+.cat-bar__more {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    margin-inline-start: 0.35rem;
+}
+
+.cat-bar__more-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.35rem 0.85rem;
+    font: inherit;
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--color-text);
+    background: var(--color-surface, #ffffff);
+    border: 1px solid var(--color-border);
+    border-radius: 9999px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: color var(--transition), border-color var(--transition), background-color var(--transition), box-shadow var(--transition);
+}
+
+.cat-bar__more-btn:hover,
+.cat-bar__more.is-open .cat-bar__more-btn {
+    color: var(--color-primary);
+    border-color: var(--color-primary);
+    box-shadow: 0 2px 8px color-mix(in srgb, var(--color-primary) 15%, transparent);
+}
+
+.cat-bar__more-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+.cat-bar__more-icon {
+    inline-size: 0.85rem;
+    block-size: 0.85rem;
+    width: 0.85rem;
+    height: 0.85rem;
+    stroke: currentColor;
+    flex-shrink: 0;
+    transition: transform var(--transition);
+}
+
+.cat-bar__more.is-open .cat-bar__more-icon {
+    transform: rotate(180deg);
+}
+
+.cat-bar__dropdown {
+    position: absolute;
+    top: calc(100% + 0.45rem);
+    inset-inline-end: 0;
+    width: max-content;
+    min-inline-size: 100%;
+    max-inline-size: 18rem;
+    max-block-size: 22rem;
+    overflow-y: auto;
+    background: var(--color-surface, #ffffff);
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+    box-shadow: 0 10px 25px -4px rgba(0, 0, 0, 0.12), 0 4px 10px -2px rgba(0, 0, 0, 0.05);
+    padding: 0.35rem;
+    box-sizing: border-box;
+    z-index: 1050;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-6px);
+    transition: opacity 0.2s cubic-bezier(0.16, 1, 0.3, 1), transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.2s;
+    list-style: none;
+    scrollbar-width: thin;
+}
+
+.cat-bar__dropdown::-webkit-scrollbar {
+    width: 5px;
+}
+
+.cat-bar__dropdown::-webkit-scrollbar-thumb {
+    background: color-mix(in srgb, var(--color-text) 15%, transparent);
+    border-radius: 4px;
+}
+
+.cat-bar__more.is-open .cat-bar__dropdown,
+.cat-bar__more:hover .cat-bar__dropdown,
+.cat-bar__more:focus-within .cat-bar__dropdown {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.cat-bar__dropdown-item {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0.55rem 0.85rem;
+    color: var(--color-text);
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    text-align: start;
+    border-radius: 8px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: background-color var(--transition), color var(--transition);
+}
+
+.cat-bar__dropdown-item:hover,
+.cat-bar__dropdown-item:focus {
+    background: color-mix(in srgb, var(--color-primary) 8%, transparent);
+    color: var(--color-primary);
+}
+
+@media (min-width: 861px) {
+    .cat-bar,
+    .cat-bar ul {
+        overflow: visible;
+    }
+    .cat-bar__item--overflow {
+        display: none !important;
+    }
 }
 
 .site-header__logo {
@@ -8183,6 +8311,13 @@ falak-announcement:not(.f-announce--scroll) .f-announce__inner {
     margin: 0;
     font-size: clamp(0.875rem, 0.8391rem + 0.1609vw, 1rem);
     font-weight: 500;
+}
+
+.site-footer__newsletter-desc {
+    margin: 0;
+    font-size: clamp(0.8rem, 0.77rem + 0.14vw, 0.92rem);
+    color: var(--color-footer-text, var(--color-text-soft));
+    line-height: 1.5;
 }
 
 .site-footer__newsletter-form {
@@ -12642,6 +12777,48 @@ falak-product-card falak-add-product-button button.is-clicked svg path,
     stroke: var(--color-primary);
 }
 
+.product-single__copy-link,
+.product-single__copy-slug {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    background: transparent;
+    border: 0;
+    padding: 0;
+    color: var(--color-text-soft);
+    font: inherit;
+    font-size: 0.92rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: color var(--transition), transform var(--transition);
+}
+
+.product-single__copy-link:hover,
+.product-single__copy-slug:hover {
+    color: var(--color-primary);
+}
+
+.product-single__copy-icon {
+    inline-size: 1.15rem;
+    block-size: 1.15rem;
+    width: 1.15rem;
+    height: 1.15rem;
+    stroke: currentColor;
+    flex-shrink: 0;
+    transition: stroke var(--transition), transform var(--transition);
+}
+
+.product-single__copy-link.is-copied,
+.product-single__copy-slug.is-copied {
+    color: #10b981;
+}
+
+.product-single__copy-link.is-copied .product-single__copy-icon,
+.product-single__copy-slug.is-copied .product-single__copy-icon {
+    stroke: #10b981;
+    transform: scale(1.15);
+}
+
 .product-single__actions-row .product-single__share,
 .product-single__actions-row .f-social--share {
     margin-block: 0 !important;
@@ -17092,11 +17269,21 @@ body.mega-is-open {
 @media (max-width: 860px) {
     .cat-bar ul {
         justify-content: flex-start;
+        overflow-x: auto;
     }
 
     .cat-bar {
+        overflow: hidden;
         -webkit-mask-image: linear-gradient(to right, transparent, #000 1.25rem, #000 calc(100% - 1.25rem), transparent);
         mask-image: linear-gradient(to right, transparent, #000 1.25rem, #000 calc(100% - 1.25rem), transparent);
+    }
+
+    .cat-bar__more {
+        display: none !important;
+    }
+
+    .cat-bar__item--overflow {
+        display: inline-flex !important;
     }
 }
 
