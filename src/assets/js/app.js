@@ -1584,18 +1584,56 @@
         buyObserver.observe(buyBoxEl, { childList: true, subtree: true });
     }
 
-    /* Search Modal "View all results for [query]" formatting */
-    function updateSearchViewAll() {
+    /* Search Modal "View all results for [query]" formatting & Mobile Cancel button */
+    function enhanceSearchModal() {
         var modal = document.querySelector('#falak-search') || document.querySelector('falak-search');
         if (!modal) return;
+
+        // 1. Inject cancel icon button on mobile into .f-search__form if not present
+        var form = modal.querySelector('.f-search__form');
+        if (form && !form.querySelector('.f-search__cancel-btn')) {
+            var isAr = document.documentElement.lang === 'ar' || document.documentElement.dir === 'rtl';
+            var cancelBtn = document.createElement('button');
+            cancelBtn.type = 'button';
+            cancelBtn.className = 'f-search__cancel-btn';
+            cancelBtn.setAttribute('aria-label', isAr ? 'إلغاء' : 'Cancel');
+            cancelBtn.innerHTML = '<svg class="f-search__cancel-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>';
+
+            cancelBtn.addEventListener('click', function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                var closeBtn = modal.querySelector('.f-modal__close');
+                if (closeBtn) {
+                    closeBtn.click();
+                    return;
+                }
+                var overlay = modal.querySelector('.f-modal__overlay');
+                if (overlay) {
+                    overlay.click();
+                    return;
+                }
+                if (typeof modal.close === 'function') {
+                    modal.close();
+                    return;
+                }
+                modal.classList.remove('is-open', 'f-modal--open');
+                modal.setAttribute('aria-hidden', 'true');
+                modal.style.display = 'none';
+                document.body.classList.remove('f-modal-open', 'modal-open');
+            });
+            form.appendChild(cancelBtn);
+        }
+
+        // 2. Format view all link
         var input = modal.querySelector('.f-search__input') || document.querySelector('#falak-search .f-search__input');
         var viewAll = modal.querySelector('.f-search__view-all') || document.querySelector('#falak-search .f-search__view-all');
         if (!viewAll) return;
         var val = input ? input.value.trim() : '';
-        var isAr = document.documentElement.lang === 'ar' || document.documentElement.dir === 'rtl';
-        var chevron = isAr ? '‹' : '›';
+        var isArLang = document.documentElement.lang === 'ar' || document.documentElement.dir === 'rtl';
+        var chevron = isArLang ? '‹' : '›';
         if (val) {
-            var label = isAr ? ('عرض كل النتائج لـ "' + val + '" ' + chevron) : ('View all results for "' + val + '" ' + chevron);
+            var label = isArLang ? ('عرض كل النتائج لـ "' + val + '" ' + chevron) : ('View all results for "' + val + '" ' + chevron);
             if (viewAll.textContent !== label) {
                 viewAll.textContent = label;
             }
@@ -1604,7 +1642,14 @@
 
     document.addEventListener('input', function (e) {
         if (e.target && (e.target.matches('#falak-search .f-search__input, .f-search__input') || (e.target.classList && e.target.classList.contains('f-search__input')))) {
-            updateSearchViewAll();
+            enhanceSearchModal();
+        }
+    });
+
+    document.addEventListener('click', function (e) {
+        if (e.target && e.target.closest('.search-link, [data-search-trigger], falak-search, .f-search__trigger')) {
+            setTimeout(enhanceSearchModal, 50);
+            setTimeout(enhanceSearchModal, 200);
         }
     });
 
@@ -1612,10 +1657,22 @@
         var searchTarget = document.querySelector('#falak-search');
         if (searchTarget) {
             var searchObserver = new MutationObserver(function () {
-                updateSearchViewAll();
+                enhanceSearchModal();
             });
             searchObserver.observe(searchTarget, { childList: true, subtree: true });
         }
+        // Also watch body for when falak-search modal is mounted dynamically
+        new MutationObserver(function (mutations) {
+            for (var i = 0; i < mutations.length; i++) {
+                if (mutations[i].addedNodes && mutations[i].addedNodes.length) {
+                    var m = document.querySelector('#falak-search, falak-search');
+                    if (m) {
+                        enhanceSearchModal();
+                        break;
+                    }
+                }
+            }
+        }).observe(document.body, { childList: true });
     }
 
     /* Product details enhancement: SKU, Detailed Description & Specifications */
