@@ -64,10 +64,16 @@
                 {% elseif slide_link_type == 'products' %}{% set slide_link = '/products' %}
                 {% elseif slide_link_type == 'home' %}{% set slide_link = '/' %}{% endif %}
                 <div class="hero-slider__slide{{ loop.first ? ' is-active' : '' }}" data-falak-field="slides" data-falak-label="{{ trans('editor.field.slides') }}" data-falak-bind="none">
-                    {# A video link plays instead of the image (muted, looping, like
+                    {# A video (uploaded or direct link) plays instead of the image (muted, looping, like
                        Jalawi); the image, when set, stays as its poster. Only the
                        first slide autoplays — home.js plays whichever is active. #}
-                    {% set slide_video = slide.video|default(null) %}
+                    {% set slide_video_source = slide.video_source|default('upload') %}
+                    {% if slide_video_source is iterable %}{% set slide_video_source = slide_video_source|first %}{% endif %}
+                    {% if slide_video_source == 'url' %}
+                        {% set slide_video = slide.video|default(null) %}
+                    {% else %}
+                        {% set slide_video = slide.video_file|default(slide.video)|default(null) %}
+                    {% endif %}
                     {% if slide_video %}
                         <video class="hero-slider__img hero-slider__video" src="{{ slide_video }}"{% if slide.image %} poster="{{ slide.image }}"{% endif %}
                                muted loop playsinline aria-hidden="true"{{ loop.first ? ' autoplay preload="auto"' : ' preload="metadata"' }}></video>
@@ -115,7 +121,13 @@
                        falls back to the image card. #}
                     {% set product_id = slide.thumb_product|default(null) %}
                     {% set category_id = slide.thumb_category|default(null) %}
-                    {% set slide_video = slide.video|default(null) %}
+                    {% set thumb_video_source = slide.video_source|default('upload') %}
+                    {% if thumb_video_source is iterable %}{% set thumb_video_source = thumb_video_source|first %}{% endif %}
+                    {% if thumb_video_source == 'url' %}
+                        {% set slide_video = slide.video|default(null) %}
+                    {% else %}
+                        {% set slide_video = slide.video_file|default(slide.video)|default(null) %}
+                    {% endif %}
                     {# The button's resolved target (same Link type rules as above). #}
                     {% set btn_link = slide.button_url|default(null) %}
                     {% set btn_link_type = slide.link_type|default('custom') %}

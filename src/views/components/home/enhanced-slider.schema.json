@@ -175,6 +175,57 @@
                     ]
                 },
                 {
+                    "id": "slides.video_source",
+                    "type": "items",
+                    "format": "dropdown-list",
+                    "label": {
+                        "ar": "مصدر فيديو الخلفية",
+                        "en": "Background video source"
+                    },
+                    "description": {
+                        "ar": "اختياري — اختر رفع ملف فيديو من جهازك أو وضع رابط مباشر",
+                        "en": "Optional — choose to upload a video file from your device or use a direct URL"
+                    },
+                    "value": "upload",
+                    "required": false,
+                    "options": [
+                        {
+                            "label": {
+                                "ar": "رفع من جهازي",
+                                "en": "Upload from my device"
+                            },
+                            "value": "upload"
+                        },
+                        {
+                            "label": {
+                                "ar": "رابط مباشر (URL)",
+                                "en": "Direct link (URL)"
+                            },
+                            "value": "url"
+                        }
+                    ]
+                },
+                {
+                    "id": "slides.video_file",
+                    "type": "string",
+                    "format": "video",
+                    "label": {
+                        "ar": "ملف فيديو الخلفية",
+                        "en": "Background video file"
+                    },
+                    "description": {
+                        "ar": "اختر ملف MP4 أو WebM من جهازك يعمل بدل الصورة (بدون صوت وبشكل متكرر)",
+                        "en": "Select an MP4 or WebM file from your device to play instead of the image (muted, looping)"
+                    },
+                    "required": false,
+                    "conditions": [
+                        {
+                            "id": "slides.video_source",
+                            "value": "upload"
+                        }
+                    ]
+                },
+                {
                     "id": "slides.video",
                     "type": "string",
                     "format": "text",
@@ -183,11 +234,17 @@
                         "en": "Background video URL"
                     },
                     "description": {
-                        "ar": "اختياري — ملف MP4 أو WebM يعمل بدل الصورة (بدون صوت وبشكل متكرر)",
-                        "en": "Optional — an MP4 or WebM file played instead of the image (muted, looping)"
+                        "ar": "اختياري — رابط مباشر لملف MP4 أو WebM يعمل بدل الصورة (بدون صوت وبشكل متكرر)",
+                        "en": "Optional — direct link to an MP4 or WebM file played instead of the image (muted, looping)"
                     },
                     "required": false,
-                    "maxLength": 500
+                    "maxLength": 500,
+                    "conditions": [
+                        {
+                            "id": "slides.video_source",
+                            "value": "url"
+                        }
+                    ]
                 },
                 {
                     "id": "slides.card_type",

@@ -1083,11 +1083,91 @@
                         "en": "Gallery link"
                     },
                     "description": {
-                        "ar": "تفتحه الصور التي ليس لها رابط — اتركه فارغاً لاستخدام حساب انستغرام",
-                        "en": "Opened by tiles without their own link — leave empty to use the Instagram account"
+                        "ar": "تفتحه الصور التي ليس لها رابط — اتركه فارغاً لاستخدام حساب التواصل التلقائي",
+                        "en": "Opened by tiles without their own link — leave empty to use the default social account"
                     },
                     "required": false,
                     "maxLength": 255
+                },
+                {
+                    "id": "footer_gallery_icon",
+                    "type": "items",
+                    "format": "dropdown-list",
+                    "label": {
+                        "ar": "أيقونة المعرض عند التمرير",
+                        "en": "Gallery hover icon"
+                    },
+                    "description": {
+                        "ar": "تلقائي يكتشف من الرابط، أو اختر شبكة تواصل معينة",
+                        "en": "Auto-detect from link URL, or choose a specific social network"
+                    },
+                    "options": [
+                        {
+                            "value": "auto",
+                            "label": {
+                                "ar": "تلقائي (حسب الرابط / العنوان)",
+                                "en": "Auto (detect from URL/title)"
+                            }
+                        },
+                        {
+                            "value": "instagram",
+                            "label": {
+                                "ar": "انستغرام (Instagram)",
+                                "en": "Instagram"
+                            }
+                        },
+                        {
+                            "value": "facebook",
+                            "label": {
+                                "ar": "فيسبوك (Facebook)",
+                                "en": "Facebook"
+                            }
+                        },
+                        {
+                            "value": "x",
+                            "label": {
+                                "ar": "إكس / تويتر (X / Twitter)",
+                                "en": "X (Twitter)"
+                            }
+                        },
+                        {
+                            "value": "tiktok",
+                            "label": {
+                                "ar": "تيك توك (TikTok)",
+                                "en": "TikTok"
+                            }
+                        },
+                        {
+                            "value": "snapchat",
+                            "label": {
+                                "ar": "سناب شات (Snapchat)",
+                                "en": "Snapchat"
+                            }
+                        },
+                        {
+                            "value": "youtube",
+                            "label": {
+                                "ar": "يوتيوب (YouTube)",
+                                "en": "YouTube"
+                            }
+                        },
+                        {
+                            "value": "pinterest",
+                            "label": {
+                                "ar": "بينتيريست (Pinterest)",
+                                "en": "Pinterest"
+                            }
+                        },
+                        {
+                            "value": "link",
+                            "label": {
+                                "ar": "رابط عام (Link)",
+                                "en": "Generic Link"
+                            }
+                        }
+                    ],
+                    "value": "auto",
+                    "required": false
                 },
                 {
                     "id": "footer_gallery",
@@ -1155,6 +1235,86 @@
                             },
                             "required": false,
                             "maxLength": 255
+                        },
+                        {
+                            "id": "footer_gallery.icon",
+                            "type": "items",
+                            "format": "dropdown-list",
+                            "label": {
+                                "ar": "أيقونة التمرير الخاصة بالصورة",
+                                "en": "Tile hover icon"
+                            },
+                            "description": {
+                                "ar": "اتركه فارغاً للاعتماد على إعداد المعرض أو الاكتشاف التلقائي",
+                                "en": "Leave empty to use gallery setting or auto-detection"
+                            },
+                            "options": [
+                                {
+                                    "value": "",
+                                    "label": {
+                                        "ar": "افتراضي (حسب المعرض / الرابط)",
+                                        "en": "Default (from gallery / link)"
+                                    }
+                                },
+                                {
+                                    "value": "instagram",
+                                    "label": {
+                                        "ar": "انستغرام (Instagram)",
+                                        "en": "Instagram"
+                                    }
+                                },
+                                {
+                                    "value": "facebook",
+                                    "label": {
+                                        "ar": "فيسبوك (Facebook)",
+                                        "en": "Facebook"
+                                    }
+                                },
+                                {
+                                    "value": "x",
+                                    "label": {
+                                        "ar": "إكس / تويتر (X / Twitter)",
+                                        "en": "X (Twitter)"
+                                    }
+                                },
+                                {
+                                    "value": "tiktok",
+                                    "label": {
+                                        "ar": "تيك توك (TikTok)",
+                                        "en": "TikTok"
+                                    }
+                                },
+                                {
+                                    "value": "snapchat",
+                                    "label": {
+                                        "ar": "سناب شات (Snapchat)",
+                                        "en": "Snapchat"
+                                    }
+                                },
+                                {
+                                    "value": "youtube",
+                                    "label": {
+                                        "ar": "يوتيوب (YouTube)",
+                                        "en": "YouTube"
+                                    }
+                                },
+                                {
+                                    "value": "pinterest",
+                                    "label": {
+                                        "ar": "بينتيريست (Pinterest)",
+                                        "en": "Pinterest"
+                                    }
+                                },
+                                {
+                                    "value": "link",
+                                    "label": {
+                                        "ar": "رابط عام (Link)",
+                                        "en": "Generic Link"
+                                    }
+                                }
+                            ],
+                            "value": "",
+                            "required": false
                         }
                     ]
                 }
