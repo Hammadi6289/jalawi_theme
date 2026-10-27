@@ -2665,5 +2665,89 @@
     videoCommerce();
 })();
 
+/*
+ * Category grid (categories-circles).
+ * Fetched rather than rendered in Twig: a home block gets no page data, the
+ * sandbox exposes no categories function, and there is no categories
+ * component in the SDK. Ported from Nova's wireCategoryGrid.
+ */
+(function () {
+    'use strict';
+
+    var section = document.querySelector('[data-category-grid]');
+    if (!section || !window.falak) return;
+
+    var list = section.querySelector('[data-category-grid-list]');
+    var limit = Number(section.getAttribute('data-limit') || 12);
+    var withText = section.getAttribute('data-text') !== '0';
+
+    window.falak.onReady(function () {
+        window.falak.api.withoutNotifier(function () {
+            return window.falak.api.request('categories');
+        }).then(function (response) {
+            var rows = Array.isArray(response) ? response : (response && response.data) || [];
+
+            var categories = rows
+                .filter(function (c) { return c && c.id && (c.status === undefined || c.status === 'active'); })
+                .sort(function (a, b) { return (a.sort_order || 0) - (b.sort_order || 0); })
+                .slice(0, limit);
+
+            if (!categories.length) {
+                var note = document.createElement('div');
+                note.className = 'f-list__message f-list__message--empty';
+
+                var noteText = document.createElement('p');
+                noteText.textContent = window.falak.lang.get('categories.none_added');
+
+                note.appendChild(noteText);
+                list.insertAdjacentElement('afterend', note);
+                section.removeAttribute('hidden');
+
+                return;
+            }
+
+            categories.forEach(function (category) {
+                var tile = document.createElement('a');
+                tile.className = 'cat-tile';
+                tile.href = window.falak.url.category(category.id);
+
+                var figure = document.createElement('span');
+                figure.className = 'cat-tile__figure';
+
+                if (category.image_url) {
+                    var img = document.createElement('img');
+                    img.className = 'cat-tile__image';
+                    img.src = category.image_url;
+                    img.alt = '';
+                    img.loading = 'lazy';
+                    figure.appendChild(img);
+                }
+
+                var name = document.createElement('b');
+                name.className = 'cat-tile__name';
+                name.textContent = category.name || '';
+
+                tile.appendChild(figure);
+                tile.appendChild(name);
+
+                if (withText && category.description) {
+                    var text = document.createElement('small');
+                    text.className = 'cat-tile__text';
+                    text.textContent = category.description;
+                    tile.appendChild(text);
+                }
+
+                list.appendChild(tile);
+            });
+
+            section.removeAttribute('hidden');
+        }).catch(function (e) {
+            if (window.falak.logger) {
+                window.falak.logger.warn('categories band: fetch failed', e);
+            }
+        });
+    });
+})();
+
 
 

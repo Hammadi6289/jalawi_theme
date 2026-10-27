@@ -20,8 +20,32 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     {% hook 'head:start' %}
 
-    <title>{% block title %}{{ store.name }}{% endblock %}</title>
-    <meta name="description" content="{% block meta_description %}{{ store.name }}{% endblock %}">
+    {#
+        Breadcrumb trail is cached per session by <falak-breadcrumb>, titles
+        included, so a trail built in one language survives a switch to the
+        other. Dropped here — before the SDK loads — so the component rebuilds
+        it in the language actually being read.
+    #}
+    <script>
+        (function () {
+            try {
+                var locale = document.documentElement.lang || '';
+                var seen = window.sessionStorage.getItem('falak::breadcrumb.locale');
+
+                if (seen !== null && seen !== locale) {
+                    window.sessionStorage.removeItem('falak::breadcrumb.trail');
+                }
+
+                window.sessionStorage.setItem('falak::breadcrumb.locale', locale);
+            } catch (e) {
+                /* Private mode and blocked storage both throw; the breadcrumb
+                   simply keeps whatever it had. */
+            }
+        })();
+    </script>
+
+    <title>{% block title %}{{ seo.title }}{% endblock %}</title>
+    <meta name="description" content="{% block meta_description %}{{ seo.description }}{% endblock %}">
 
     {% if store.favicon %}
         <link rel="icon" href="{{ store.favicon }}">
@@ -33,17 +57,23 @@
 
     {% block styles %}{% endblock %}
     {# ?v= busts browser caches from before the dev no-cache header; bump on asset changes #}
-    <link rel="stylesheet" href="{{ 'styles/app.css'|asset }}?v=131">
+    <link rel="stylesheet" href="{{ 'styles/app.css'|asset }}?v=132">
 
     <style>
         :root {
+            {# Only when the merchant picked a brand colour. Otherwise app.css
+               already carries the theme's own palette (the platform reads its
+               --color-primary from there), including shades darker()/lighter()
+               would not reproduce. #}
+            {% if theme.color.source == 'store' %}
             --color-primary: {{ theme.color.primary }};
             --color-primary-dark: {{ theme.color.darker(12) }};
             --color-primary-light: {{ theme.color.lighter(12) }};
             {# theme.color.text is the CONTRAST color for primary surfaces
                (near-white when primary is dark) — never the body text color. #}
             --color-on-primary: {{ theme.color.text }};
-            --font-main: '{{ theme.font.name }}';
+            {% endif %}
+            --font-main: 'Falak Riyal', '{{ theme.font.name }}';
 
             {# Merchant background colours (customizer -> Colors group).
                Emitted ONLY when set: an unset value must fall through to the

@@ -6,6 +6,7 @@
         "en": "Testimonials"
     },
     "icon": "chat-smile-line",
+    "preview": "images/sections/testimonials.png",
     "is_default": true,
     "default_sort": 40,
     "areas": [

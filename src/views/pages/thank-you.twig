@@ -16,8 +16,17 @@
         {% if order|default(null) %}
             <p class="thank-you__order">
                 {{ trans('account.order') }} <strong>#{{ order.number }}</strong>
-                — {{ falak_currency(order.total|default(0)) }}
+                <button type="button" class="thank-you__copy" data-copy="{{ order.number }}"
+                        aria-label="{{ trans('thank_you.copy_number') }}" title="{{ trans('thank_you.copy_number') }}"
+                        onclick="if (navigator.clipboard) { navigator.clipboard.writeText(this.dataset.copy); } this.classList.add('is-copied'); var b = this; setTimeout(function () { b.classList.remove('is-copied'); }, 1500);">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                    <span class="thank-you__copied">{{ trans('thank_you.copied') }}</span>
+                </button>
+                — {{ order.display_total is defined and order.display_total is not null ? falak_currency(order.display_total, order.display_currency, false) : falak_currency(order.total|default(0)) }}
             </p>
+            {% if order.address.email|default(null) %}
+                <p class="thank-you__sent">{{ trans('thank_you.confirmation_sent', {email: order.address.email}) }}</p>
+            {% endif %}
             {% if order.payment_method == 'cash_on_delivery' %}
                 <p class="thank-you__note">{{ trans('checkout.cod_note') }}</p>
             {% endif %}

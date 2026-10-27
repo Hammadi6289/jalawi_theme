@@ -17,6 +17,11 @@
 
 {% block content %}
     <div class="container cart-page" data-cart-page>
+        {# The store's special offers as the cart sees them: applied ones
+           ticked, the rest with how much is still missing. Draws nothing when
+           offers are off or none is in reach. #}
+        <falak-cart-offers class="cart-page__offers"></falak-cart-offers>
+
         {% if cart_items|length > 0 %}
             <header class="page-head">
                 <h1>{{ trans('cart.title') }}</h1>

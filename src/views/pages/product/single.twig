@@ -310,8 +310,13 @@
                         </svg>
                         <p class="product-comments-empty__text">{{ trans('reviews.none_yet')|default('No reviews yet — be the first.') }}</p>
                     </div>
-                    <falak-reviews-summary product-id="{{ product.id }}" class="product-single__reviews-summary"></falak-reviews-summary>
+                    <falak-reviews-summary product-id="{{ product.id }}" class="product-single__reviews-summary" hide-empty></falak-reviews-summary>
                     <falak-comments product-id="{{ product.id }}" per-page="5"></falak-comments>
+
+                    {# Product Q&A — questions with their replies, plus an ask form #}
+                    <section class="product-single__questions">
+                        <falak-questions product-id="{{ product.id }}"></falak-questions>
+                    </section>
                 </div>
 
                 {% if theme.settings.get('shipping_note', '') %}
@@ -324,10 +329,12 @@
             </div>
         </section>
 
-        {# Fetches and renders its own <falak-product-card> children. #}
+        {# Fetches and renders its own <falak-product-card> children.
+           data-exclude-product ensures current product doesn't recommend itself. #}
         <section class="product-single__related">
             <h2>{{ trans('product.related') }}</h2>
-            <falak-products-list limit="4" columns="4" card-button source="product.single"></falak-products-list>
+            <falak-products-list limit="5" columns="4" card-button source="product.single"
+                                 data-exclude-product="{{ product.id }}" data-max-cards="4"></falak-products-list>
         </section>
     </div>
 {% endblock %}
