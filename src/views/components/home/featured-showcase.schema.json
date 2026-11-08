@@ -6,6 +6,7 @@
         "en": "Featured Showcase"
     },
     "icon": "layout-masonry-line",
+    "preview": "images/sections/featured-showcase.png",
     "is_default": false,
     "areas": [
         "home",
