@@ -6,6 +6,7 @@
         "en": "Looping video (clean)"
     },
     "icon": "video-line",
+    "preview": "images/sections/looping-video.png",
     "is_default": false,
     "areas": [
         "home",

@@ -6,6 +6,7 @@
         "en": "Store Stats"
     },
     "icon": "bar-chart-line",
+    "preview": "images/sections/store-stats.png",
     "is_default": false,
     "areas": [
         "home",

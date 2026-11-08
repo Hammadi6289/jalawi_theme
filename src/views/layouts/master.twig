@@ -57,7 +57,7 @@
 
     {% block styles %}{% endblock %}
     {# ?v= busts browser caches from before the dev no-cache header; bump on asset changes #}
-    <link rel="stylesheet" href="{{ 'styles/app.css'|asset }}?v=132">
+    <link rel="stylesheet" href="{{ 'styles/app.css'|asset }}?v=133">
 
     <style>
         :root {
@@ -247,7 +247,7 @@
     {# platform injection: FalakSDK script + init #}
     {% hook 'body:end' %}
 
-    <script defer src="{{ 'js/app.js'|asset }}?v=53"></script>
+    <script defer src="{{ 'js/app.js'|asset }}?v=54"></script>
     <script defer src="{{ 'js/blog.js'|asset }}?v=4"></script>
     {% block scripts %}{% endblock %}
 </body>

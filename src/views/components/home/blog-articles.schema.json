@@ -6,6 +6,7 @@
         "en": "Blog articles"
     },
     "icon": "article-line",
+    "preview": "images/sections/blog-articles.png",
     "is_default": false,
     "areas": [
         "home",

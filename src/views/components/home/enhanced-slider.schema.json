@@ -6,6 +6,7 @@
         "en": "Hero Slider"
     },
     "icon": "image-carousel-line",
+    "preview": "images/sections/hero.png",
     "is_default": true,
     "default_sort": 10,
     "areas": [

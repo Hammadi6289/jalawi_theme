@@ -6,6 +6,7 @@
         "en": "Promo Banners"
     },
     "icon": "image-line",
+    "preview": "images/sections/promo-banner.png",
     "is_default": false,
     "areas": [
         "home",

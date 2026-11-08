@@ -6,6 +6,7 @@
         "en": "FAQ"
     },
     "icon": "question-line",
+    "preview": "images/sections/faqs.png",
     "is_default": false,
     "areas": [
         "home",

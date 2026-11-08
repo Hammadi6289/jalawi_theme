@@ -6,6 +6,7 @@
         "en": "Brands"
     },
     "icon": "store-2-line",
+    "preview": "images/sections/brands.png",
     "is_default": true,
     "default_sort": 35,
     "areas": [

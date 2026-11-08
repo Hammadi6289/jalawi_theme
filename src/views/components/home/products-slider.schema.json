@@ -6,6 +6,7 @@
         "en": "Products Carousel"
     },
     "icon": "carousel-view",
+    "preview": "images/sections/products-carousal.png",
     "is_default": false,
     "areas": [
         "home",
