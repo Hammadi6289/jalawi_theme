@@ -50,26 +50,48 @@
     // Product cards are the SDK's <falak-product-card>; Jalawi also shows a
     // short line under the name, which the card doesn't print. It's read
     // from the card's own loaded product (no second request) once it renders.
-    function addDescription(host) {
+    var HERO_CART_ICON = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>';
+
+    function decorateProductThumb(host) {
         var card = host.querySelector('falak-product-card');
         var target = host.querySelector('[data-hero-thumb-desc]');
-        if (!card || !target) return;
+        var viewBtn = host.querySelector('.hero-thumb__view');
+        if (!card) return;
 
-        function fill() {
-            var p = card.product;
-            if (!p) return false;
-            var desc = (isArabic && p.subtitle_ar) || p.subtitle || (isArabic && p.description_ar) || p.description || '';
-            if (desc) {
-                var tmp = document.createElement('div');
-                tmp.innerHTML = desc;
-                target.textContent = (tmp.textContent || '').trim();
+        function sync() {
+            // 1. Fill description line if available
+            if (target && !target.textContent) {
+                var p = card.product;
+                if (p) {
+                    var desc = (isArabic && p.subtitle_ar) || p.subtitle || (isArabic && p.description_ar) || p.description || '';
+                    if (desc) {
+                        var tmp = document.createElement('div');
+                        tmp.innerHTML = desc;
+                        target.textContent = (tmp.textContent || '').trim();
+                    }
+                }
             }
-            return true;
+
+            // 2. Ensure Add to Cart button has icon and matches styling
+            var actions = card.querySelector('.f-card__actions');
+            var addBtn = card.querySelector('.f-card__add, .f-add-product__button, falak-add-product-button button');
+            if (addBtn && !addBtn.querySelector('svg')) {
+                addBtn.insertAdjacentHTML('afterbegin', HERO_CART_ICON);
+            }
+
+            // 3. Keep view (eye) button inside .f-card__actions side by side with add button
+            if (actions && viewBtn && viewBtn.parentNode !== actions) {
+                actions.appendChild(viewBtn);
+            }
+
+            return Boolean(card.product && actions);
         }
 
-        if (fill()) return;
-        var observer = new MutationObserver(function () { if (fill()) observer.disconnect(); });
-        observer.observe(card, { childList: true });
+        if (sync()) return;
+        var observer = new MutationObserver(function () {
+            if (sync()) observer.disconnect();
+        });
+        observer.observe(card, { childList: true, subtree: true });
     }
 
     // The store's categories, fetched once for every section that needs them.
@@ -107,7 +129,7 @@
         }).catch(function () { /* card keeps the slide's own title */ });
     }
 
-    document.querySelectorAll('.hero-thumb--product').forEach(addDescription);
+    document.querySelectorAll('.hero-thumb--product').forEach(decorateProductThumb);
 
     var categoryCards = Array.prototype.slice.call(document.querySelectorAll('[data-hero-category]'));
     if (categoryCards.length) {

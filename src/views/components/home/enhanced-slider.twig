@@ -154,7 +154,10 @@
                            The eye link is slotted into the card's actions; the
                            description line is filled by home.js from the
                            card's own data. #}
-                        <div class="hero-thumb hero-thumb--product">
+                        <div class="hero-thumb hero-thumb--product" data-hero-product="{{ product_id }}">
+                            {% if card_image %}
+                                <div class="hero-thumb__media"><img src="{{ card_image }}" alt="" loading="lazy"></div>
+                            {% endif %}
                             <div class="hero-thumb__body">
                                 <falak-product-card product-id="{{ product_id }}" fetch show-add-button hide-offer source="hero">
                                     <a class="hero-thumb__btn hero-thumb__view" href="/product/{{ product_id }}" aria-label="{{ trans('compare.view') }}">

@@ -8882,170 +8882,263 @@ falak-announcement:not(.f-announce--scroll) .f-announce__inner {
     opacity: 0;
 }
 
-/* product card — <falak-product-card> skinned to Jalawi's glass card: no
-   image; name, description, price, then add-to-cart + view. The card's own
-   wrappers dissolve (display: contents) so its parts sit on this grid. */
-.hero-thumb__body {
+/* product card — <falak-product-card> skinned to Jalawi's glass card:
+   Frosted glass backdrop, product title, description, price, and side-by-side action buttons. */
+.hero-thumb--product .hero-thumb__body {
     position: absolute;
     inset: 0;
     z-index: 5;
-    display: grid;
-    grid-template-columns: auto auto 1fr;
-    grid-template-rows: auto auto 1fr auto auto;
-    column-gap: 0.25rem;
-    row-gap: 0.35rem;
-    padding: 0.375rem 0.625rem;
-    text-align: start;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
+    padding: clamp(0.6rem, 1.2vw, 0.95rem) clamp(0.7rem, 1.5vw, 1.05rem) !important;
+    box-sizing: border-box !important;
+    text-align: start !important;
+    overflow: hidden !important;
 }
 
-@media (min-width: 768px) {
-    .hero-thumb__body {
-        padding: 0.75rem 1rem;
-        row-gap: 0.5rem;
-    }
-}
-
+/* Ensure falak-product-card and internal wrappers do not take up extra height or block flex flow */
 .hero-thumb falak-product-card,
-.hero-thumb .f-card__inner,
-.hero-thumb .f-card__body,
-.hero-thumb .f-card__actions {
-    display: contents;
+.hero-thumb .f-card,
+.hero-thumb .f-card__inner {
+    display: contents !important;
+    position: static !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    width: auto !important;
+    height: auto !important;
+    max-height: none !important;
 }
 
+/* Hide non-relevant SDK elements from the glass thumbnail card */
 .hero-thumb .f-card__media,
+.hero-thumb .product-card__media,
+.hero-thumb .product-card__placeholder,
+.hero-thumb .f-card__placeholder,
 .hero-thumb .f-card--empty,
 .hero-thumb .f-card__badge,
 .hero-thumb .f-card__offer,
 .hero-thumb .f-card__remaining,
 .hero-thumb .f-card__stock,
+.hero-thumb .f-card__wishlist,
+.hero-thumb .f-card__compare,
+.hero-thumb .f-card__quickview,
+.hero-thumb .f-card__quick-actions,
+.hero-thumb .product-card__quick-actions,
 .hero-thumb falak-rating-stars,
 .hero-thumb falak-wishlist-button {
-    display: none;
+    display: none !important;
+    visibility: hidden !important;
+    width: 0 !important;
+    height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
 }
 
+/* Product body content (title, description, price) */
+.hero-thumb .f-card__body {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 0.2rem !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    background: transparent !important;
+    border: none !important;
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+    justify-content: flex-start !important;
+}
+
+/* Title: 1 line on small cards, max 2 on large, crisp white */
 .hero-thumb .f-card__title {
-    grid-column: 1 / -1;
-    grid-row: 1;
-    margin: 0;
-    display: -webkit-box;
-    line-clamp: 2;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    font-size: clamp(0.75rem, 0.5969rem + 0.6531vw, 1.25rem);
-    font-weight: 500;
-    line-height: 1.6;
+    margin: 0 !important;
+    padding: 0 !important;
+    font-size: clamp(0.8rem, 0.7rem + 0.35vw, 1.05rem) !important;
+    font-weight: 600 !important;
+    line-height: 1.25 !important;
+    color: #fff !important;
+    display: -webkit-box !important;
+    -webkit-line-clamp: 1 !important;
+    line-clamp: 1 !important;
+    -webkit-box-orient: vertical !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
 }
 
 @media (min-width: 1024px) {
     .hero-thumb .f-card__title {
-        line-clamp: 1;
-        -webkit-line-clamp: 1;
+        -webkit-line-clamp: 2 !important;
+        line-clamp: 2 !important;
     }
 }
 
-.hero-thumb .f-card__link {
-    color: #fff;
-    text-decoration: none;
+.hero-thumb .f-card__link,
+.hero-thumb .f-card__title a {
+    color: #fff !important;
+    text-decoration: none !important;
 }
 
-/* Two lines of description on wide screens only, as on Jalawi. */
+/* Description */
 .hero-thumb__desc {
-    grid-column: 1 / -1;
-    grid-row: 2;
-    display: none;
-    font-size: clamp(0.75rem, 0.6735rem + 0.3265vw, 1rem);
-    line-height: 1.6;
+    display: block !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    font-size: clamp(0.72rem, 0.65rem + 0.2vw, 0.85rem) !important;
+    line-height: 1.3 !important;
+    color: rgba(255, 255, 255, 0.82) !important;
+    display: -webkit-box !important;
+    -webkit-line-clamp: 1 !important;
+    line-clamp: 1 !important;
+    -webkit-box-orient: vertical !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
 }
 
-@media (min-width: 1024px) {
-    .hero-thumb__desc:not(:empty) {
-        display: -webkit-box;
-        line-clamp: 2;
-        -webkit-line-clamp: 2;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-    }
+.hero-thumb__desc:empty {
+    display: none !important;
 }
 
+/* Price */
 .hero-thumb .f-card__price {
-    grid-column: 1 / -1;
-    grid-row: 4;
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 0.5rem;
-    margin: 0;
-    color: #fff;
-    font-weight: 300;
+    display: flex !important;
+    flex-wrap: wrap !important;
+    align-items: baseline !important;
+    gap: 0.35rem !important;
+    margin: auto 0 0.25rem !important;
+    padding: 0 !important;
+    color: #fff !important;
 }
 
 .hero-thumb .f-card__price-now {
-    font-size: clamp(0.75rem, 0.5969rem + 0.6531vw, 1.25rem);
-    color: inherit;
+    font-size: clamp(0.85rem, 0.75rem + 0.3vw, 1.15rem) !important;
+    font-weight: 700 !important;
+    color: #fff !important;
 }
 
 .hero-thumb .f-card__price-was {
-    font-size: 0.875rem;
-    color: #b91c1c;
+    font-size: 0.75rem !important;
+    color: rgba(255, 255, 255, 0.6) !important;
+    text-decoration: line-through !important;
 }
 
-.hero-thumb falak-add-product-button {
-    grid-column: 1;
-    grid-row: 5;
+/* Bottom Action Row: Add to cart + View button side by side */
+.hero-thumb .f-card__actions {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    gap: 0.45rem !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    background: transparent !important;
+    border: none !important;
+    width: 100% !important;
+    position: static !important;
+    flex-shrink: 0 !important;
 }
 
-.hero-thumb .hero-thumb__view {
-    grid-column: 2;
-    grid-row: 5;
-}
-
+/* Buttons styling */
 .hero-thumb .f-card__add,
+.hero-thumb .f-add-product__button,
+.hero-thumb falak-add-product-button,
+.hero-thumb falak-add-product-button button,
 .hero-thumb__btn {
-    display: inline-grid;
-    place-items: center;
-    inline-size: 1.5rem;
-    block-size: 1.5rem;
-    min-block-size: 0;
-    margin: 0;
-    padding: 0;
-    border: 1px solid var(--color-primary);
-    border-radius: 0.375rem;
-    background: var(--color-primary);
-    color: #fff;
-    cursor: pointer;
-    transition: background-color 0.3s ease, color 0.3s ease;
-}
-
-.hero-thumb .f-card__add:hover,
-.hero-thumb__btn:hover {
-    background: transparent;
-    color: var(--color-primary);
-}
-
-.hero-thumb .f-card__add span {
-    display: none;
-}
-
-.hero-thumb .f-card__add svg,
-.hero-thumb__btn svg {
-    inline-size: 0.9rem;
-    block-size: 0.9rem;
+    position: static !important;
+    inset: auto !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    inline-size: 1.85rem !important;
+    block-size: 1.85rem !important;
+    width: 1.85rem !important;
+    height: 1.85rem !important;
+    min-inline-size: 1.85rem !important;
+    min-block-size: 1.85rem !important;
+    max-inline-size: 1.85rem !important;
+    max-block-size: 1.85rem !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 1px solid var(--color-primary) !important;
+    border-radius: 0.375rem !important;
+    background: var(--color-primary) !important;
+    color: #fff !important;
+    cursor: pointer !important;
+    opacity: 1 !important;
+    transform: none !important;
+    box-shadow: none !important;
+    flex-shrink: 0 !important;
+    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease !important;
 }
 
 @media (min-width: 768px) {
-
     .hero-thumb .f-card__add,
+    .hero-thumb .f-add-product__button,
+    .hero-thumb falak-add-product-button,
+    .hero-thumb falak-add-product-button button,
     .hero-thumb__btn {
-        inline-size: 2rem;
-        block-size: 2rem;
+        inline-size: 2.1rem !important;
+        block-size: 2.1rem !important;
+        width: 2.1rem !important;
+        height: 2.1rem !important;
+        min-inline-size: 2.1rem !important;
+        min-block-size: 2.1rem !important;
+        max-inline-size: 2.1rem !important;
+        max-block-size: 2.1rem !important;
     }
+}
 
-    .hero-thumb .f-card__add svg,
-    .hero-thumb__btn svg {
-        inline-size: 1rem;
-        block-size: 1rem;
-    }
+.hero-thumb:not(.is-active) a,
+.hero-thumb:not(.is-active) falak-add-product-button,
+.hero-thumb:not(.is-active) button {
+    pointer-events: none !important;
+}
+
+.hero-thumb.is-active a,
+.hero-thumb.is-active falak-add-product-button,
+.hero-thumb.is-active button {
+    pointer-events: auto !important;
+}
+
+.hero-thumb .f-card__add:hover,
+.hero-thumb .f-add-product__button:hover,
+.hero-thumb falak-add-product-button button:hover,
+.hero-thumb__btn:hover {
+    background: transparent !important;
+    color: var(--color-primary) !important;
+    border-color: var(--color-primary) !important;
+}
+
+.hero-thumb .f-card__add span,
+.hero-thumb .f-add-product__button span,
+.hero-thumb falak-add-product-button button span {
+    display: none !important;
+}
+
+.hero-thumb .f-card__add svg,
+.hero-thumb .f-add-product__button svg,
+.hero-thumb falak-add-product-button button svg,
+.hero-thumb__btn svg {
+    inline-size: 1rem !important;
+    block-size: 1rem !important;
+    width: 1rem !important;
+    height: 1rem !important;
+    stroke: currentColor !important;
+    color: inherit !important;
+    fill: none !important;
+}
+
+.hero-thumb .f-card__add:hover svg,
+.hero-thumb .f-add-product__button:hover svg,
+.hero-thumb falak-add-product-button button:hover svg,
+.hero-thumb__btn:hover svg {
+    stroke: var(--color-primary) !important;
+    color: var(--color-primary) !important;
 }
 
 /* category card — image, name centred, arrow pill top-end; hovering fades
@@ -11974,7 +12067,6 @@ falak-product-card:hover .f-card__media img,
 .product-card falak-add-product-button button,
 falak-product-card .f-add-product__button,
 falak-product-card falak-add-product-button button,
-.hero-thumb falak-add-product-button button,
 .product-card .btn--card {
     position: absolute;
     inset-block-end: 0.75rem;
@@ -12008,7 +12100,6 @@ falak-product-card falak-add-product-button button,
 .product-card falak-add-product-button button svg,
 falak-product-card .f-add-product__button svg,
 falak-product-card falak-add-product-button button svg,
-.hero-thumb falak-add-product-button button svg,
 .product-card .btn--card svg {
     width: 1.05rem;
     height: 1.05rem;
@@ -12036,7 +12127,6 @@ falak-product-card falak-add-product-button button svg,
     .product-card falak-add-product-button button,
     falak-product-card .f-add-product__button,
     falak-product-card falak-add-product-button button,
-    .hero-thumb falak-add-product-button button,
     .product-card .btn--card {
         opacity: 0;
         pointer-events: none;
@@ -12128,8 +12218,6 @@ falak-product-card .f-add-product__button:hover,
 falak-product-card .f-add-product__button.is-btn-hovered,
 falak-product-card falak-add-product-button button:hover,
 falak-product-card falak-add-product-button button.is-btn-hovered,
-.hero-thumb falak-add-product-button button:hover,
-.hero-thumb falak-add-product-button button.is-btn-hovered,
 .product-card .btn--card:hover,
 .product-card .btn--card.is-btn-hovered {
     background: #ffffff !important;
@@ -12171,8 +12259,6 @@ falak-product-card .f-add-product__button:hover svg,
 falak-product-card .f-add-product__button.is-btn-hovered svg,
 falak-product-card falak-add-product-button button:hover svg,
 falak-product-card falak-add-product-button button.is-btn-hovered svg,
-.hero-thumb falak-add-product-button button:hover svg,
-.hero-thumb falak-add-product-button button.is-btn-hovered svg,
 .product-card .btn--card:hover svg,
 .product-card .btn--card.is-btn-hovered svg {
     color: var(--color-primary) !important;
@@ -12203,8 +12289,6 @@ falak-product-card .f-add-product__button:hover svg path,
 falak-product-card .f-add-product__button.is-btn-hovered svg path,
 falak-product-card falak-add-product-button button:hover svg path,
 falak-product-card falak-add-product-button button.is-btn-hovered svg path,
-.hero-thumb falak-add-product-button button:hover svg path,
-.hero-thumb falak-add-product-button button.is-btn-hovered svg path,
 .product-card .btn--card:hover svg path,
 .product-card .btn--card.is-btn-hovered svg path {
     color: var(--color-primary) !important;
@@ -12279,8 +12363,6 @@ falak-product-card .f-add-product__button:active,
 falak-product-card .f-add-product__button.is-clicked,
 falak-product-card falak-add-product-button button:active,
 falak-product-card falak-add-product-button button.is-clicked,
-.hero-thumb falak-add-product-button button:active,
-.hero-thumb falak-add-product-button button.is-clicked,
 .product-card .btn--card:active,
 .product-card .btn--card.is-clicked,
 .product-card .btn--card-icon:active,
@@ -12310,8 +12392,6 @@ falak-product-card .f-add-product__button:active svg,
 falak-product-card .f-add-product__button.is-clicked svg,
 falak-product-card falak-add-product-button button:active svg,
 falak-product-card falak-add-product-button button.is-clicked svg,
-.hero-thumb falak-add-product-button button:active svg,
-.hero-thumb falak-add-product-button button.is-clicked svg,
 .product-card .btn--card:active svg,
 .product-card .btn--card.is-clicked svg,
 .product-card .btn--card-icon:active svg,
@@ -12339,8 +12419,6 @@ falak-product-card .f-add-product__button:active svg path,
 falak-product-card .f-add-product__button.is-clicked svg path,
 falak-product-card falak-add-product-button button:active svg path,
 falak-product-card falak-add-product-button button.is-clicked svg path,
-.hero-thumb falak-add-product-button button:active svg path,
-.hero-thumb falak-add-product-button button.is-clicked svg path,
 .product-card .btn--card:active svg path,
 .product-card .btn--card.is-clicked svg path,
 .product-card .btn--card-icon:active svg path,
@@ -12424,7 +12502,6 @@ falak-product-card falak-add-product-button button.is-clicked svg path,
     .product-card falak-add-product-button button,
     falak-product-card .f-add-product__button,
     falak-product-card falak-add-product-button button,
-    .hero-thumb falak-add-product-button button,
     .product-card .btn--card {
         opacity: 1 !important;
         pointer-events: auto !important;
@@ -18932,14 +19009,15 @@ body.mega-is-open {
 .stat-card {
     background: var(--color-bg, #ffffff);
     border-radius: var(--radius-lg, 1.15rem);
-    padding: clamp(1.15rem, 3vw, 1.6rem) clamp(0.85rem, 2vw, 1.25rem);
+    padding: clamp(1.5rem, 3.5vw, 2rem) clamp(1.25rem, 2.5vw, 1.75rem);
     box-shadow: 0 10px 30px rgba(16, 24, 40, 0.06);
     border: 0;
     display: flex;
     flex-direction: column;
     align-items: center;
     text-align: center;
-    gap: 0.85rem;
+    gap: 1rem;
+    box-sizing: border-box;
     transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s ease;
 }
 
@@ -18988,12 +19066,12 @@ body.mega-is-open {
 }
 
 .stat-card__value {
-    font-size: clamp(1.45rem, 1.25rem + 0.6vw, 1.85rem);
-    font-weight: 800;
-    line-height: 1.2;
+    font-size: clamp(1.75rem, 1.45rem + 1vw, 2.35rem);
+    font-weight: 900;
+    line-height: 1.15;
     color: var(--color-text);
-    margin-block-end: 0.25rem;
-    letter-spacing: -0.01em;
+    margin-block-end: 0.35rem;
+    letter-spacing: -0.02em;
 }
 
 .stat-card__label {
@@ -19050,8 +19128,8 @@ body.mega-is-open {
         flex-direction: row;
         align-items: center;
         text-align: start;
-        gap: 1.25rem;
-        padding: 1.35rem 1.6rem;
+        gap: clamp(1.25rem, 1.8vw, 1.75rem);
+        padding: clamp(1.6rem, 2.2vw, 2.15rem) clamp(1.85rem, 2.5vw, 2.35rem);
     }
 }
 
@@ -19080,8 +19158,15 @@ body.mega-is-open {
     border-width: var(--falak-el-stat_card-border-width, 0);
     border-color: var(--falak-el-stat_card-border-color, transparent);
     border-style: solid;
-    padding-block: var(--falak-el-stat_card-py, revert);
-    padding-inline: var(--falak-el-stat_card-px, revert);
+    padding-block: var(--falak-el-stat_card-py, clamp(1.5rem, 3.5vw, 2rem));
+    padding-inline: var(--falak-el-stat_card-px, clamp(1.25rem, 2.5vw, 1.75rem));
+}
+
+@media (min-width: 992px) {
+    .block--store-stats .stat-card {
+        padding-block: var(--falak-el-stat_card-py, clamp(1.6rem, 2.2vw, 2.15rem));
+        padding-inline: var(--falak-el-stat_card-px, clamp(1.85rem, 2.5vw, 2.35rem));
+    }
 }
 
 .block--store-stats .stat-card__icon {
@@ -19092,9 +19177,9 @@ body.mega-is-open {
 }
 
 .block--store-stats .stat-card__value {
-    font-size: var(--falak-el-stat_value-size, revert);
-    font-weight: var(--falak-el-stat_value-weight, revert);
-    color: var(--falak-el-stat_value-color, revert);
+    font-size: var(--falak-el-stat_value-size, clamp(1.75rem, 1.45rem + 1vw, 2.35rem));
+    font-weight: var(--falak-el-stat_value-weight, 900);
+    color: var(--falak-el-stat_value-color, var(--color-text));
 }
 
 .block--store-stats .stat-card__label {
