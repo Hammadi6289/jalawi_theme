@@ -2749,5 +2749,110 @@
     });
 })();
 
+/*
+ * <custom-falak-testimonials> — the testimonials block's "real reviews" source.
+ *
+ * Reads GET /api/storefront/reviews and renders them inside Jalawi's
+ * <falak-slider class="testimonials-slider"> using the exact same
+ * .testimonial-card structure as the manual branch in testimonials.twig.
+ */
+(function () {
+    'use strict';
+
+    if (window.customElements && customElements.get('custom-falak-testimonials')) return;
+
+    class CustomFalakTestimonials extends HTMLElement {
+        connectedCallback() {
+            if (!window.falak) return;
+            window.falak.onReady(() => this.load());
+        }
+
+        escape(v) {
+            return String(v ?? '').replace(/[&<>"']/g, function (c) {
+                return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+            });
+        }
+
+        async load() {
+            const falak = window.falak;
+            const limit = Number(this.getAttribute('limit')) || 6;
+
+            this.innerHTML = '<div class="testimonials-grid">'
+                + new Array(Math.min(limit, 3)).fill(
+                    '<div class="testimonial-card testimonial-card--skeleton" aria-hidden="true"></div>'
+                ).join('')
+                + '</div>';
+
+            try {
+                const response = await falak.api.withoutNotifier(() => falak.api.request('reviews', {
+                    params: { per_page: limit },
+                }));
+
+                this.reviews = (response && (response.reviews || response.data)) || [];
+                if (!Array.isArray(this.reviews)) this.reviews = [];
+            } catch (e) {
+                if (falak.logger) falak.logger.warn('custom-falak-testimonials: fetch failed', e);
+                this.reviews = [];
+            }
+
+            this.render();
+        }
+
+        render() {
+            const falak = window.falak;
+            const showStars = this.hasAttribute('show-stars');
+
+            if (!this.reviews.length) {
+                this.innerHTML = '';
+
+                const section = this.closest('.block--testimonials');
+                if (section) section.hidden = true;
+                return;
+            }
+
+            const cardsHtml = this.reviews.map((row) => {
+                const name = row.customer_name || falak.lang.get('product.anonymous');
+                const text = row.review_comment || '';
+                const rating = Math.min(5, Math.round(Number(row.review_rating) || 0));
+
+                let starsHtml = '';
+                if (showStars && rating > 0) {
+                    let spans = '';
+                    for (let i = 1; i <= 5; i++) {
+                        spans += '<span class="testimonial-star ' + (i <= rating ? 'is-filled' : 'is-empty') + '">★</span>';
+                    }
+                    starsHtml = '<div class="testimonial-card__stars" data-falak-part="stars" aria-label="' + rating + '/5">' + spans + '</div>';
+                }
+
+                return '<figure class="testimonial-card">'
+                    + (text ? '<blockquote class="testimonial-card__quote" data-falak-part="quote">' + this.escape(text) + '</blockquote>' : '')
+                    + '<div class="testimonial-card__footer">'
+                        + '<div class="testimonial-card__author" data-falak-part="author">'
+                            + '<div class="testimonial-card__avatar testimonial-card__avatar--placeholder" data-falak-part="picture" aria-hidden="true">'
+                                + '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>'
+                            + '</div>'
+                            + '<div class="testimonial-card__meta">'
+                                + '<figcaption class="testimonial-card__name" data-falak-part="author_name">' + this.escape(name) + '</figcaption>'
+                            + '</div>'
+                        + '</div>'
+                        + starsHtml
+                    + '</div>'
+                + '</figure>';
+            }).join('');
+
+            this.innerHTML = '<div class="testimonials-slider-wrap">'
+                + '<falak-slider class="testimonials-slider" slides-per-view="3" gap="1.5rem" show-controls loop>'
+                    + '<div slot="items" class="testimonials-grid">'
+                        + cardsHtml
+                    + '</div>'
+                + '</falak-slider>'
+            + '</div>';
+        }
+    }
+
+    customElements.define('custom-falak-testimonials', CustomFalakTestimonials);
+})();
+
+
 
 

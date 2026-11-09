@@ -45,7 +45,7 @@
                         {% if item.image|default(null) %}<img src="{{ item.image }}" alt="" loading="lazy">{% endif %}
                     </a>
                     <div class="blog-card__body">
-                        {% if item.date|default(null) %}<p class="blog-card__date">{{ item.date }}</p>{% endif %}
+                        {% if item.date|default(null) %}<p class="blog-card__date"><span dir="ltr">{{ item.date }}</span></p>{% endif %}
                         <h3 class="blog-card__title" data-falak-part="article_title">
                             {% if link %}<a href="{{ link }}">{{ item.title|default('') }}</a>{% else %}{{ item.title|default('') }}{% endif %}
                         </h3>
