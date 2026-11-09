@@ -1,0 +1,116 @@
+{#
+    Quote block / Editorial quotation merchant-placeable component (home + builder pages).
+    A modern 3-part fashion layout inspired by high-end editorial magazines:
+      - Start column: Pill badge, headline title, descriptive narrative, and arrow CTA button.
+      - Center column: Featured portrait photography.
+      - End column: Prominent quotation mark, bold quote statement, and author attribution.
+
+    | Variable                  | Type    | Description                               |
+    | component.badge           | ?string | upper badge text (localized)              |
+    | component.title           | ?string | headline title (localized)                |
+    | component.description     | ?string | narrative description (localized)         |
+    | component.button_text     | ?string | CTA label (localized)                     |
+    | component.button_url      | ?string | CTA destination                           |
+    | component.image           | ?string | photo URL                                 |
+    | component.quote           | string  | quotation statement (localized)           |
+    | component.author          | ?string | quote author or source attribution        |
+    | component.show_quote_icon | ?bool   | whether quote mark icon renders           |
+    | component.reversed        | ?bool   | flip start and end column positions       |
+    | position                  | int     | section position                          |
+
+    Customizer bindings:
+    | Element      | Tag                                                               |
+    | badge        | data-falak-field="badge"                                          |
+    | title        | data-falak-field="title"                                          |
+    | description  | data-falak-field="description"                                    |
+    | button       | data-falak-field="button_text" data-falak-bind-href="button_url"  |
+    | image        | data-falak-field="image"                                          |
+    | quote        | data-falak-field="quote"                                          |
+    | author       | data-falak-field="author"                                         |
+#}
+<section class="block block--quote-block" id="quote-block-{{ position }}" {{ falak_section() }}>
+    <div class="container">
+        <div class="quote-block{{ component.reversed|default(false) ? ' quote-block--reversed' : '' }}">
+            
+            {# 1. Editorial Content Column #}
+            <div class="quote-block__col quote-block__col--content" data-reveal="fade">
+                {% if component.badge %}
+                    <span class="quote-block__badge" data-falak-field="badge" data-falak-part="badge" data-falak-label="{{ trans('editor.field.title') }}">
+                        <span class="quote-block__badge-dot" aria-hidden="true"></span>
+                        <span>{{ component.badge }}</span>
+                    </span>
+                {% endif %}
+
+                {% if component.title %}
+                    <h2 class="quote-block__title" data-falak-field="title" data-falak-part="title" data-falak-label="{{ trans('editor.field.title') }}">
+                        {{ component.title }}
+                    </h2>
+                {% endif %}
+
+                {% if component.description %}
+                    <p class="quote-block__desc" data-falak-field="description" data-falak-part="description" data-falak-label="{{ trans('editor.field.text') }}">
+                        {{ component.description }}
+                    </p>
+                {% endif %}
+
+                {% if component.button_text %}
+                    <div class="quote-block__actions">
+                        <a class="btn btn--primary quote-block__btn"
+                           data-falak-field="button_text"
+                           data-falak-part="button"
+                           data-falak-bind-href="button_url"
+                           data-falak-label="{{ trans('editor.field.button') }}"
+                           href="{{ component.button_url|default('/products') }}">
+                            <span>{{ component.button_text }}</span>
+                            <svg class="quote-block__btn-arrow" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <polyline points="{{ theme.is_rtl ? '15 18 9 12 15 6' : '9 18 15 12 9 6' }}"></polyline>
+                            </svg>
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+
+            {# 2. Featured Image Column #}
+            <div class="quote-block__col quote-block__col--media" data-reveal="slide-up" style="--reveal-delay: 120ms;">
+                {% set default_img = 'images/category-sidebar-banner.png'|asset %}
+                {% set raw_img = component.image|default(null) %}
+                {% set img_src = raw_img ? (raw_img starts with 'http' or raw_img starts with '/' or raw_img starts with 'data:' ? raw_img : raw_img|asset) : default_img %}
+                <figure class="quote-block__figure" data-falak-part="image">
+                    <img class="quote-block__img"
+                         data-falak-field="image"
+                         data-falak-label="{{ trans('editor.field.image') }}"
+                         src="{{ img_src }}"
+                         alt="{{ component.title|default(component.author|default('Fashion showcase')) }}"
+                         loading="lazy">
+                </figure>
+            </div>
+
+            {# 3. Quote Statement Column #}
+            <div class="quote-block__col quote-block__col--quote" data-reveal="slide-up" style="--reveal-delay: 200ms;">
+                <aside class="quote-block__quote-card" data-falak-part="quote_box">
+                    {% if component.show_quote_icon is not defined or component.show_quote_icon %}
+                        <div class="quote-block__quote-icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+                                <path d="M4.583 17.321C3.553 16.227 3 15 3 13.011c0-3.5 2.457-6.637 6.03-8.188l.893 1.378c-3.335 1.804-3.987 4.145-4.247 5.621.537-.278 1.24-.375 1.929-.311 1.804.167 3.226 1.648 3.226 3.489a3.5 3.5 0 01-3.5 3.5c-1.073 0-2.099-.49-2.748-1.179zm10 0C13.553 16.227 13 15 13 13.011c0-3.5 2.457-6.637 6.03-8.188l.893 1.378c-3.335 1.804-3.987 4.145-4.247 5.621.537-.278 1.24-.375 1.929-.311 1.804.167 3.226 1.648 3.226 3.489a3.5 3.5 0 01-3.5 3.5c-1.073 0-2.099-.49-2.748-1.179z"/>
+                            </svg>
+                        </div>
+                    {% endif %}
+
+                    {% if component.quote %}
+                        <blockquote class="quote-block__statement" data-falak-field="quote" data-falak-part="quote" data-falak-label="{{ trans('editor.field.text') }}">
+                            {{ component.quote }}
+                        </blockquote>
+                    {% endif %}
+
+                    {% if component.author %}
+                        <cite class="quote-block__author" data-falak-field="author" data-falak-part="author" data-falak-label="{{ trans('editor.field.title') }}">
+                            {{ component.author }}
+                        </cite>
+                    {% endif %}
+                </aside>
+            </div>
+
+        </div>
+    </div>
+</section>
+

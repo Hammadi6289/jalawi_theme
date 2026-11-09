@@ -1,0 +1,267 @@
+{
+    "key": "falak-quote-block",
+    "path": "home.quote-block",
+    "title": {
+        "ar": "اقتباس مميز",
+        "en": "Quote Block"
+    },
+    "icon": "chat-quote-line",
+    "preview": "images/sections/quote-block.png",
+    "is_default": false,
+    "areas": [
+        "home",
+        "pages"
+    ],
+    "styleable": [
+        {
+            "id": "badge",
+            "label": {
+                "ar": "الشارة",
+                "en": "Badge"
+            },
+            "properties": [
+                "font_size",
+                "font_weight",
+                "color",
+                "background_color",
+                "border_radius"
+            ]
+        },
+        {
+            "id": "title",
+            "label": {
+                "ar": "العنوان الرئيسي",
+                "en": "Headline title"
+            },
+            "properties": [
+                "font_size",
+                "font_weight",
+                "color"
+            ]
+        },
+        {
+            "id": "description",
+            "label": {
+                "ar": "النص الوصفي",
+                "en": "Description text"
+            },
+            "properties": [
+                "font_size",
+                "font_weight",
+                "color"
+            ]
+        },
+        {
+            "id": "button",
+            "label": {
+                "ar": "زر الانتقال",
+                "en": "CTA button"
+            },
+            "properties": [
+                "font_size",
+                "font_weight",
+                "color",
+                "background_color",
+                "border_radius",
+                "border_width",
+                "border_color"
+            ]
+        },
+        {
+            "id": "image",
+            "label": {
+                "ar": "الصورة المميزة",
+                "en": "Featured image"
+            },
+            "properties": [
+                "border_radius",
+                "border_width",
+                "border_color"
+            ]
+        },
+        {
+            "id": "quote_box",
+            "label": {
+                "ar": "صندوق الاقتباس",
+                "en": "Quote box"
+            },
+            "properties": [
+                "background_color",
+                "border_radius",
+                "border_width",
+                "border_color",
+                "padding_block",
+                "padding_inline"
+            ]
+        },
+        {
+            "id": "quote",
+            "label": {
+                "ar": "نص الاقتباس",
+                "en": "Quote text"
+            },
+            "properties": [
+                "font_size",
+                "font_weight",
+                "color"
+            ]
+        },
+        {
+            "id": "author",
+            "label": {
+                "ar": "اسم قائل الاقتباس",
+                "en": "Quote author"
+            },
+            "properties": [
+                "font_size",
+                "font_weight",
+                "color"
+            ]
+        }
+    ],
+    "fields": [
+        {
+            "id": "badge",
+            "type": "string",
+            "format": "text",
+            "label": {
+                "ar": "نص الشارة العلوية",
+                "en": "Top badge label"
+            },
+            "multilanguage": true,
+            "required": false,
+            "maxLength": 60,
+            "value": {
+                "ar": "إلهام الموضة",
+                "en": "EDITORIAL ESSENCE"
+            }
+        },
+        {
+            "id": "title",
+            "type": "string",
+            "format": "text",
+            "label": {
+                "ar": "العنوان الرئيسي",
+                "en": "Headline title"
+            },
+            "multilanguage": true,
+            "required": false,
+            "maxLength": 120,
+            "value": {
+                "ar": "أناقة خالدة تُعبّر عن حضوركِ الفريد",
+                "en": "Timeless elegance that speaks to your unique essence"
+            }
+        },
+        {
+            "id": "description",
+            "type": "string",
+            "format": "textarea",
+            "label": {
+                "ar": "النص الوصفي",
+                "en": "Description text"
+            },
+            "multilanguage": true,
+            "required": false,
+            "maxLength": 500,
+            "value": {
+                "ar": "نبتكر تصاميم تجمع بين الرقي العصري والأصالة، لتمنحكِ إطلالة تتجاوز المواسم وتعكس جوهر جمالكِ الطبيعي بكل ثقة وجاذبية.",
+                "en": "Crafting timeless silhouettes with premium fabrics, designed to transcend fleeting trends and celebrate your natural confidence."
+            }
+        },
+        {
+            "id": "button_text",
+            "type": "string",
+            "format": "text",
+            "label": {
+                "ar": "نص الزر",
+                "en": "Button text"
+            },
+            "multilanguage": true,
+            "required": false,
+            "maxLength": 40,
+            "value": {
+                "ar": "اكتشف المجموعة",
+                "en": "EXPLORE COLLECTION"
+            }
+        },
+        {
+            "id": "button_url",
+            "type": "string",
+            "format": "text",
+            "label": {
+                "ar": "رابط الزر",
+                "en": "Button link"
+            },
+            "required": false,
+            "maxLength": 255,
+            "value": "/products"
+        },
+        {
+            "id": "image",
+            "type": "string",
+            "format": "image",
+            "label": {
+                "ar": "الصورة المميزة",
+                "en": "Featured image"
+            },
+            "description": {
+                "ar": "أبعاد موصى بها: 700×900 بكسل (صورة طولية)",
+                "en": "Recommended: 700x900 px (portrait image)"
+            },
+            "required": false
+        },
+        {
+            "id": "quote",
+            "type": "string",
+            "format": "textarea",
+            "label": {
+                "ar": "نص الاقتباس",
+                "en": "Quote statement"
+            },
+            "multilanguage": true,
+            "required": true,
+            "maxLength": 500,
+            "value": {
+                "ar": "اعتني بنفسكِ من الداخل، وسيتألق جمالكِ الطبيعي ويشع من خلال إطلالتك.",
+                "en": "Look after yourself from within, and your beauty will shine through on your skin."
+            }
+        },
+        {
+            "id": "author",
+            "type": "string",
+            "format": "text",
+            "label": {
+                "ar": "قائل الاقتباس / المصدر",
+                "en": "Quote author / attribution"
+            },
+            "multilanguage": true,
+            "required": false,
+            "maxLength": 80,
+            "value": {
+                "ar": "جين إلستون",
+                "en": "JANE ELSTON"
+            }
+        },
+        {
+            "id": "show_quote_icon",
+            "type": "boolean",
+            "format": "switch",
+            "label": {
+                "ar": "إظهار علامة الاقتباس",
+                "en": "Show quotation mark icon"
+            },
+            "value": true
+        },
+        {
+            "id": "reversed",
+            "type": "boolean",
+            "format": "switch",
+            "label": {
+                "ar": "عكس الترتيب (عرض الاقتباس في البداية)",
+                "en": "Reverse order (Quote first)"
+            },
+            "value": false
+        }
+    ]
+}
+
