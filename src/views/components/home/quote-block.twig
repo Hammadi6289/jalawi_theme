@@ -54,13 +54,26 @@
                 {% endif %}
 
                 {% if component.button_text %}
+                    {% set btn_url = component.button_url|default('/products') %}
+                    {% set btn_type = component.button_link_type|default(component.button_url ? 'custom' : 'products') %}
+                    {% if btn_type is iterable %}{% set btn_type = btn_type|first %}{% endif %}
+                    {% if btn_type == 'category' and component.button_category|default(null) %}
+                        {% set btn_url = '/products?category_id[]=' ~ component.button_category %}
+                    {% elseif btn_type == 'product' and component.button_product|default(null) %}
+                        {% set btn_url = '/product/' ~ component.button_product %}
+                    {% elseif btn_type == 'products' %}
+                        {% set btn_url = '/products' %}
+                    {% elseif btn_type == 'home' %}
+                        {% set btn_url = '/' %}
+                    {% endif %}
+
                     <div class="quote-block__actions">
                         <a class="btn btn--primary quote-block__btn"
                            data-falak-field="button_text"
                            data-falak-part="button"
                            data-falak-bind-href="button_url"
                            data-falak-label="{{ trans('editor.field.button') }}"
-                           href="{{ component.button_url|default('/products') }}">
+                           href="{{ btn_url }}">
                             <span>{{ component.button_text }}</span>
                             <svg class="quote-block__btn-arrow" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                                 <polyline points="{{ theme.is_rtl ? '15 18 9 12 15 6' : '9 18 15 12 9 6' }}"></polyline>
