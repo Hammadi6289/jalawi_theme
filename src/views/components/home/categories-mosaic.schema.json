@@ -1,0 +1,574 @@
+{
+    "key": "falak-categories-mosaic",
+    "path": "home.categories-mosaic",
+    "title": {
+        "ar": "فسيفساء الأقسام",
+        "en": "Categories Mosaic"
+    },
+    "icon": "layout-masonry-line",
+    "preview": "images/sections/categories-mosaic.webp",
+    "is_default": false,
+    "areas": [
+        "home",
+        "pages"
+    ],
+    "styleable": [
+        {
+            "id": "title",
+            "label": {
+                "ar": "عنوان القسم",
+                "en": "Section title"
+            },
+            "properties": [
+                "font_size",
+                "font_weight",
+                "color"
+            ]
+        },
+        {
+            "id": "subtitle",
+            "label": {
+                "ar": "نص القسم",
+                "en": "Section text"
+            },
+            "properties": [
+                "font_size",
+                "font_weight",
+                "color"
+            ]
+        },
+        {
+            "id": "tile",
+            "label": {
+                "ar": "البلاطة",
+                "en": "Tile"
+            },
+            "properties": [
+                "border_radius",
+                "border_width",
+                "border_color",
+                "background_color"
+            ]
+        },
+        {
+            "id": "tile_title",
+            "label": {
+                "ar": "عنوان البلاطة",
+                "en": "Tile title"
+            },
+            "properties": [
+                "font_size",
+                "font_weight",
+                "color"
+            ]
+        }
+    ],
+    "fields": [
+        {
+            "id": "title",
+            "type": "string",
+            "format": "text",
+            "label": {
+                "ar": "عنوان القسم",
+                "en": "Section title"
+            },
+            "multilanguage": true,
+            "required": false,
+            "maxLength": 100,
+            "value": {
+                "ar": "تسوقي حسب الفئات",
+                "en": "Shop by Category"
+            }
+        },
+        {
+            "id": "subtitle",
+            "type": "string",
+            "format": "textarea",
+            "label": {
+                "ar": "نص تحت العنوان",
+                "en": "Subtitle under title"
+            },
+            "multilanguage": true,
+            "required": false,
+            "maxLength": 255,
+            "value": {
+                "ar": "اكتشفي تشكيلاتنا المختارة بعناية من مستحضرات التجميل، العناية بالبشرة، وأرقى العطور",
+                "en": "Explore our curated beauty, skincare, and luxury fragrance collections"
+            }
+        },
+        {
+            "id": "header_align",
+            "type": "items",
+            "format": "dropdown-list",
+            "label": {
+                "ar": "محاذاة العنوان",
+                "en": "Header alignment"
+            },
+            "value": "start",
+            "options": [
+                {
+                    "label": {
+                        "ar": "بداية (يمين بالعربي / يسار بالإنجليزي)",
+                        "en": "Start (Left in LTR / Right in RTL)"
+                    },
+                    "value": "start"
+                },
+                {
+                    "label": {
+                        "ar": "توسيط",
+                        "en": "Center"
+                    },
+                    "value": "center"
+                },
+                {
+                    "label": {
+                        "ar": "نهاية",
+                        "en": "End"
+                    },
+                    "value": "end"
+                }
+            ],
+            "required": false
+        },
+        {
+            "id": "full_width",
+            "type": "boolean",
+            "format": "switch",
+            "label": {
+                "ar": "عرض كامل الشاشة",
+                "en": "Full width layout"
+            },
+            "description": {
+                "ar": "يمتد القسم بعرض الصفحة دون حواف جانبية",
+                "en": "Extends the mosaic grid edge-to-edge across the screen"
+            },
+            "value": false,
+            "required": false
+        },
+        {
+            "id": "desktop_height",
+            "type": "items",
+            "format": "dropdown-list",
+            "label": {
+                "ar": "ارتفاع القسم على الشاشات الكبيرة",
+                "en": "Desktop grid height"
+            },
+            "value": "540px",
+            "options": [
+                {
+                    "label": {
+                        "ar": "مضغوط (460 بكسل)",
+                        "en": "Compact (460px)"
+                    },
+                    "value": "460px"
+                },
+                {
+                    "label": {
+                        "ar": "متوسط (540 بكسل)",
+                        "en": "Medium (540px)"
+                    },
+                    "value": "540px"
+                },
+                {
+                    "label": {
+                        "ar": "واسع (600 بكسل)",
+                        "en": "Spacious (600px)"
+                    },
+                    "value": "600px"
+                },
+                {
+                    "label": {
+                        "ar": "كبير جداً (680 بكسل)",
+                        "en": "Extra large (680px)"
+                    },
+                    "value": "680px"
+                }
+            ],
+            "required": false
+        },
+        {
+            "id": "tile_gap",
+            "type": "items",
+            "format": "dropdown-list",
+            "label": {
+                "ar": "المسافة بين البلاطات",
+                "en": "Gap between tiles"
+            },
+            "value": "12px",
+            "options": [
+                {
+                    "label": {
+                        "ar": "بدون مسافة (0)",
+                        "en": "None (0px)"
+                    },
+                    "value": "0px"
+                },
+                {
+                    "label": {
+                        "ar": "صغيرة (8 بكسل)",
+                        "en": "Small (8px)"
+                    },
+                    "value": "8px"
+                },
+                {
+                    "label": {
+                        "ar": "متوسطة (12 بكسل)",
+                        "en": "Medium (12px)"
+                    },
+                    "value": "12px"
+                },
+                {
+                    "label": {
+                        "ar": "كبيرة (18 بكسل)",
+                        "en": "Large (18px)"
+                    },
+                    "value": "18px"
+                }
+            ],
+            "required": false
+        },
+        {
+            "id": "tile_radius",
+            "type": "items",
+            "format": "dropdown-list",
+            "label": {
+                "ar": "انحناء حواف البلاطات",
+                "en": "Tile corner radius"
+            },
+            "value": "0px",
+            "options": [
+                {
+                    "label": {
+                        "ar": "حواف مستقيمة (0)",
+                        "en": "Square (0px)"
+                    },
+                    "value": "0px"
+                },
+                {
+                    "label": {
+                        "ar": "خفيف (6 بكسل)",
+                        "en": "Subtle (6px)"
+                    },
+                    "value": "6px"
+                },
+                {
+                    "label": {
+                        "ar": "متوسط (12 بكسل)",
+                        "en": "Rounded (12px)"
+                    },
+                    "value": "12px"
+                },
+                {
+                    "label": {
+                        "ar": "كبير (18 بكسل)",
+                        "en": "Pill (18px)"
+                    },
+                    "value": "18px"
+                }
+            ],
+            "required": false
+        },
+        {
+            "id": "hover_effect",
+            "type": "items",
+            "format": "dropdown-list",
+            "label": {
+                "ar": "تأثير حركة الماوس",
+                "en": "Hover effect"
+            },
+            "value": "zoom",
+            "options": [
+                {
+                    "label": {
+                        "ar": "تكبير انسيابي للصورة",
+                        "en": "Smooth image zoom"
+                    },
+                    "value": "zoom"
+                },
+                {
+                    "label": {
+                        "ar": "إضاءة ناعمة",
+                        "en": "Gentle brighten"
+                    },
+                    "value": "brighten"
+                },
+                {
+                    "label": {
+                        "ar": "بدون تأثير",
+                        "en": "None"
+                    },
+                    "value": "none"
+                }
+            ],
+            "required": false
+        },
+        {
+            "id": "items",
+            "type": "collection",
+            "format": "collection",
+            "label": {
+                "ar": "بلاطات الفسيفساء (حتى 5)",
+                "en": "Mosaic tiles (up to 5)"
+            },
+            "item_label": {
+                "ar": "بلاطة",
+                "en": "Tile"
+            },
+            "description": {
+                "ar": "الترتيب يحدد موضع البلاطة في الفسيفساء: 1=اليسار الكبير، 2=الوسط العلوي، 3=الوسط السفلي (يسار)، 4=الوسط السفلي (يمين)، 5=اليمين الطولي.",
+                "en": "Order sets the tile position: 1=Large left, 2=Middle top, 3=Middle bottom left, 4=Middle bottom right, 5=Tall right."
+            },
+            "required": true,
+            "minLength": 2,
+            "maxLength": 5,
+            "value": [
+                {
+                    "items.category": null,
+                    "items.image": "",
+                    "items.title": {
+                        "ar": "العناية بالبشرة",
+                        "en": "Skincare"
+                    },
+                    "items.link_type": "products",
+                    "items.text_position": "top-start"
+                },
+                {
+                    "items.category": null,
+                    "items.image": "",
+                    "items.title": {
+                        "ar": "المكياج والجمال",
+                        "en": "Makeup & Beauty"
+                    },
+                    "items.link_type": "products",
+                    "items.text_position": "top-start"
+                },
+                {
+                    "items.category": null,
+                    "items.image": "",
+                    "items.title": {
+                        "ar": "العناية بالشعر",
+                        "en": "Hair Care"
+                    },
+                    "items.link_type": "products",
+                    "items.text_position": "top-start"
+                },
+                {
+                    "items.category": null,
+                    "items.image": "",
+                    "items.title": {
+                        "ar": "العناية بالجسم",
+                        "en": "Body Care"
+                    },
+                    "items.link_type": "products",
+                    "items.text_position": "top-start"
+                },
+                {
+                    "items.category": null,
+                    "items.image": "",
+                    "items.title": {
+                        "ar": "العطور الفاخرة",
+                        "en": "Luxury Perfumes"
+                    },
+                    "items.link_type": "products",
+                    "items.text_position": "top-start"
+                }
+            ],
+            "fields": [
+                {
+                    "id": "items.category",
+                    "type": "string",
+                    "format": "category",
+                    "label": {
+                        "ar": "الفئة من المتجر",
+                        "en": "Store category"
+                    },
+                    "description": {
+                        "ar": "اختياري — عند اختياره يتم استيراد الاسم والصورة والرابط تلقائياً ما لم تكتب عنواناً مخصصاً",
+                        "en": "Optional — automatically uses category name, image and link unless customized below"
+                    },
+                    "required": false
+                },
+                {
+                    "id": "items.title",
+                    "type": "string",
+                    "format": "text",
+                    "label": {
+                        "ar": "عنوان البلاطة",
+                        "en": "Tile title"
+                    },
+                    "multilanguage": true,
+                    "required": false,
+                    "maxLength": 80
+                },
+                {
+                    "id": "items.subtitle",
+                    "type": "string",
+                    "format": "text",
+                    "label": {
+                        "ar": "نص إضافي / تسمية توضيحية",
+                        "en": "Subtitle / caption"
+                    },
+                    "multilanguage": true,
+                    "required": false,
+                    "maxLength": 100
+                },
+                {
+                    "id": "items.image",
+                    "type": "string",
+                    "format": "image",
+                    "label": {
+                        "ar": "صورة مخصصة للبلاطة",
+                        "en": "Custom tile image"
+                    },
+                    "description": {
+                        "ar": "صورة عالية الجودة تعبر عن القسم",
+                        "en": "High-quality photo for the tile"
+                    },
+                    "required": false
+                },
+                {
+                    "id": "items.badge",
+                    "type": "string",
+                    "format": "text",
+                    "label": {
+                        "ar": "شارة علوية (اختياري)",
+                        "en": "Badge label (optional)"
+                    },
+                    "multilanguage": true,
+                    "required": false,
+                    "maxLength": 30
+                },
+                {
+                    "id": "items.link_type",
+                    "type": "items",
+                    "format": "dropdown-list",
+                    "label": {
+                        "ar": "نوع الرابط",
+                        "en": "Link destination"
+                    },
+                    "value": "category",
+                    "options": [
+                        {
+                            "label": {
+                                "ar": "رابط الفئة المختارة أعلاه",
+                                "en": "Chosen category above"
+                            },
+                            "value": "category"
+                        },
+                        {
+                            "label": {
+                                "ar": "جميع المنتجات",
+                                "en": "All products page"
+                            },
+                            "value": "products"
+                        },
+                        {
+                            "label": {
+                                "ar": "منتج محدد",
+                                "en": "Specific product"
+                            },
+                            "value": "product"
+                        },
+                        {
+                            "label": {
+                                "ar": "رابط مخصص",
+                                "en": "Custom URL"
+                            },
+                            "value": "custom"
+                        },
+                        {
+                            "label": {
+                                "ar": "بدون رابط (للعرض فقط)",
+                                "en": "None (Display only)"
+                            },
+                            "value": "none"
+                        }
+                    ],
+                    "required": false
+                },
+                {
+                    "id": "items.link_product",
+                    "type": "string",
+                    "format": "product",
+                    "label": {
+                        "ar": "المنتج المستهدف",
+                        "en": "Target product"
+                    },
+                    "required": false,
+                    "conditions": [
+                        {
+                            "id": "items.link_type",
+                            "value": "product"
+                        }
+                    ]
+                },
+                {
+                    "id": "items.link_url",
+                    "type": "string",
+                    "format": "text",
+                    "label": {
+                        "ar": "الرابط المخصص",
+                        "en": "Custom URL link"
+                    },
+                    "required": false,
+                    "maxLength": 500,
+                    "conditions": [
+                        {
+                            "id": "items.link_type",
+                            "value": "custom"
+                        }
+                    ]
+                },
+                {
+                    "id": "items.text_position",
+                    "type": "items",
+                    "format": "dropdown-list",
+                    "label": {
+                        "ar": "موضع النص داخل البلاطة",
+                        "en": "Text position"
+                    },
+                    "value": "top-start",
+                    "options": [
+                        {
+                            "label": {
+                                "ar": "أعلى البداية (مثل الصورة)",
+                                "en": "Top start (as in photo)"
+                            },
+                            "value": "top-start"
+                        },
+                        {
+                            "label": {
+                                "ar": "أعلى الوسط",
+                                "en": "Top center"
+                            },
+                            "value": "top-center"
+                        },
+                        {
+                            "label": {
+                                "ar": "أسفل البداية",
+                                "en": "Bottom start"
+                            },
+                            "value": "bottom-start"
+                        },
+                        {
+                            "label": {
+                                "ar": "أسفل الوسط",
+                                "en": "Bottom center"
+                            },
+                            "value": "bottom-center"
+                        },
+                        {
+                            "label": {
+                                "ar": "منتصف البلاطة",
+                                "en": "Center"
+                            },
+                            "value": "center"
+                        }
+                    ],
+                    "required": false
+                }
+            ]
+        }
+    ]
+}
+

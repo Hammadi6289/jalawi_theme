@@ -138,6 +138,35 @@
         });
     }
 
+    function fillMosaicCategories(cards) {
+        loadCategories().then(function (list) {
+            cards.forEach(function (tile) {
+                var id = tile.getAttribute('data-mosaic-category');
+                var match = list.filter(function (c) { return String(c.id) === String(id); })[0];
+                if (!match) return;
+                var title = tile.querySelector('[data-mosaic-title]');
+                if (title && !title.hasAttribute('data-custom')) {
+                    title.textContent = (isArabic && match.name_ar) || match.name;
+                }
+                var img = tile.querySelector('[data-mosaic-image]');
+                var catImage = match.image_url || match.image;
+                if (catImage && img && !img.hasAttribute('data-custom')) {
+                    img.src = catImage;
+                }
+                if (tile.tagName === 'A' && (!tile.getAttribute('href') || tile.getAttribute('href') === '#')) {
+                    tile.href = '/products?category_id[]=' + encodeURIComponent(match.id);
+                }
+            });
+        }).catch(function () {});
+    }
+
+    var mosaicCards = Array.prototype.slice.call(document.querySelectorAll('[data-mosaic-category]'));
+    if (mosaicCards.length) {
+        whenSdk(function () {
+            if (window.falak.product) fillMosaicCategories(mosaicCards);
+        });
+    }
+
     /* ------------------------------------------------- shop by category */
     // Flip cards: the category's name, photo and sub-categories come from the
     // store; a merchant's own name/photo (data-custom) wins. With no category

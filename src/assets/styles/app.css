@@ -20134,3 +20134,348 @@ body.mega-is-open {
     .cat-tile__text { display: none; }
 }
 
+/* ==========================================================================
+   Categories Mosaic block (falak-categories-mosaic)
+   Editorial 5-tile mosaic grid (Large left, middle top/bottom, tall right)
+   ========================================================================== */
+
+.block--categories-mosaic {
+    padding-block: clamp(2rem, 4vw, 3.5rem);
+    background: var(--color-bg, #ffffff);
+    color: var(--color-text, #111111);
+}
+
+.cat-mosaic__container--fluid {
+    width: 100%;
+    padding-inline: clamp(1rem, 2.5vw, 2.5rem);
+    box-sizing: border-box;
+}
+
+/* Section Header */
+.cat-mosaic__head {
+    margin-bottom: clamp(1.25rem, 2.5vw, 2.25rem);
+}
+
+.cat-mosaic__head--start { text-align: start; }
+.cat-mosaic__head--center { text-align: center; }
+.cat-mosaic__head--end { text-align: end; }
+
+.cat-mosaic__heading {
+    font-size: clamp(1.4rem, 1.2rem + 1vw, 2.1rem);
+    font-weight: 700;
+    line-height: 1.25;
+    color: var(--color-text);
+    margin: 0 0 0.4rem;
+}
+
+.cat-mosaic__subheading {
+    font-size: clamp(0.9rem, 0.85rem + 0.25vw, 1.05rem);
+    color: var(--color-text-soft, #6b7280);
+    margin: 0;
+    line-height: 1.5;
+}
+
+/* The Mosaic Grid */
+.cat-mosaic__grid {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Desktop Grid (min-width: 992px) */
+@media (min-width: 992px) {
+    .cat-mosaic__grid--5 {
+        display: grid;
+        grid-template-columns: 1.55fr 1fr 1fr 1.05fr;
+        grid-template-rows: 1.35fr 1fr;
+        height: var(--mosaic-height, 540px);
+        gap: var(--mosaic-gap, 12px);
+    }
+
+    .cat-mosaic__grid--5 .cat-mosaic__tile--1 {
+        grid-column: 1;
+        grid-row: 1 / 3;
+    }
+
+    .cat-mosaic__grid--5 .cat-mosaic__tile--2 {
+        grid-column: 2 / 4;
+        grid-row: 1;
+    }
+
+    .cat-mosaic__grid--5 .cat-mosaic__tile--3 {
+        grid-column: 2;
+        grid-row: 2;
+    }
+
+    .cat-mosaic__grid--5 .cat-mosaic__tile--4 {
+        grid-column: 3;
+        grid-row: 2;
+    }
+
+    .cat-mosaic__grid--5 .cat-mosaic__tile--5 {
+        grid-column: 4;
+        grid-row: 1 / 3;
+    }
+
+    /* 4 Tiles Fallback */
+    .cat-mosaic__grid--4 {
+        display: grid;
+        grid-template-columns: 1.55fr 1fr 1fr;
+        grid-template-rows: 1.35fr 1fr;
+        height: var(--mosaic-height, 540px);
+        gap: var(--mosaic-gap, 12px);
+    }
+    .cat-mosaic__grid--4 .cat-mosaic__tile--1 { grid-column: 1; grid-row: 1 / 3; }
+    .cat-mosaic__grid--4 .cat-mosaic__tile--2 { grid-column: 2 / 4; grid-row: 1; }
+    .cat-mosaic__grid--4 .cat-mosaic__tile--3 { grid-column: 2; grid-row: 2; }
+    .cat-mosaic__grid--4 .cat-mosaic__tile--4 { grid-column: 3; grid-row: 2; }
+
+    /* 3 Tiles Fallback */
+    .cat-mosaic__grid--3 {
+        display: grid;
+        grid-template-columns: 1.5fr 1.2fr 1fr;
+        height: var(--mosaic-height, 540px);
+        gap: var(--mosaic-gap, 12px);
+    }
+
+    /* 2 Tiles Fallback */
+    .cat-mosaic__grid--2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        height: var(--mosaic-height, 540px);
+        gap: var(--mosaic-gap, 12px);
+    }
+}
+
+/* Tablet Grid (768px to 991px) */
+@media (min-width: 768px) and (max-width: 991px) {
+    .cat-mosaic__grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: var(--mosaic-gap, 12px);
+        height: auto;
+    }
+
+    .cat-mosaic__tile {
+        min-height: 220px;
+    }
+
+    .cat-mosaic__grid--5 .cat-mosaic__tile--1 {
+        grid-column: 1 / -1;
+        min-height: 280px;
+    }
+
+    .cat-mosaic__grid--5 .cat-mosaic__tile--2 {
+        grid-column: 1 / -1;
+        min-height: 220px;
+    }
+
+    .cat-mosaic__grid--5 .cat-mosaic__tile--3 { grid-column: 1; }
+    .cat-mosaic__grid--5 .cat-mosaic__tile--4 { grid-column: 2; }
+
+    .cat-mosaic__grid--5 .cat-mosaic__tile--5 {
+        grid-column: 1 / -1;
+        min-height: 260px;
+    }
+}
+
+/* Mobile Phone Grid (<= 767px) */
+@media (max-width: 767px) {
+    .cat-mosaic__grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: clamp(6px, 2vw, 10px);
+        height: auto;
+    }
+
+    .cat-mosaic__tile {
+        min-height: 140px;
+    }
+
+    .cat-mosaic__grid--5 .cat-mosaic__tile--1 {
+        grid-column: 1 / -1;
+        min-height: 200px;
+    }
+
+    .cat-mosaic__grid--5 .cat-mosaic__tile--2 {
+        grid-column: 1 / -1;
+        min-height: 160px;
+    }
+
+    .cat-mosaic__grid--5 .cat-mosaic__tile--3 { grid-column: 1; }
+    .cat-mosaic__grid--5 .cat-mosaic__tile--4 { grid-column: 2; }
+
+    .cat-mosaic__grid--5 .cat-mosaic__tile--5 {
+        grid-column: 1 / -1;
+        min-height: 190px;
+    }
+}
+
+/* Individual Tile Styling */
+.cat-mosaic__tile {
+    position: relative;
+    overflow: hidden;
+    display: block;
+    text-decoration: none;
+    border-radius: var(--mosaic-radius, 0px);
+    background: #18191c;
+    cursor: pointer;
+    box-sizing: border-box;
+    transform: translateZ(0);
+}
+
+.cat-mosaic__media {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    z-index: 1;
+}
+
+.cat-mosaic__img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+    transition: transform 0.65s cubic-bezier(0.16, 1, 0.3, 1), filter 0.5s ease;
+}
+
+/* Hover effects */
+.cat-mosaic--hover-zoom .cat-mosaic__tile:hover .cat-mosaic__img {
+    transform: scale(1.06);
+}
+
+.cat-mosaic--hover-brighten .cat-mosaic__tile:hover .cat-mosaic__img {
+    transform: scale(1.04);
+    filter: brightness(1.1);
+}
+
+/* Scrim Gradient Overlays to guarantee white text contrast on any background */
+.cat-mosaic__scrim {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    pointer-events: none;
+    transition: opacity 0.35s ease;
+}
+
+.cat-mosaic__scrim--top-start,
+.cat-mosaic__scrim--top-center {
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0.42) 0%, rgba(0, 0, 0, 0.12) 45%, transparent 100%);
+}
+
+.cat-mosaic__scrim--bottom-start,
+.cat-mosaic__scrim--bottom-center {
+    background: linear-gradient(0deg, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0.15) 50%, transparent 100%);
+}
+
+.cat-mosaic__scrim--center {
+    background: rgba(0, 0, 0, 0.28);
+}
+
+.cat-mosaic__tile:hover .cat-mosaic__scrim {
+    opacity: 0.85;
+}
+
+/* Tile Content Overlay */
+.cat-mosaic__content {
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    padding: clamp(0.85rem, 1.8vw, 1.5rem);
+    display: flex;
+    flex-direction: column;
+    pointer-events: none;
+    box-sizing: border-box;
+}
+
+.cat-mosaic__content--top-start {
+    justify-content: flex-start;
+    align-items: flex-start;
+    text-align: start;
+}
+
+.cat-mosaic__content--top-center {
+    justify-content: flex-start;
+    align-items: center;
+    text-align: center;
+}
+
+.cat-mosaic__content--bottom-start {
+    justify-content: flex-end;
+    align-items: flex-start;
+    text-align: start;
+}
+
+.cat-mosaic__content--bottom-center {
+    justify-content: flex-end;
+    align-items: center;
+    text-align: center;
+}
+
+.cat-mosaic__content--center {
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+/* Tile Typography */
+.cat-mosaic__title {
+    color: #ffffff !important;
+    font-size: clamp(0.95rem, 0.82rem + 0.45vw, 1.35rem);
+    font-weight: 700;
+    line-height: 1.25;
+    margin: 0;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.45);
+    letter-spacing: -0.01em;
+}
+
+.cat-mosaic__caption {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: clamp(0.75rem, 0.7rem + 0.15vw, 0.88rem);
+    margin: 0.25rem 0 0;
+    line-height: 1.35;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+}
+
+.cat-mosaic__badge {
+    display: inline-block;
+    padding: 0.2rem 0.55rem;
+    background: var(--color-primary);
+    color: #ffffff;
+    font-size: 0.72rem;
+    font-weight: 700;
+    border-radius: 4px;
+    margin-bottom: 0.35rem;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+/* Styleable Overrides via Customizer */
+.block--categories-mosaic .cat-mosaic__heading {
+    font-size: var(--falak-el-title-size, revert);
+    font-weight: var(--falak-el-title-weight, revert);
+    color: var(--falak-el-title-color, var(--color-text));
+}
+
+.block--categories-mosaic .cat-mosaic__subheading {
+    font-size: var(--falak-el-subtitle-size, revert);
+    font-weight: var(--falak-el-subtitle-weight, revert);
+    color: var(--falak-el-subtitle-color, var(--color-text-soft));
+}
+
+.block--categories-mosaic .cat-mosaic__tile {
+    border-radius: var(--falak-el-tile-radius, var(--mosaic-radius, 0px));
+    border-width: var(--falak-el-tile-border-width, 0);
+    border-color: var(--falak-el-tile-border-color, transparent);
+    border-style: solid;
+    background-color: var(--falak-el-tile-bg, #18191c);
+}
+
+.block--categories-mosaic .cat-mosaic__title {
+    font-size: var(--falak-el-tile_title-size, revert);
+    font-weight: var(--falak-el-tile_title-weight, revert);
+    color: var(--falak-el-tile_title-color, #ffffff) !important;
+}
+
+

@@ -1,0 +1,105 @@
+{#
+    Categories Mosaic — merchant-placeable home & page component.
+    Renders an editorial 5-tile mosaic grid (1 large left, 1 middle-top, 2 middle-bottom, 1 tall right).
+    
+    | Variable                       | Type     | Description                                           |
+    | component.title                | ?string  | section main heading                                  |
+    | component.subtitle             | ?string  | section subheading text                               |
+    | component.header_align         | ?string  | start | center | end (default: start)                  |
+    | component.full_width           | ?bool    | stretch edge-to-edge (default: false)                 |
+    | component.desktop_height       | ?string  | grid desktop height: 460px | 540px | 600px | 680px     |
+    | component.tile_gap             | ?string  | 0px | 8px | 12px | 18px                             |
+    | component.tile_radius          | ?string  | 0px | 6px | 12px | 18px                             |
+    | component.hover_effect         | ?string  | zoom | brighten | none                             |
+    | component.items[].category     | ?string  | category id (fetches name/image/link if empty)        |
+    | component.items[].title        | ?string  | custom tile title                                     |
+    | component.items[].subtitle     | ?string  | optional caption line                                 |
+    | component.items[].image        | ?string  | custom tile image URL                                 |
+    | component.items[].badge        | ?string  | optional badge pill text                              |
+    | component.items[].link_type    | ?string  | category | products | product | custom | none         |
+    | component.items[].link_url     | ?string  | custom URL link target                                |
+    | component.items[].link_product | ?string  | target product id                                     |
+    | component.items[].text_position| ?string  | top-start | top-center | bottom-start | center     |
+    | position                       | int      | render order index                                    |
+#}
+{% set items = component.items|default([]) %}
+{% set header_align = component.header_align|default('start') %}
+{% set full_width = component.full_width|default(false) %}
+{% set desktop_height = component.desktop_height|default('540px') %}
+{% set tile_gap = component.tile_gap|default('12px') %}
+{% set tile_radius = component.tile_radius|default('0px') %}
+{% set hover_effect = component.hover_effect|default('zoom') %}
+
+<section class="block block--categories-mosaic" id="cat-mosaic-{{ position }}" {{ falak_section() }}>
+    <div class="{{ full_width ? 'cat-mosaic__container--fluid' : 'container' }}">
+        {% if component.title or component.subtitle %}
+            <div class="cat-mosaic__head cat-mosaic__head--{{ header_align }}" data-reveal="fade">
+                {% if component.title %}
+                    <h2 class="cat-mosaic__heading" data-falak-field="title" data-falak-label="{{ trans('editor.field.title') }}" data-falak-part="title">{{ component.title }}</h2>
+                {% endif %}
+                {% if component.subtitle %}
+                    <p class="cat-mosaic__subheading" data-falak-field="subtitle" data-falak-label="{{ trans('editor.field.text') }}" data-falak-part="subtitle">{{ component.subtitle }}</p>
+                {% endif %}
+            </div>
+        {% endif %}
+
+        {% if items|length %}
+            <div class="cat-mosaic__grid cat-mosaic__grid--{{ items|length }} cat-mosaic--hover-{{ hover_effect }}"
+                 style="--mosaic-height: {{ desktop_height }}; --mosaic-gap: {{ tile_gap }}; --mosaic-radius: {{ tile_radius }};"
+                 data-falak-field="items" data-falak-label="{{ trans('editor.field.items') }}" data-falak-bind="none">
+                {% for item in items %}
+                    {% if loop.index <= 5 %}
+                        {% set category_id = item.category|default(null) %}
+                        {% set link_type = item.link_type|default('category') %}
+                        {% set href = null %}
+                        {% if link_type == 'category' %}
+                            {% set href = category_id ? '/products?category_id[]=' ~ category_id : '/products' %}
+                        {% elseif link_type == 'products' %}
+                            {% set href = '/products' %}
+                        {% elseif link_type == 'product' and item.link_product|default(null) %}
+                            {% set href = '/product/' ~ item.link_product %}
+                        {% elseif link_type == 'custom' %}
+                            {% set href = item.link_url|default('#') %}
+                        {% endif %}
+
+                        {% set custom_image = item.image|default(null) %}
+                        {% set fallback_img = loop.index == 5 ? ('images/category-1.jpg'|asset) : (('images/category-' ~ loop.index ~ '.jpg')|asset) %}
+                        {% set image = custom_image ? custom_image : fallback_img %}
+                        {% set title = item.title|default('') %}
+                        {% set subtitle = item.subtitle|default('') %}
+                        {% set badge = item.badge|default('') %}
+                        {% set text_position = item.text_position|default('top-start') %}
+
+                        {% set tag = href ? 'a' : 'div' %}
+                        <{{ tag }} class="cat-mosaic__tile cat-mosaic__tile--{{ loop.index }}"
+                            {% if href %}href="{{ href }}"{% endif %}
+                            {% if category_id %}data-mosaic-category="{{ category_id }}"{% endif %}
+                            data-reveal="zoom-in" style="--reveal-delay: {{ loop.index0 * 70 }}ms;"
+                            data-falak-part="tile">
+
+                            <div class="cat-mosaic__media">
+                                <img class="cat-mosaic__img" src="{{ image }}" alt="{{ title }}" loading="lazy"
+                                     data-mosaic-image{{ custom_image ? ' data-custom' : '' }}>
+                            </div>
+
+                            <span class="cat-mosaic__scrim cat-mosaic__scrim--{{ text_position }}" aria-hidden="true"></span>
+
+                            <div class="cat-mosaic__content cat-mosaic__content--{{ text_position }}">
+                                {% if badge %}
+                                    <span class="cat-mosaic__badge">{{ badge }}</span>
+                                {% endif %}
+                                {% if title %}
+                                    <h3 class="cat-mosaic__title" data-mosaic-title{{ item.title ? ' data-custom' : '' }} data-falak-part="tile_title">{{ title }}</h3>
+                                {% endif %}
+                                {% if subtitle %}
+                                    <p class="cat-mosaic__caption">{{ subtitle }}</p>
+                                {% endif %}
+                            </div>
+                        </{{ tag }}>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+</section>
+
