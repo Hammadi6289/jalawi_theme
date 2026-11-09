@@ -167,6 +167,115 @@
         });
     }
 
+    function formatProductPrice(p) {
+        if (!p) return '';
+        if (p.formatted_sale_price) return p.formatted_sale_price;
+        if (p.formatted_price) return p.formatted_price;
+        if (p.sale_price_formatted) return p.sale_price_formatted;
+        if (p.price_formatted) return p.price_formatted;
+
+        var curr = p.currency || '';
+        var sale = (p.discount_price !== undefined && p.discount_price !== null) ? p.discount_price
+            : ((p.discount_price_cents !== undefined && p.discount_price_cents !== null) ? p.discount_price_cents : null);
+        var reg = (p.price !== undefined && p.price !== null) ? p.price
+            : ((p.price_cents !== undefined && p.price_cents !== null) ? p.price_cents : null);
+        var amount = (sale !== null && Number(sale) > 0) ? sale : reg;
+
+        if (amount !== null && amount !== undefined && window.falak && typeof window.falak.money === 'function') {
+            return window.falak.money(amount, curr);
+        }
+        if (amount !== null && amount !== undefined) {
+            return amount + (curr ? ' ' + curr : '');
+        }
+        return '';
+    }
+
+    function fillRowWithProduct(row, p) {
+        if (!row || !p) return;
+        var title = row.querySelector('[data-lookbook-title]');
+        if (title && !title.hasAttribute('data-custom')) {
+            title.textContent = (isArabic && p.name_ar) || p.name || '';
+        }
+        var price = row.querySelector('[data-lookbook-price]');
+        if (price) {
+            var formatted = formatProductPrice(p);
+            if (formatted) price.textContent = formatted;
+        }
+        var img = row.querySelector('[data-lookbook-img]');
+        if (img && !img.hasAttribute('data-custom')) {
+            var pImg = (p.images && p.images[0] ? p.images[0].url : '') || p.image_url || p.image;
+            if (pImg) img.src = pImg;
+        }
+        var targetId = p.slug || p.id || '';
+        if (targetId && row.tagName === 'A' && (!row.getAttribute('href') || row.getAttribute('href') === '#')) {
+            row.href = '/product/' + encodeURIComponent(targetId);
+        }
+    }
+
+    function initLookbook() {
+        var blocks = document.querySelectorAll('.block--lookbook');
+        if (!blocks.length) return;
+
+        blocks.forEach(function (block) {
+            var rows = Array.prototype.slice.call(block.querySelectorAll('.lookbook-row'));
+            var unassignedRows = [];
+
+            rows.forEach(function (row) {
+                var id = row.getAttribute('data-lookbook-product');
+                if (id && window.falak && window.falak.product && typeof window.falak.product.show === 'function') {
+                    window.falak.product.show(id).then(function (res) {
+                        var p = res && res.data ? res.data : res;
+                        fillRowWithProduct(row, p);
+                    }).catch(function () {});
+                } else if (!id) {
+                    unassignedRows.push(row);
+                }
+            });
+
+            if (unassignedRows.length) {
+                fetchStoreProducts().then(function (products) {
+                    if (!products || !products.length) return;
+                    unassignedRows.forEach(function (row, idx) {
+                        if (products[idx]) fillRowWithProduct(row, products[idx]);
+                    });
+                }).catch(function () {});
+            }
+        });
+    }
+
+    function fetchStoreProducts() {
+        if (window.falak && window.falak.api && typeof window.falak.api.request === 'function') {
+            return window.falak.api.withoutNotifier(function () {
+                return window.falak.api.request('products');
+            }).then(function (res) {
+                return Array.isArray(res) ? res : (res && res.data) || [];
+            }).catch(function () {
+                return fetchStoreProductsRaw();
+            });
+        }
+        return fetchStoreProductsRaw();
+    }
+
+    function fetchStoreProductsRaw() {
+        return fetch('/api/storefront/products', {
+            credentials: 'same-origin',
+            headers: { 'Accept': 'application/json' }
+        }).then(function (res) {
+            if (!res.ok) return [];
+            return res.json();
+        }).then(function (data) {
+            return Array.isArray(data) ? data : (data && data.data) || [];
+        }).catch(function () {
+            return [];
+        });
+    }
+
+    if (document.querySelector('.block--lookbook')) {
+        whenSdk(function () {
+            initLookbook();
+        });
+    }
+
     /* ------------------------------------------------- shop by category */
     // Flip cards: the category's name, photo and sub-categories come from the
     // store; a merchant's own name/photo (data-custom) wins. With no category

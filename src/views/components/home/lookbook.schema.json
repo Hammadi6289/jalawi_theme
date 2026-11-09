@@ -1,0 +1,501 @@
+{
+    "key": "falak-lookbook",
+    "path": "home.lookbook",
+    "title": {
+        "ar": "كتالوج الإطلالات (لوك بوك)",
+        "en": "Lookbook"
+    },
+    "icon": "book-open-line",
+    "preview": "images/sections/Lookbook.png",
+    "is_default": false,
+    "areas": [
+        "home",
+        "pages"
+    ],
+    "styleable": [
+        {
+            "id": "title",
+            "label": {
+                "ar": "عنوان القسم",
+                "en": "Section title"
+            },
+            "properties": [
+                "font_size",
+                "font_weight",
+                "color"
+            ]
+        },
+        {
+            "id": "subtitle",
+            "label": {
+                "ar": "نص القسم",
+                "en": "Section subtitle"
+            },
+            "properties": [
+                "font_size",
+                "font_weight",
+                "color"
+            ]
+        },
+        {
+            "id": "banner",
+            "label": {
+                "ar": "صورة الإطلالة الرئيسية",
+                "en": "Hero lookbook image"
+            },
+            "properties": [
+                "border_radius",
+                "border_width",
+                "border_color"
+            ]
+        },
+        {
+            "id": "product_card",
+            "label": {
+                "ar": "بطاقة المنتج",
+                "en": "Product row card"
+            },
+            "properties": [
+                "background_color",
+                "border_radius",
+                "border_width",
+                "border_color",
+                "padding_block",
+                "padding_inline"
+            ]
+        },
+        {
+            "id": "product_title",
+            "label": {
+                "ar": "عنوان المنتج",
+                "en": "Product title"
+            },
+            "properties": [
+                "font_size",
+                "font_weight",
+                "color"
+            ]
+        },
+        {
+            "id": "product_price",
+            "label": {
+                "ar": "سعر المنتج",
+                "en": "Product price"
+            },
+            "properties": [
+                "font_size",
+                "font_weight",
+                "color"
+            ]
+        }
+    ],
+    "fields": [
+        {
+            "id": "title",
+            "type": "string",
+            "format": "text",
+            "label": {
+                "ar": "عنوان القسم",
+                "en": "Section title"
+            },
+            "multilanguage": true,
+            "required": false,
+            "maxLength": 100,
+            "value": {
+                "ar": "التشكيلة الجديدة",
+                "en": "The new collection"
+            }
+        },
+        {
+            "id": "subtitle",
+            "type": "string",
+            "format": "textarea",
+            "label": {
+                "ar": "نص توضيحي تحت العنوان",
+                "en": "Section subtitle"
+            },
+            "multilanguage": true,
+            "required": false,
+            "maxLength": 255,
+            "value": {
+                "ar": "تسوقي منتجات الإطلالة المتكاملة المختارة بعناية لأناقتك اليومية",
+                "en": "Shop the complete look curated with hand-picked beauty essentials"
+            }
+        },
+        {
+            "id": "header_align",
+            "type": "items",
+            "format": "dropdown-list",
+            "label": {
+                "ar": "محاذاة العنوان",
+                "en": "Header alignment"
+            },
+            "value": "center",
+            "options": [
+                {
+                    "label": {
+                        "ar": "توسيط",
+                        "en": "Center"
+                    },
+                    "value": "center"
+                },
+                {
+                    "label": {
+                        "ar": "بداية (يمين بالعربي / يسار بالإنجليزي)",
+                        "en": "Start (Left in LTR / Right in RTL)"
+                    },
+                    "value": "start"
+                },
+                {
+                    "label": {
+                        "ar": "نهاية",
+                        "en": "End"
+                    },
+                    "value": "end"
+                }
+            ],
+            "required": false
+        },
+        {
+            "id": "banner_image",
+            "type": "string",
+            "format": "image",
+            "label": {
+                "ar": "صورة الإطلالة الرئيسية",
+                "en": "Lookbook featured image"
+            },
+            "description": {
+                "ar": "الصورة الكبيرة المعروضة بجانب قائمة المنتجات (أبعاد موصى بها: 800×800 بكسل أو صورة طولية 800×1000)",
+                "en": "Featured photo displayed beside the product list (recommended: 800x800 px or 800x1000 portrait)"
+            },
+            "required": false
+        },
+        {
+            "id": "image_position",
+            "type": "items",
+            "format": "dropdown-list",
+            "label": {
+                "ar": "موضع صورة الإطلالة",
+                "en": "Lookbook image position"
+            },
+            "value": "start",
+            "options": [
+                {
+                    "label": {
+                        "ar": "البداية (يسار بالإنجليزي / يمين بالعربي)",
+                        "en": "Start (Left in LTR / Right in RTL)"
+                    },
+                    "value": "start"
+                },
+                {
+                    "label": {
+                        "ar": "النهاية (يمين بالإنجليزي / يسار بالعربي)",
+                        "en": "End (Right in LTR / Left in RTL)"
+                    },
+                    "value": "end"
+                }
+            ],
+            "required": false
+        },
+        {
+            "id": "banner_link_type",
+            "type": "items",
+            "format": "dropdown-list",
+            "label": {
+                "ar": "نوع رابط صورة الإطلالة",
+                "en": "Lookbook image link"
+            },
+            "value": "products",
+            "options": [
+                {
+                    "label": {
+                        "ar": "جميع المنتجات",
+                        "en": "All products page"
+                    },
+                    "value": "products"
+                },
+                {
+                    "label": {
+                        "ar": "فئة محددة",
+                        "en": "Specific category"
+                    },
+                    "value": "category"
+                },
+                {
+                    "label": {
+                        "ar": "منتج محدد",
+                        "en": "Specific product"
+                    },
+                    "value": "product"
+                },
+                {
+                    "label": {
+                        "ar": "رابط مخصص",
+                        "en": "Custom URL"
+                    },
+                    "value": "custom"
+                },
+                {
+                    "label": {
+                        "ar": "بدون رابط",
+                        "en": "None"
+                    },
+                    "value": "none"
+                }
+            ],
+            "required": false
+        },
+        {
+            "id": "banner_category",
+            "type": "string",
+            "format": "category",
+            "label": {
+                "ar": "الفئة المستهدفة",
+                "en": "Target category"
+            },
+            "required": false,
+            "conditions": [
+                {
+                    "id": "banner_link_type",
+                    "value": "category"
+                }
+            ]
+        },
+        {
+            "id": "banner_product",
+            "type": "string",
+            "format": "product",
+            "label": {
+                "ar": "المنتج المستهدف",
+                "en": "Target product"
+            },
+            "required": false,
+            "conditions": [
+                {
+                    "id": "banner_link_type",
+                    "value": "product"
+                }
+            ]
+        },
+        {
+            "id": "banner_url",
+            "type": "string",
+            "format": "text",
+            "label": {
+                "ar": "رابط الصورة المخصص",
+                "en": "Custom URL"
+            },
+            "required": false,
+            "maxLength": 500,
+            "conditions": [
+                {
+                    "id": "banner_link_type",
+                    "value": "custom"
+                }
+            ]
+        },
+        {
+            "id": "items",
+            "type": "collection",
+            "format": "collection",
+            "label": {
+                "ar": "منتجات الإطلالة",
+                "en": "Lookbook products"
+            },
+            "item_label": {
+                "ar": "منتج",
+                "en": "Product"
+            },
+            "description": {
+                "ar": "أضف المنتجات المعروضة في الإطلالة. اختر منتجاً من المتجر لجلب تفاصيله وأسعاره وصوره تلقائياً، أو أضف عنواناً وصورة مخصصة.",
+                "en": "Add products for this look. Pick a store product to automatically pull its name, price, photo, and link, or provide a custom title/image."
+            },
+            "required": true,
+            "minLength": 1,
+            "maxLength": 10,
+            "value": [
+                {
+                    "items.product": null,
+                    "items.title": {
+                        "ar": "",
+                        "en": ""
+                    },
+                    "items.image": "",
+                    "items.link_type": "product"
+                },
+                {
+                    "items.product": null,
+                    "items.title": {
+                        "ar": "",
+                        "en": ""
+                    },
+                    "items.image": "",
+                    "items.link_type": "product"
+                },
+                {
+                    "items.product": null,
+                    "items.title": {
+                        "ar": "",
+                        "en": ""
+                    },
+                    "items.image": "",
+                    "items.link_type": "product"
+                },
+                {
+                    "items.product": null,
+                    "items.title": {
+                        "ar": "",
+                        "en": ""
+                    },
+                    "items.image": "",
+                    "items.link_type": "product"
+                },
+                {
+                    "items.product": null,
+                    "items.title": {
+                        "ar": "",
+                        "en": ""
+                    },
+                    "items.image": "",
+                    "items.link_type": "product"
+                },
+                {
+                    "items.product": null,
+                    "items.title": {
+                        "ar": "",
+                        "en": ""
+                    },
+                    "items.image": "",
+                    "items.link_type": "product"
+                }
+            ],
+            "fields": [
+                {
+                    "id": "items.product",
+                    "type": "string",
+                    "format": "product",
+                    "label": {
+                        "ar": "اختر المنتج من المتجر",
+                        "en": "Select store product"
+                    },
+                    "description": {
+                        "ar": "عند اختياره يتم استيراد اسم المنتج، سعره، صورته ورابطه تلقائياً ما لم تملأ الحقول المخصصة أدناه",
+                        "en": "When picked, the product title, price, image and URL are auto-imported unless customized below"
+                    },
+                    "required": false
+                },
+                {
+                    "id": "items.title",
+                    "type": "string",
+                    "format": "text",
+                    "label": {
+                        "ar": "اسم المنتج المخصص (اختياري)",
+                        "en": "Custom product title (optional)"
+                    },
+                    "description": {
+                        "ar": "اختياري — اتركه فارغاً ليتم استخدام اسم المنتج تلقائياً من المتجر",
+                        "en": "Optional — leave empty to automatically use the title from the store product"
+                    },
+                    "multilanguage": true,
+                    "required": false,
+                    "maxLength": 100
+                },
+                {
+                    "id": "items.image",
+                    "type": "string",
+                    "format": "image",
+                    "label": {
+                        "ar": "صورة مخصصة للمنتج (اختياري)",
+                        "en": "Custom product image (optional)"
+                    },
+                    "description": {
+                        "ar": "اختياري — اتركه فارغاً لاستخدام الصورة الأساسية للمنتج من المتجر",
+                        "en": "Optional — leave empty to use the product's primary store photo"
+                    },
+                    "required": false
+                },
+                {
+                    "id": "items.link_type",
+                    "type": "items",
+                    "format": "dropdown-list",
+                    "label": {
+                        "ar": "وجهة الرابط",
+                        "en": "Link destination"
+                    },
+                    "value": "product",
+                    "options": [
+                        {
+                            "label": {
+                                "ar": "صفحة المنتج المختار أعلاه",
+                                "en": "Selected store product"
+                            },
+                            "value": "product"
+                        },
+                        {
+                            "label": {
+                                "ar": "جميع المنتجات",
+                                "en": "All products page"
+                            },
+                            "value": "products"
+                        },
+                        {
+                            "label": {
+                                "ar": "فئة معينة",
+                                "en": "Specific category"
+                            },
+                            "value": "category"
+                        },
+                        {
+                            "label": {
+                                "ar": "رابط مخصص",
+                                "en": "Custom URL"
+                            },
+                            "value": "custom"
+                        },
+                        {
+                            "label": {
+                                "ar": "بدون رابط",
+                                "en": "None"
+                            },
+                            "value": "none"
+                        }
+                    ],
+                    "required": false
+                },
+                {
+                    "id": "items.link_category",
+                    "type": "string",
+                    "format": "category",
+                    "label": {
+                        "ar": "الفئة المستهدفة",
+                        "en": "Target category"
+                    },
+                    "required": false,
+                    "conditions": [
+                        {
+                            "id": "items.link_type",
+                            "value": "category"
+                        }
+                    ]
+                },
+                {
+                    "id": "items.link_url",
+                    "type": "string",
+                    "format": "text",
+                    "label": {
+                        "ar": "الرابط المخصص",
+                        "en": "Custom URL"
+                    },
+                    "required": false,
+                    "maxLength": 500,
+                    "conditions": [
+                        {
+                            "id": "items.link_type",
+                            "value": "custom"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

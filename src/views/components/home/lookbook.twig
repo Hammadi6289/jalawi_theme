@@ -1,0 +1,127 @@
+{#
+    Lookbook — merchant-placeable home & page component.
+    2-column split layout:
+    - Side 1: Large aesthetic lookbook featured image
+    - Side 2: Clean vertical list of product row cards (thumbnail + title + price)
+
+    | Variable                       | Type     | Description                                |
+    | component.title                | ?string  | section headline                           |
+    | component.subtitle             | ?string  | section description                        |
+    | component.header_align         | ?string  | center | start | end                        |
+    | component.banner_image         | ?string  | main lookbook photo                        |
+    | component.image_position       | ?string  | start | end                                |
+    | component.banner_link_type     | ?string  | products | category | product | custom | none |
+    | component.banner_category      | ?string  | category target id                         |
+    | component.banner_product       | ?string  | product target id                          |
+    | component.banner_url           | ?string  | custom URL link                            |
+    | component.items[].product      | ?string  | store product id (syncs title, price, img) |
+    | component.items[].title        | ?string  | custom product title (leave empty for auto)|
+    | component.items[].image        | ?string  | custom product thumbnail                   |
+    | component.items[].link_type    | ?string  | product | products | category | custom | none|
+    | component.items[].link_url     | ?string  | custom target link                         |
+    | position                       | int      | render order index                         |
+#}
+{% set header_align = component.header_align|default('center') %}
+{% set image_position = component.image_position|default('start') %}
+{% set banner_image = component.banner_image|default(null) %}
+{% if not banner_image %}
+    {% set banner_image = 'images/category-sidebar-banner.jpg'|asset %}
+{% endif %}
+
+{# Banner link destination #}
+{% set banner_link_type = component.banner_link_type|default('products') %}
+{% set banner_href = null %}
+{% if banner_link_type == 'category' and component.banner_category|default(null) %}
+    {% set banner_href = '/products?category_id[]=' ~ component.banner_category %}
+{% elseif banner_link_type == 'product' and component.banner_product|default(null) %}
+    {% set banner_href = '/product/' ~ component.banner_product %}
+{% elseif banner_link_type == 'products' %}
+    {% set banner_href = '/products' %}
+{% elseif banner_link_type == 'custom' %}
+    {% set banner_href = component.banner_url|default('#') %}
+{% endif %}
+
+{% set items = component.items|default([]) %}
+
+<section class="block block--lookbook" id="lookbook-{{ position }}" {{ falak_section() }}>
+    <div class="container">
+        {% if component.title or component.subtitle %}
+            <div class="lookbook__head lookbook__head--{{ header_align }}" data-reveal="fade">
+                {% if component.title %}
+                    <h2 class="lookbook__title" data-falak-field="title" data-falak-label="{{ trans('editor.field.title') }}" data-falak-part="title">{{ component.title }}</h2>
+                {% endif %}
+                {% if component.subtitle %}
+                    <p class="lookbook__subtitle" data-falak-field="subtitle" data-falak-label="{{ trans('editor.field.text') }}" data-falak-part="subtitle">{{ component.subtitle }}</p>
+                {% endif %}
+            </div>
+        {% endif %}
+
+        <div class="lookbook__layout lookbook__layout--{{ image_position }}">
+            {# Lookbook Large Featured Image Banner #}
+            <div class="lookbook__banner-col" data-reveal="zoom-in" style="--reveal-delay: 100ms;">
+                {% set banner_tag = banner_href ? 'a' : 'div' %}
+                <{{ banner_tag }} {% if banner_href %}href="{{ banner_href }}"{% endif %} class="lookbook__banner" data-falak-part="banner">
+                    <img class="lookbook__banner-img" data-falak-field="banner_image" data-falak-label="{{ trans('editor.field.image') }}" src="{{ banner_image }}" alt="{{ component.title|default('') }}" loading="lazy">
+                </{{ banner_tag }}>
+            </div>
+
+            {# Lookbook Products Row List #}
+            {% if items|length %}
+                <div class="lookbook__products-col">
+                    <div class="lookbook__products-list" data-falak-field="items" data-falak-label="{{ trans('editor.field.items') }}" data-falak-bind="none">
+                        {% for item in items %}
+                            {% set product_id = item.product|default(attribute(item, 'items.product')|default(null)) %}
+                            {% set link_type = item.link_type|default(attribute(item, 'items.link_type')|default(product_id ? 'product' : 'products')) %}
+                            {% set href = null %}
+                            {% if link_type == 'product' %}
+                                {% set target_id = item.link_product|default(attribute(item, 'items.link_product')|default(product_id)) %}
+                                {% set href = target_id ? ('/product/' ~ target_id) : '/products' %}
+                            {% elseif link_type == 'category' and (item.link_category|default(attribute(item, 'items.link_category')|default(null))) %}
+                                {% set href = '/products?category_id[]=' ~ (item.link_category|default(attribute(item, 'items.link_category'))) %}
+                            {% elseif link_type == 'products' %}
+                                {% set href = '/products' %}
+                            {% elseif link_type == 'custom' %}
+                                {% set href = item.link_url|default(attribute(item, 'items.link_url')|default('#')) %}
+                            {% endif %}
+
+                            {% set custom_image = item.image|default(attribute(item, 'items.image')|default(null)) %}
+                            {% set fallback_img = ('images/category-' ~ ((loop.index0 % 4) + 1) ~ '.jpg')|asset %}
+                            {% set image = custom_image ? custom_image : fallback_img %}
+
+                            {% set custom_title = item.title|default(attribute(item, 'items.title')|default('')) %}
+                            {% set default_titles_en = ['Baby Charlie Perfume', 'Retinal Tightening Booster', 'Long-Lasting Velvet Blush', 'Jet Black Abaaya', 'Gray Signature Slippers', 'Women Party Shoe'] %}
+                            {% set default_titles_ar = ['عطر بيبي تشارلي', 'سيروم ريتينول لشد البشرة', 'أحمر خدود مخملي يدوم طويلاً', 'عباية سوداء فاخرة', 'حذاء منزلي رمادي مميز', 'حذاء نسائي للمناسبات'] %}
+                            {% set is_ar = app.locale|default('ar') == 'ar' %}
+                            {% set fallback_title = is_ar ? default_titles_ar[loop.index0 % 6] : default_titles_en[loop.index0 % 6] %}
+                            {% set title = custom_title ? custom_title : (product_id ? '' : fallback_title) %}
+
+                            {% set demo_prices = ['286.35 $', '55.00 $', '99.99 $', '150.00 $', '75.00 $', '359.99 $'] %}
+                            {% set demo_price = demo_prices[loop.index0 % 6] %}
+
+                            {% set row_tag = href ? 'a' : 'div' %}
+                            <{{ row_tag }} {% if href %}href="{{ href }}"{% endif %} class="lookbook-row"
+                                {% if product_id %}data-lookbook-product="{{ product_id }}"{% endif %}
+                                data-reveal="slide-up" style="--reveal-delay: {{ 80 + loop.index0 * 50 }}ms;"
+                                data-falak-part="product_card">
+
+                                <div class="lookbook-row__thumb">
+                                    <img class="lookbook-row__img" src="{{ image }}" alt="{{ title }}" loading="lazy"
+                                         data-lookbook-img{{ custom_image ? ' data-custom' : '' }}>
+                                </div>
+
+                                <div class="lookbook-row__info">
+                                    <h3 class="lookbook-row__title" data-lookbook-title{{ custom_title ? ' data-custom' : '' }} data-falak-part="product_title">{{ title }}</h3>
+                                </div>
+
+                                <div class="lookbook-row__price-wrap">
+                                    <span class="lookbook-row__price" data-lookbook-price data-falak-part="product_price">{{ product_id ? '' : demo_price }}</span>
+                                </div>
+                            </{{ row_tag }}>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</section>
+

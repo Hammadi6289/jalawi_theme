@@ -20478,4 +20478,266 @@ body.mega-is-open {
     color: var(--falak-el-tile_title-color, #ffffff) !important;
 }
 
+/* *** Lookbook block (falak-lookbook)
+   2-column layout: Large featured banner + clean horizontal product cards list *** */
+
+.block--lookbook {
+    padding-block: clamp(2.5rem, 4.5vw, 4rem);
+    background: var(--color-bg, #ffffff);
+    color: var(--color-text, #111827);
+}
+
+.lookbook__head {
+    margin-bottom: clamp(1.5rem, 3vw, 2.5rem);
+}
+
+.lookbook__head--center { text-align: center; }
+.lookbook__head--start { text-align: start; }
+.lookbook__head--end { text-align: end; }
+
+.lookbook__title {
+    font-size: clamp(1.4rem, 1.2rem + 1vw, 2.2rem);
+    font-weight: 700;
+    line-height: 1.25;
+    color: var(--color-text, #111827);
+    margin: 0 0 0.45rem;
+    letter-spacing: -0.01em;
+}
+
+.lookbook__subtitle {
+    font-size: clamp(0.9rem, 0.85rem + 0.2vw, 1.05rem);
+    color: var(--color-text-soft, #6b7280);
+    margin: 0;
+    line-height: 1.5;
+}
+
+/* 2-Column Split Layout */
+.lookbook__layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 1.25fr);
+    gap: clamp(1.25rem, 2.5vw, 2.5rem);
+    align-items: stretch;
+}
+
+.lookbook__layout--end {
+    grid-template-columns: minmax(0, 1.25fr) minmax(0, 1.05fr);
+}
+
+.lookbook__layout--end .lookbook__banner-col {
+    order: 2;
+}
+
+.lookbook__layout--end .lookbook__products-col {
+    order: 1;
+}
+
+@media (max-width: 991px) {
+    .lookbook__layout,
+    .lookbook__layout--end {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 1.5rem;
+    }
+
+    .lookbook__layout--end .lookbook__banner-col {
+        order: 1;
+    }
+
+    .lookbook__layout--end .lookbook__products-col {
+        order: 2;
+    }
+}
+
+/* Featured Lookbook Image */
+.lookbook__banner-col {
+    display: flex;
+    flex-direction: column;
+}
+
+.lookbook__banner {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: 100%;
+    min-height: 380px;
+    border-radius: var(--radius-lg, 1rem);
+    overflow: hidden;
+    background: #f3f4f6;
+    text-decoration: none;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
+    box-sizing: border-box;
+}
+
+@media (max-width: 767px) {
+    .lookbook__banner {
+        min-height: 280px;
+        aspect-ratio: 4 / 3;
+    }
+}
+
+.lookbook__banner-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+    transition: transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.lookbook__banner:hover .lookbook__banner-img {
+    transform: scale(1.03);
+}
+
+/* Products List Column */
+.lookbook__products-col {
+    display: flex;
+    flex-direction: column;
+}
+
+.lookbook__products-list {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 0.75rem;
+    height: 100%;
+}
+
+/* Product Row Card */
+.lookbook-row {
+    display: flex;
+    align-items: center;
+    gap: clamp(0.65rem, 1.5vw, 1.15rem);
+    padding: 0.65rem 1rem;
+    background: #ffffff;
+    border: 0 solid transparent;
+    border-radius: var(--radius-md, 0.65rem);
+    text-decoration: none;
+    color: inherit;
+    box-sizing: border-box;
+    transition: box-shadow 0.25s ease, transform 0.25s ease;
+}
+
+.lookbook-row:hover {
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.05);
+    transform: translateY(-1px);
+}
+
+.lookbook-row__thumb {
+    width: 3.4rem;
+    height: 3.4rem;
+    min-width: 3.4rem;
+    border-radius: 0.4rem;
+    overflow: hidden;
+    background: #f8f9fa;
+    flex-shrink: 0;
+}
+
+.lookbook-row__img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.lookbook-row__info {
+    flex: 1 1 0%;
+    min-width: 0;
+    overflow: hidden;
+}
+
+.lookbook-row__title {
+    font-size: clamp(0.9rem, 0.86rem + 0.15vw, 1.02rem);
+    font-weight: 600;
+    line-height: 1.35;
+    color: var(--color-primary);
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: opacity 0.2s ease;
+}
+
+.lookbook-row:hover .lookbook-row__title {
+    opacity: 0.85;
+    text-decoration: underline;
+}
+
+.lookbook-row__price-wrap {
+    flex: 0 0 auto;
+    min-width: max-content;
+    text-align: end;
+    margin-inline-start: auto;
+}
+
+.lookbook-row__price {
+    font-size: clamp(0.9rem, 0.85rem + 0.2vw, 1.05rem);
+    font-weight: 700;
+    color: var(--color-primary);
+    white-space: nowrap;
+    display: inline-block;
+}
+
+@media (max-width: 640px) {
+    .lookbook-row {
+        padding: 0.55rem 0.75rem;
+        gap: 0.65rem;
+    }
+
+    .lookbook-row__thumb {
+        width: 2.75rem;
+        height: 2.75rem;
+        min-width: 2.75rem;
+    }
+
+    .lookbook-row__title {
+        font-size: 0.85rem;
+    }
+
+    .lookbook-row__price {
+        font-size: 0.88rem;
+    }
+}
+
+/* Customizer Styleable Hooks */
+.block--lookbook .lookbook__title {
+    font-size: var(--falak-el-title-size, revert);
+    font-weight: var(--falak-el-title-weight, revert);
+    color: var(--falak-el-title-color, var(--color-text));
+}
+
+.block--lookbook .lookbook__subtitle {
+    font-size: var(--falak-el-subtitle-size, revert);
+    font-weight: var(--falak-el-subtitle-weight, revert);
+    color: var(--falak-el-subtitle-color, var(--color-text-soft));
+}
+
+.block--lookbook .lookbook__banner {
+    border-radius: var(--falak-el-banner-radius, var(--radius-lg, 1rem));
+    border-width: var(--falak-el-banner-border-width, 0);
+    border-color: var(--falak-el-banner-border-color, transparent);
+    border-style: solid;
+}
+
+.block--lookbook .lookbook-row {
+    background-color: var(--falak-el-product_card-bg, #ffffff);
+    border-radius: var(--falak-el-product_card-radius, var(--radius-md, 0.65rem));
+    border-width: var(--falak-el-product_card-border-width, 0);
+    border-color: var(--falak-el-product_card-border-color, transparent);
+    border-style: solid;
+    padding-block: var(--falak-el-product_card-py, 0.65rem);
+    padding-inline: var(--falak-el-product_card-px, 1rem);
+}
+
+.block--lookbook .lookbook-row__title {
+    font-size: var(--falak-el-product_title-size, revert);
+    font-weight: var(--falak-el-product_title-weight, revert);
+    color: var(--falak-el-product_title-color, var(--color-primary)) !important;
+}
+
+.block--lookbook .lookbook-row__price {
+    font-size: var(--falak-el-product_price-size, revert);
+    font-weight: var(--falak-el-product_price-weight, revert);
+    color: var(--falak-el-product_price-color, var(--color-primary)) !important;
+}
+
+
 
