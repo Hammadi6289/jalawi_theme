@@ -45,16 +45,50 @@
                     link-whatsapp="{{ theme.settings.get('social_whatsapp') }}"></falak-social>
             </div>
 
-            {# Footer menu (dashboard → Menus → footer). No menu, no column —
-               an empty "Useful links" heading reads as broken. #}
-            {% set footer_links = menus.footer_menu|default([]) %}
-            {% if footer_links|length %}
-                <nav class="site-footer__col site-footer__menu" data-reveal="slide-up" style="--reveal-delay: 100ms;" aria-labelledby="footer-links-title">
-                    <h3 class="site-footer__title" id="footer-links-title">{{ trans('footer.links') }}</h3>
+            {# Quick links — two sources, most deliberate first:
+               1. A curated footer_menu built in the Menus panel wins outright.
+               2. Otherwise the `footer_links` setting from the Customizer, which
+                  ships with the store's core pages as defaults so a new store
+                  always has a populated column. #}
+            {% set footer_links = theme.settings.get('footer_links')|default([]) %}
+
+            {# Contact us on every store: /contact-us is a platform route
+               (pages/contact.twig). Skipped only if the merchant's own links
+               already point there. #}
+            {% set contact_url = '/contact-us' %}
+            {% set contact_title = theme.is_rtl ? 'تواصل معنا' : 'Contact us' %}
+            {% set own_urls = menus.footer_menu|default([])|length > 0
+                ? menus.footer_menu|map(i => i.url)|join('|')
+                : footer_links|map(i => i.url|default(i['footer_links.url']))|join('|') %}
+            {% set show_contact = ('|' ~ contact_url ~ '|') not in ('|' ~ own_urls ~ '|') %}
+
+            {% if menus.footer_menu|default([])|length > 0 %}
+                <nav class="site-footer__col site-footer__menu" data-reveal="slide-up" style="--reveal-delay: 100ms;" aria-labelledby="footer-links-title"
+                     data-falak-field="footer_links_menu" data-falak-label="{{ trans('footer.quick_links') }}" data-falak-bind="none">
+                    <h3 class="site-footer__title" id="footer-links-title">{{ trans('footer.quick_links') }}</h3>
                     <ul>
-                        {% for item in footer_links %}
+                        {% for item in menus.footer_menu %}
                             <li><a href="{{ item.url }}"{{ item.is_new_tab ? ' target="_blank" rel="noopener"' : '' }}>{{ item.title }}</a></li>
                         {% endfor %}
+                        {% if show_contact %}<li><a href="{{ contact_url }}">{{ contact_title }}</a></li>{% endif %}
+                    </ul>
+                </nav>
+            {% elseif footer_links|length > 0 or show_contact %}
+                <nav class="site-footer__col site-footer__menu" data-reveal="slide-up" style="--reveal-delay: 100ms;" aria-labelledby="footer-links-title"
+                     data-falak-field="footer_links" data-falak-label="{{ trans('footer.quick_links') }}" data-falak-bind="none">
+                    <h3 class="site-footer__title" id="footer-links-title">{{ trans('footer.quick_links') }}</h3>
+                    <ul>
+                        {% for item in footer_links %}
+                            {% set item_url = item.url|default(item['footer_links.url']) %}
+                            {% set item_label = item.label|default(item['footer_links.label']) %}
+                            {% if item_label is iterable %}
+                                {% set item_label = item_label[user.language.code|default('ar')]|default(item_label.ar)|default(item_label.en) %}
+                            {% endif %}
+                            {% if item_url and item_label %}
+                                <li><a href="{{ item_url }}">{{ item_label }}</a></li>
+                            {% endif %}
+                        {% endfor %}
+                        {% if show_contact %}<li><a href="{{ contact_url }}">{{ contact_title }}</a></li>{% endif %}
                     </ul>
                 </nav>
             {% endif %}

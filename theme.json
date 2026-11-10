@@ -1013,6 +1013,97 @@
                     }
                 },
                 {
+                    "id": "footer_links",
+                    "type": "collection",
+                    "format": "collection",
+                    "label": {
+                        "ar": "روابط سريعة",
+                        "en": "Quick links"
+                    },
+                    "description": {
+                        "ar": "الروابط في عمود «روابط سريعة». تبدأ بصفحات المتجر الأساسية — عدّلها أو احذفها أو أضف غيرها",
+                        "en": "The links in the Quick links column. Starts with the store's core pages — edit, remove or add to them"
+                    },
+                    "item_label": {
+                        "ar": "رابط",
+                        "en": "Link"
+                    },
+                    "maxLength": 8,
+                    "fields": [
+                        {
+                            "id": "footer_links.label",
+                            "type": "string",
+                            "format": "text",
+                            "label": {
+                                "ar": "الاسم",
+                                "en": "Label"
+                            },
+                            "multilanguage": true,
+                            "required": true,
+                            "maxLength": 40
+                        },
+                        {
+                            "id": "footer_links.url",
+                            "type": "string",
+                            "format": "page-link",
+                            "label": {
+                                "ar": "الرابط",
+                                "en": "Link"
+                            },
+                            "description": {
+                                "ar": "اكتب رابطاً، أو اختر صفحة منشورة من القائمة",
+                                "en": "Type a link, or pick a published page from the list"
+                            },
+                            "required": true,
+                            "maxLength": 200
+                        }
+                    ],
+                    "value": [
+                        {
+                            "footer_links.label": {
+                                "ar": "الرئيسية",
+                                "en": "Home"
+                            },
+                            "footer_links.url": "/"
+                        },
+                        {
+                            "footer_links.label": {
+                                "ar": "المنتجات",
+                                "en": "Products"
+                            },
+                            "footer_links.url": "/products"
+                        },
+                        {
+                            "footer_links.label": {
+                                "ar": "سلة التسوق",
+                                "en": "Cart"
+                            },
+                            "footer_links.url": "/cart"
+                        },
+                        {
+                            "footer_links.label": {
+                                "ar": "حسابي",
+                                "en": "My account"
+                            },
+                            "footer_links.url": "/customer/profile"
+                        }
+                    ]
+                },
+                {
+                    "id": "footer_links_menu",
+                    "type": "string",
+                    "format": "panel-link",
+                    "panel": "menus",
+                    "label": {
+                        "ar": "استخدام قائمة تنقّل بدلاً من ذلك",
+                        "en": "Use a navigation menu instead"
+                    },
+                    "description": {
+                        "ar": "إذا أنشأت قائمة «روابط التذييل» في شاشة القوائم فستحل محل الروابط أعلاه",
+                        "en": "A Footer links menu built in the Menus panel replaces the links above"
+                    }
+                },
+                {
                     "id": "footer_newsletter_enabled",
                     "type": "boolean",
                     "format": "switch",
