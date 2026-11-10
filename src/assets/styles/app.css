@@ -16981,8 +16981,8 @@ body.compare-is-open {
     margin: 0;
     padding-inline: 0.25rem;
     border-radius: 999px;
-    background: #ef4444;
-    color: #ffffff;
+    background: var(--color-primary);
+    color: var(--color-on-primary, #ffffff);
     font-size: 0.625rem;
     font-weight: 700;
     line-height: 1;
@@ -16992,12 +16992,18 @@ body.compare-is-open {
     position: absolute;
     inset-block-start: -0.35rem;
     inset-inline-end: -0.35rem;
-    min-inline-size: 1.125rem;
-    block-size: 1.125rem;
-    padding-inline: 0.25rem;
     display: flex;
     align-items: center;
     justify-content: center;
+    min-inline-size: 1.125rem;
+    block-size: 1.125rem;
+    margin: 0;
+    padding-inline: 0.25rem;
+    border-radius: 999px;
+    background: var(--color-primary);
+    color: var(--color-on-primary, #ffffff);
+    font-size: 0.625rem;
+    font-weight: 700;
     line-height: 1;
 }
 
