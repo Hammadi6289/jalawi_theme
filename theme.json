@@ -687,8 +687,8 @@
                         "en": "Starter menu links"
                     },
                     "description": {
-                        "ar": "تظهر في القائمة الرئيسية حتى تنشئ قائمة من شاشة القوائم، عندها تحل قائمتك محلها",
-                        "en": "Shown in the main menu until you build a menu on the Menus screen, which then replaces them"
+                        "ar": "تظهر في القائمة الرئيسية قبل قائمتك من شاشة القوائم. أوقف «إظهار الرابط» لإخفاء أي رابط",
+                        "en": "Shown in the main menu ahead of your own menu from the Menus screen. Turn off \"Show this link\" to hide one"
                     },
                     "item_label": {
                         "ar": "رابط",
@@ -810,6 +810,7 @@
                                 "ar": "الرئيسية",
                                 "en": "Home"
                             },
+                            "topnav_links.link_type": "home",
                             "topnav_links.url": "/",
                             "topnav_links.visible": true
                         },
@@ -818,6 +819,7 @@
                                 "ar": "المنتجات",
                                 "en": "Products"
                             },
+                            "topnav_links.link_type": "products",
                             "topnav_links.url": "/products",
                             "topnav_links.visible": true
                         }

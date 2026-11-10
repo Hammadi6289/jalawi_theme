@@ -18,7 +18,7 @@
 #}
 {% set ratio = component.ratio|default('16/9') %}
 {% if ratio is iterable %}{% set ratio = ratio|first %}{% endif %}
-{% set source = component.source|default('upload') %}
+{% set source = component.source|default('url') %}
 {% if source is iterable %}{% set source = source|first %}{% endif %}
 {% set video_src = source == 'url' ? component.video_url : component.video_file %}
 {% set missing_video  = not video_src %}

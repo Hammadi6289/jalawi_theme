@@ -8,7 +8,7 @@
     "icon": "star-line",
     "preview": "images/sections/features.png",
     "is_default": true,
-    "default_sort": 20,
+    "default_sort": 30,
     "areas": [
         "home",
         "pages"

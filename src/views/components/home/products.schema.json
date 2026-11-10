@@ -8,7 +8,7 @@
     "icon": "shopping-bag-line",
     "is_default": true,
     "preview": "images/sections/products-grid.png",
-    "default_sort": 30,
+    "default_sort": 50,
     "areas": [
         "home",
         "pages"

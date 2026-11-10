@@ -7,7 +7,8 @@
     },
     "icon": "grid-line",
     "preview": "images/sections/photo-grid.png",
-    "is_default": false,
+    "is_default": true,
+    "default_sort": 40,
     "areas": [
         "home",
         "pages"

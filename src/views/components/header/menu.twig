@@ -17,12 +17,19 @@
     empty <ul> — a header with nothing to click. `topnav_links` in theme.json
     seeds Home and Products so the strip is never blank.
 
-    A FALLBACK, not an addition: the moment the merchant creates a menu on the
-    Menus screen their items take over completely.
+    Shown alongside the merchant's own menu, ahead of it: a menu built on the
+    Menus screen no longer hides them. Each link has its own "show" switch in
+    the customizer, so a merchant whose menu already has a Home turns the
+    starter one off rather than living with two.
 #}
-{% set starter_links = menu_items|length == 0
-    ? theme.settings.get('topnav_links')|default([])
-    : [] %}
+{% set default_starter_links = [
+    { 'label': trans('common.home'), 'url': '/', 'link_type': 'home', 'visible': true },
+    { 'label': trans('common.products'), 'url': '/products', 'link_type': 'products', 'visible': true }
+] %}
+{% set configured_starter_links = theme.settings.get('topnav_links') %}
+{% set starter_links = (configured_starter_links is iterable and configured_starter_links|length > 0)
+    ? configured_starter_links
+    : default_starter_links %}
 {% set banner = theme.settings.get('mega_menu_image')|default('images/mega-menu-banner.webp'|asset) %}
 
 <div class="mega-overlay" data-mega-close></div>
@@ -62,7 +69,7 @@
                     {% elseif link_type == 'product' and link_product %}{% set link_url = '/product/' ~ link_product %}
                     {% elseif link_type == 'products' %}{% set link_url = '/products' %}
                     {% elseif link_type == 'home' %}{% set link_url = '/' %}{% endif %}
-                    {% set link_visible = link.visible is defined ? link.visible : (link['topnav_links.visible'] is defined ? link['topnav_links.visible'] : true) %}
+                    {% set link_visible = (link.visible is defined and link.visible is not null) ? link.visible : ((link['topnav_links.visible'] is defined and link['topnav_links.visible'] is not null) ? link['topnav_links.visible'] : true) %}
                     {% if link_visible %}
                         <li class="mega-menu__card">
                             <a class="mega-menu__parent" href="{{ link_url }}">

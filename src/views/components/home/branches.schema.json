@@ -7,8 +7,7 @@
     },
     "icon": "map-pin-line",
     "preview": "images/sections/store-branches.png",
-    "is_default": true,
-    "default_sort": 65,
+    "is_default": false,
     "areas": [
         "home",
         "pages"

@@ -7,7 +7,8 @@
     },
     "icon": "video-line",
     "preview": "images/sections/looping-video.png",
-    "is_default": false,
+    "is_default": true,
+    "default_sort": 80,
     "areas": [
         "home",
         "pages"
@@ -37,7 +38,7 @@
                 "ar": "مصدر الفيديو",
                 "en": "Video source"
             },
-            "value": "upload",
+            "value": "url",
             "required": true,
             "options": [
                 { "label": { "ar": "رفع من جهازي", "en": "Upload from my device" }, "value": "upload" },
@@ -75,6 +76,7 @@
             },
             "required": true,
             "maxLength": 500,
+            "value": "https://files.catbox.moe/2tfcev.mp4",
             "conditions": [
                 { "id": "source", "value": "url" }
             ]
@@ -91,7 +93,8 @@
                 "ar": "مطلوبة — تظهر حتى يبدأ الفيديو",
                 "en": "Required — shown until the video starts"
             },
-            "required": true
+            "required": true,
+            "value": "https://falakcart-bucket.s3.ap-south-1.amazonaws.com/basic_settings/store_images/c9oLVffMPv78SwYejBHLdWZWl8gt2zhkaIQgld3S.png"
         },
         {
             "id": "ratio",

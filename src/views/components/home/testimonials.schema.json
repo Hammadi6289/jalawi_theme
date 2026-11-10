@@ -8,7 +8,7 @@
     "icon": "chat-smile-line",
     "preview": "images/sections/testimonials.png",
     "is_default": true,
-    "default_sort": 40,
+    "default_sort": 60,
     "areas": [
         "home",
         "pages"

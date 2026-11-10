@@ -50,7 +50,16 @@
                2. Otherwise the `footer_links` setting from the Customizer, which
                   ships with the store's core pages as defaults so a new store
                   always has a populated column. #}
-            {% set footer_links = theme.settings.get('footer_links')|default([]) %}
+            {% set default_footer_links = [
+                { 'label': trans('common.home'), 'url': '/' },
+                { 'label': trans('common.products'), 'url': '/products' },
+                { 'label': trans('cart.title'), 'url': '/cart' },
+                { 'label': trans('account.title'), 'url': '/customer/profile' }
+            ] %}
+            {% set configured_footer_links = theme.settings.get('footer_links') %}
+            {% set footer_links = (configured_footer_links is iterable and configured_footer_links|length > 0)
+                ? configured_footer_links
+                : default_footer_links %}
 
             {# Contact us on every store: /contact-us is a platform route
                (pages/contact.twig). Skipped only if the merchant's own links
