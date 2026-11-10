@@ -1,7 +1,6 @@
-# Falak Theme 2026
+# Jalawi Theme
 
-Falak Cart's default storefront theme and the official reference implementation
-of the theme package structure. Bilingual (Arabic/English), RTL-first.
+Bilingual (Arabic/English), RTL-first storefront theme built for Falak Cart.
 
 ## Structure
 
@@ -34,17 +33,40 @@ data-guarded and render empty states until the platform wires their data.
 
 ## Merchant components
 
-| Component | Areas |
-|---|---|
-| Hero slider | home |
-| Testimonials | home, pages |
-| Promo banner | home, pages |
-| Store features | home, pages |
-| Image with text | home, pages |
-| Photo grid | home, pages |
-| Video | home, pages |
-| FAQ | home, pages |
-| Blog articles | home, pages |
+The theme includes **25 merchant-placeable blocks** configurable through the customizer across supported page areas:
+
+| Component | Arabic Name | Template Path | Areas |
+|---|---|---|---|
+| Hero Slider | صور متحركة | `home.enhanced-slider` | home |
+| Promo Banners | بنرات ترويجية | `home.banner` | home, pages |
+| Products Grid | شبكة المنتجات | `home.products` | home, pages |
+| Products Carousel | شريط المنتجات | `home.products-slider` | home, pages |
+| All Categories | جميع الأقسام | `home.categories-circles` | home, pages |
+| Categories Mosaic | فسيفساء الأقسام | `home.categories-mosaic` | home, pages |
+| Featured Showcase | تشكيلة مميزة ومبتكرة | `home.featured-showcase` | home, pages |
+| Lookbook | كتالوج الإطلالات (لوك بوك) | `home.lookbook` | home, pages |
+| Offer Countdown | عرض بعداد تنازلي | `home.offer-countdown` | home, pages |
+| Store Features | مميزات المتجر | `home.features` | home, pages |
+| Image with Text | صورة مع نص | `home.image-with-text` | home, pages |
+| Photo Grid | شبكة صور | `home.photo-grid` | home, pages |
+| Store Stats | إحصائيات المتجر | `home.store-stats` | home, pages |
+| Quote Block | اقتباس مميز | `home.quote-block` | home, pages |
+| Testimonials | آراء العملاء | `home.testimonials` | home, pages |
+| Video | فيديو | `home.video` | home, pages |
+| Looping Video (Clean) | فيديو متحرك (بدون أزرار) | `home.ambient-video` | home, pages |
+| Video Commerce | التجارة بالفيديو | `home.video-commerce` | home, pages, listing_top |
+| Brands | العلامات التجارية | `home.brands` | home, pages |
+| Store Branches | فروعنا ومواقعنا | `home.branches` | home, pages |
+| FAQ | الأسئلة الشائعة | `home.faq` | home, pages |
+| Blog Articles | مقالات المدونة | `home.blog-articles` | home, pages |
+| Newsletter | النشرة البريدية | `home.newsletter` | home, pages |
+| Contact Form | نموذج التواصل | `home.contact` | home, pages |
+| Custom HTML | HTML مخصص | `home.custom-html` | home, pages |
+
+### Layout Components
+
+- **Header** (`components/header/header.twig`, `components/header/menu.twig`): Main store navigation, logo, announcement bar, drawer menu, search, currency/language switcher, and account/cart actions.
+- **Footer** (`components/footer/footer.twig`): Store branding, dynamic quick links, contact info, newsletter subscription, social media links, accepted payment methods, and copyright notice.
 
 ## Customizer annotations
 
