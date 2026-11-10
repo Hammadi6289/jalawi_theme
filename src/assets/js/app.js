@@ -2042,16 +2042,30 @@
     // next/prev arrows, adjacent dimmed preview cards, and bottom buy action.
 
     function videoCommerce() {
-        var isEditor = (function () {
+        function isCustomizerEditor(sec) {
+            var inIframe = false;
             try {
-                if (window.parent && window.parent !== window) return true;
+                inIframe = (window.self !== window.top);
             } catch (e) {
-                return true;
+                inIframe = true;
             }
+            if (!inIframe) return false;
+
+            if (sec && sec.getAttribute('data-preview') === '1') return true;
+            if (window.falak && (window.falak.isEditor || window.falak.editor)) return true;
             if (document.querySelector('[data-falak-editor]') || document.body.hasAttribute('data-falak-editor')) return true;
-            if (window.location.search && /[?&](preview|draft|editor)\b/i.test(window.location.search)) return true;
+            if (window.location.search && /[?&](customizer|theme_editor|editor_mode)\b/i.test(window.location.search)) return true;
+
+            try {
+                if (window.parent && window.parent !== window && window.parent.document) {
+                    if (window.parent.document.querySelector('.customizer, [data-customizer], .theme-editor, .falak-editor')) {
+                        return true;
+                    }
+                }
+            } catch (e) {}
+
             return false;
-        })();
+        }
 
         var SOUND_ON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>';
         var SOUND_OFF = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><line x1="23" y1="9" x2="17" y2="15"></line><line x1="17" y1="9" x2="23" y2="15"></line></svg>';
@@ -2583,11 +2597,6 @@
             var sections = document.querySelectorAll('[data-video-commerce]');
             if (!sections.length) return;
 
-            // Immediately reveal skeleton placeholders while loading
-            sections.forEach(function (sec) {
-                sec.removeAttribute('hidden');
-            });
-
             fetchProducts().then(function (products) {
                 sections.forEach(function (section) {
                     var limit    = parseInt(section.getAttribute('data-limit'), 10) || 4;
@@ -2598,15 +2607,18 @@
                     var slice = products.slice(0, limit);
 
                     if (!slice.length) {
-                        if (isEditor) {
+                        if (isCustomizerEditor(section)) {
                             var isAr = document.documentElement.dir === 'rtl';
                             grid.innerHTML = '<li style="grid-column: 1 / -1; list-style: none; padding: 2.5rem 1.5rem; text-align: center; border: 1px dashed rgba(0,0,0,0.2); border-radius: 14px; background: rgba(0,0,0,0.02);">' +
                                 '<div style="font-size: 1.05rem; font-weight: 600; color: #111; margin-bottom: 0.4rem;">' + (isAr ? 'التجارة بالفيديو' : 'Video Commerce') + '</div>' +
                                 '<div style="font-size: 0.85rem; color: #666;">' + (isAr ? 'لم تتم إضافة أي منتجات فيديو بعد من لوحة التحكم.' : 'No video commerce products added yet in the dashboard.') + '</div>' +
                                 '</li>';
                             section.removeAttribute('hidden');
+                            section.style.display = '';
                         } else {
                             section.hidden = true;
+                            section.setAttribute('hidden', '');
+                            section.style.display = 'none';
                         }
                         return;
                     }
@@ -2619,13 +2631,17 @@
                     });
 
                     section.removeAttribute('hidden');
+                    section.style.display = '';
                 });
             }).catch(function () {
                 sections.forEach(function (sec) {
-                    if (isEditor) {
+                    if (isCustomizerEditor(sec)) {
                         sec.removeAttribute('hidden');
+                        sec.style.display = '';
                     } else {
                         sec.hidden = true;
+                        sec.setAttribute('hidden', '');
+                        sec.style.display = 'none';
                     }
                 });
             });

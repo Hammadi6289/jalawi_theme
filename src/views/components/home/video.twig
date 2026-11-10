@@ -16,18 +16,48 @@
     the click would never reach the editor; the value is written into the frame
     through a separate bind-src on the iframe itself.
 #}
+{% set source = component.source|default(component.video_file ? 'upload' : 'url') %}
+{% if source is iterable %}{% set source = source|first %}{% endif %}
+{% set ratio = component.ratio|default('16/9') %}
+{% if ratio is iterable %}{% set ratio = ratio|first %}{% endif %}
+
 <section class="block block--video" id="video-{{ position }}" {{ falak_section() }}>
     <div class="container">
         {% if component.title %}
             <h2 class="block__title" data-reveal="fade" data-falak-field="title" data-falak-label="{{ trans('editor.field.title') }}">{{ component.title }}</h2>
         {% endif %}
 
-        <div class="video-embed" data-reveal="slide-up" style="--reveal-delay: 120ms;" data-falak-field="embed_url" data-falak-label="{{ trans('editor.field.video') }}" data-falak-bind="none">
-            <iframe data-falak-bind-src="embed_url" src="{{ component.embed_url }}"
-                    title="{{ component.title|default('Video') }}"
-                    loading="lazy"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowfullscreen></iframe>
-        </div>
+        {% if source == 'upload' and component.video_file %}
+            <div class="video-embed video-embed--upload" style="aspect-ratio: {{ ratio }}; --reveal-delay: 120ms;"
+                 data-reveal="slide-up"
+                 data-falak-field="video_file" data-falak-label="{{ trans('editor.field.video') }}" data-falak-bind="none">
+                <video class="video-embed__player"
+                       src="{{ component.video_file }}"
+                       data-falak-bind-src="video_file"
+                       {% if component.poster %}poster="{{ component.poster }}"{% endif %}
+                       controls
+                       playsinline
+                       preload="metadata">
+                    <source src="{{ component.video_file }}">
+                </video>
+            </div>
+        {% elseif component.embed_url %}
+            <div class="video-embed" style="aspect-ratio: {{ ratio }}; --reveal-delay: 120ms;"
+                 data-reveal="slide-up"
+                 data-falak-field="embed_url" data-falak-label="{{ trans('editor.field.video') }}" data-falak-bind="none">
+                <iframe data-falak-bind-src="embed_url" src="{{ component.embed_url }}"
+                        title="{{ component.title|default('Video') }}"
+                        loading="lazy"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowfullscreen></iframe>
+            </div>
+        {% else %}
+            <div class="video-embed video-embed--placeholder" style="aspect-ratio: {{ ratio }};"
+                 data-falak-field="{{ source == 'upload' ? 'video_file' : 'embed_url' }}" data-falak-label="{{ trans('editor.field.video') }}" data-falak-bind="none">
+                <div class="video-placeholder">
+                    <svg viewBox="0 0 24 24" width="48" height="48" fill="currentColor" aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/></svg>
+                </div>
+            </div>
+        {% endif %}
     </div>
 </section>

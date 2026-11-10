@@ -5,58 +5,84 @@
     | component.subtitle      | ?string | line under the title                 |
     | component.button_text   | ?string | overrides the SDK's submit label     |
     | component.note          | ?string | small print under the form           |
+    | component.full_width    | ?bool   | expand across full screen width      |
+    | component.image         | ?string | optional side image                  |
+    | component.image_position| ?string | 'start' or 'end'                     |
     | position                | int     |                                      |
 
-    Customizer bindings — full rules in README, "Customizer annotations".
+    Customizer bindings:
     | Element             | Tag                                                          |
     | h2.block__title     | data-falak-field="title"                                     |
     | p.block__subtitle   | data-falak-field="subtitle"                                  |
     | falak-newsletter    | data-falak-field="button_text" data-falak-bind="attr:button-text" |
     | p.newsletter__note  | data-falak-field="note"                                      |
+    | img                 | data-falak-field="image"                                     |
 
-    <falak-newsletter> is an SDK component: it owns the field, the validation,
-    the busy state and the status line, and posts through
-    falak.newsletter.subscribe(). This template only frames it — every
-    `footer.newsletter_*` string it prints comes from src/locales/.
-
-    button_text reaches the component as an ATTRIBUTE, so the binding is
-    `bind="attr:button-text"` and the element also carries data-falak-bound —
-    an element with only bind-attr-* bindings needs it, or the customizer has
-    nothing to re-render as the merchant types. Left empty the component falls
-    back to footer.newsletter_submit, which is what most stores want.
-
-    Styleable parts: `box` on .newsletter.
+    Styleable parts: `box`, `title`, `subtitle`, `note`, `image`.
 #}
 {% set store_nl = store.settings.newsletter|default(store.newsletter)|default({}) %}
 {% set is_nl_enabled = store.settings.newsletter_enabled is defined ? store.settings.newsletter_enabled : (store_nl.enabled is defined ? store_nl.enabled : true) %}
 
 {% if is_nl_enabled %}
-<section class="block block--newsletter" id="newsletter-{{ position }}" {{ falak_section() }}>
-    <div class="container">
-        <div class="newsletter" data-reveal="slide-up" style="--reveal-delay: 100ms;" data-falak-part="box">
-            {% set nl_title = component.title|default(store.settings.newsletter_title)|default(store_nl.title)|default(trans('footer.newsletter')) %}
-            {% set nl_subtitle = component.subtitle|default(store.settings.newsletter_description)|default(store.settings.newsletter_subtitle)|default(store_nl.description)|default(store_nl.subtitle) %}
-            {% set nl_button_text = component.button_text|default(store.settings.newsletter_button_text)|default(store_nl.button_text) %}
-            {% set nl_note = component.note|default(store.settings.newsletter_note)|default(store_nl.note) %}
+{% set raw_img = component.image|default(null) %}
+{% set img_src = raw_img ? ((raw_img starts with 'http' or raw_img starts with '/' or raw_img starts with 'data:') ? raw_img : raw_img|asset) : null %}
+{% set is_full = component.full_width|default(false) %}
+{% set img_pos = component.image_position|default('end') %}
+{% if img_pos is iterable %}{% set img_pos = img_pos|first %}{% endif %}
 
-            {% if nl_title %}
-                <h2 class="block__title" data-falak-field="title" data-falak-label="{{ trans('editor.field.title') }}">{{ nl_title }}</h2>
+<section class="block block--newsletter{{ is_full ? ' block--newsletter-full' : '' }}" id="newsletter-{{ position }}" {{ falak_section() }}>
+    <div class="{{ is_full ? 'container-fluid' : 'container' }}">
+        <div class="newsletter{{ img_src ? ' newsletter--split newsletter--split-' ~ img_pos : '' }}{{ is_full ? ' newsletter--full' : '' }}"
+             data-reveal="slide-up"
+             style="--reveal-delay: 100ms;"
+             data-falak-part="box">
+
+            {% if img_src and img_pos == 'start' %}
+                <figure class="newsletter__media" data-falak-part="image">
+                    <img src="{{ img_src }}"
+                         alt="{{ component.title|default('Newsletter') }}"
+                         data-falak-field="image"
+                         data-falak-label="{{ trans('editor.field.image') }}"
+                         loading="lazy">
+                </figure>
             {% endif %}
 
-            {% if nl_subtitle %}
-                <p class="block__subtitle" data-falak-field="subtitle" data-falak-label="{{ trans('editor.field.description') }}">{{ nl_subtitle }}</p>
+            <div class="newsletter__content">
+                {% set nl_title = component.title|default(store.settings.newsletter_title)|default(store_nl.title)|default(trans('footer.newsletter')) %}
+                {% set nl_subtitle = component.subtitle|default(store.settings.newsletter_description)|default(store.settings.newsletter_subtitle)|default(store_nl.description)|default(store_nl.subtitle) %}
+                {% set nl_button_text = component.button_text|default(store.settings.newsletter_button_text)|default(store_nl.button_text) %}
+                {% set nl_note = component.note|default(store.settings.newsletter_note)|default(store_nl.note) %}
+
+                {% if nl_title %}
+                    <h2 class="block__title newsletter__title" data-falak-field="title" data-falak-part="title" data-falak-label="{{ trans('editor.field.title') }}">{{ nl_title }}</h2>
+                {% endif %}
+
+                {% if nl_subtitle %}
+                    <p class="block__subtitle newsletter__subtitle" data-falak-field="subtitle" data-falak-part="subtitle" data-falak-label="{{ trans('editor.field.description') }}">{{ nl_subtitle }}</p>
+                {% endif %}
+
+                <falak-newsletter class="newsletter__form"
+                                  {% if nl_button_text %}button-text="{{ nl_button_text }}"{% endif %}
+                                  data-falak-field="button_text"
+                                  data-falak-label="{{ trans('editor.field.button') }}"
+                                  data-falak-bind="attr:button-text"
+                                  data-falak-bound></falak-newsletter>
+
+                {% if nl_note %}
+                    <p class="newsletter__note" data-falak-field="note" data-falak-part="note" data-falak-label="{{ trans('editor.field.text') }}">{{ nl_note }}</p>
+                {% endif %}
+            </div>
+
+            {% if img_src and img_pos != 'start' %}
+                <figure class="newsletter__media" data-falak-part="image">
+                    <img src="{{ img_src }}"
+                         alt="{{ component.title|default('Newsletter') }}"
+                         data-falak-field="image"
+                         data-falak-label="{{ trans('editor.field.image') }}"
+                         loading="lazy">
+                </figure>
             {% endif %}
 
-            <falak-newsletter class="newsletter__form"
-                              {% if nl_button_text %}button-text="{{ nl_button_text }}"{% endif %}
-                              data-falak-field="button_text"
-                              data-falak-label="{{ trans('editor.field.button') }}"
-                              data-falak-bind="attr:button-text"
-                              data-falak-bound></falak-newsletter>
-
-            {% if nl_note %}
-                <p class="newsletter__note" data-falak-field="note" data-falak-label="{{ trans('editor.field.text') }}">{{ nl_note }}</p>
-            {% endif %}
         </div>
     </div>
 </section>

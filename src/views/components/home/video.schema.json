@@ -49,6 +49,38 @@
             "maxLength": 100
         },
         {
+            "id": "source",
+            "type": "items",
+            "format": "dropdown-list",
+            "label": {
+                "ar": "مصدر الفيديو",
+                "en": "Video source"
+            },
+            "value": "url",
+            "required": true,
+            "options": [
+                { "label": { "ar": "رابط يوتيوب / فيميو", "en": "YouTube / Vimeo URL" }, "value": "url" },
+                { "label": { "ar": "رفع من جهازي", "en": "Upload from my device" }, "value": "upload" }
+            ]
+        },
+        {
+            "id": "video_file",
+            "type": "string",
+            "format": "video",
+            "label": {
+                "ar": "ملف الفيديو",
+                "en": "Video file"
+            },
+            "description": {
+                "ar": "MP4 أو WebM من جهازك",
+                "en": "MP4 or WebM from your device"
+            },
+            "required": false,
+            "conditions": [
+                { "id": "source", "value": "upload" }
+            ]
+        },
+        {
             "id": "embed_url",
             "type": "string",
             "format": "text",
@@ -60,8 +92,45 @@
                 "ar": "الصق أي رابط يوتيوب أو فيميو — يُحوَّل تلقائيًا لصيغة العرض.",
                 "en": "Paste any YouTube or Vimeo link — it is converted to the embeddable form automatically."
             },
-            "required": true,
-            "maxLength": 255
+            "required": false,
+            "maxLength": 255,
+            "conditions": [
+                { "id": "source", "value": "url" }
+            ]
+        },
+        {
+            "id": "poster",
+            "type": "string",
+            "format": "image",
+            "label": {
+                "ar": "صورة الغلاف (اختياري)",
+                "en": "Poster image (optional)"
+            },
+            "description": {
+                "ar": "صورة تظهر قبل تشغيل الفيديو المرفوع",
+                "en": "Image shown before the uploaded video plays"
+            },
+            "required": false,
+            "conditions": [
+                { "id": "source", "value": "upload" }
+            ]
+        },
+        {
+            "id": "ratio",
+            "type": "items",
+            "format": "dropdown-list",
+            "label": {
+                "ar": "نسبة العرض للارتفاع",
+                "en": "Aspect ratio"
+            },
+            "value": "16/9",
+            "options": [
+                { "label": { "ar": "عريض 21:9", "en": "Wide 21:9" }, "value": "21/9" },
+                { "label": { "ar": "16:9", "en": "16:9" }, "value": "16/9" },
+                { "label": { "ar": "4:3", "en": "4:3" }, "value": "4/3" },
+                { "label": { "ar": "مربع 1:1", "en": "Square 1:1" }, "value": "1/1" },
+                { "label": { "ar": "طولي 9:16", "en": "Portrait 9:16" }, "value": "9/16" }
+            ]
         }
     ]
 }

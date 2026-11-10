@@ -51,9 +51,63 @@
                 "ar": "الملاحظة",
                 "en": "Note"
             }
+        },
+        {
+            "id": "image",
+            "label": {
+                "ar": "الصورة الجانبية",
+                "en": "Side image"
+            },
+            "properties": [
+                "border_radius",
+                "border_width",
+                "border_color"
+            ]
         }
     ],
     "fields": [
+        {
+            "id": "full_width",
+            "type": "boolean",
+            "format": "switch",
+            "label": {
+                "ar": "بعرض كامل",
+                "en": "Full width"
+            },
+            "description": {
+                "ar": "تمديد قسم النشرة البريدية بعرض الشاشة",
+                "en": "Expands the newsletter section across the full width"
+            },
+            "value": false
+        },
+        {
+            "id": "image",
+            "type": "string",
+            "format": "image",
+            "label": {
+                "ar": "صورة جانبية (اختياري)",
+                "en": "Side image (optional)"
+            },
+            "description": {
+                "ar": "صورة بجانب النموذج تمنح القسم مظهراً عريضاً وأنيقاً",
+                "en": "An image displayed alongside the form to create a wide, engaging layout"
+            },
+            "required": false
+        },
+        {
+            "id": "image_position",
+            "type": "items",
+            "format": "dropdown-list",
+            "label": {
+                "ar": "موضع الصورة",
+                "en": "Image position"
+            },
+            "value": "end",
+            "options": [
+                { "label": { "ar": "النهاية (اليسار في العربية)", "en": "End" }, "value": "end" },
+                { "label": { "ar": "البداية (اليمين في العربية)", "en": "Start" }, "value": "start" }
+            ]
+        },
         {
             "id": "title",
             "type": "string",

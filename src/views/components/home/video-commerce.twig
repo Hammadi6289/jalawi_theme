@@ -41,6 +41,7 @@
 
 <section class="block block--video-commerce" id="video-commerce-{{ position }}"
          data-video-commerce
+         data-preview="{{ theme.mode == 'preview' ? '1' : '0' }}"
          data-limit="{{ limit_count }}"
          data-badge="{{ show_badge ? component.badge_text|default('') : '' }}"
          data-playback="{{ component.playback|default('inview') }}"
