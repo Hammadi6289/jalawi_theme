@@ -22,7 +22,6 @@ src/
 ```
 
 ## Platform contract
-## Platform contract
 
 Globals, sandboxed functions, hooks and page-data shapes are defined by
 `config/theme-context.php` in the platform. The Twig sandbox allows a fixed
