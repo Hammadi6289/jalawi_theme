@@ -33,7 +33,7 @@ data-guarded and render empty states until the platform wires their data.
 
 ## Merchant components
 
-The theme includes **25 merchant-placeable blocks** configurable through the customizer across supported page areas:
+The theme includes **merchant-placeable blocks** configurable through the customizer across supported page areas:
 
 | Component | Arabic Name | Template Path | Areas |
 |---|---|---|---|
