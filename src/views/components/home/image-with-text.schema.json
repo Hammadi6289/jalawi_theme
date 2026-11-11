@@ -92,7 +92,8 @@
                 "ar": "المقاس المناسب 800×600 بكسل",
                 "en": "Recommended size 800x600 px"
             },
-            "required": true
+            "required": false,
+            "value": "https://falakcart-bucket.s3.ap-south-1.amazonaws.com/basic_settings/store_images/c9oLVffMPv78SwYejBHLdWZWl8gt2zhkaIQgld3S.png"
         },
         {
             "id": "title",
@@ -104,7 +105,11 @@
             },
             "multilanguage": true,
             "required": false,
-            "maxLength": 100
+            "maxLength": 100,
+            "value": {
+                "ar": "أناقة عصرية تعكس تميزك",
+                "en": "Modern Elegance That Reflects You"
+            }
         },
         {
             "id": "text",
@@ -116,7 +121,11 @@
             },
             "multilanguage": true,
             "required": false,
-            "maxLength": 500
+            "maxLength": 500,
+            "value": {
+                "ar": "نقدم لك تشكيلة استثنائية تجمع بين الفخامة والجودة العالية، مصممة بعناية لتلبي ذوقك الراقي في كل تفاصيلها.",
+                "en": "Discover an exceptional collection blending luxury and fine quality, thoughtfully crafted to match your refined style in every detail."
+            }
         },
         {
             "id": "button_text",
@@ -128,22 +137,93 @@
             },
             "multilanguage": true,
             "required": false,
-            "maxLength": 40
+            "maxLength": 40,
+            "value": {
+                "ar": "تسوق الآن",
+                "en": "Shop Now"
+            }
+        },
+        {
+            "id": "button_link_type",
+            "type": "items",
+            "format": "dropdown-list",
+            "label": {
+                "ar": "نوع رابط الزر",
+                "en": "Button link type"
+            },
+            "description": {
+                "ar": "اختر وجهة الزر، أو «رابط مخصص» لكتابة رابطك بنفسك",
+                "en": "Pick where the button goes, or “Custom link” to type your own"
+            },
+            "value": "products",
+            "required": false,
+            "options": [
+                { "label": { "ar": "رابط مخصص", "en": "Custom link" }, "value": "custom" },
+                { "label": { "ar": "تصنيف", "en": "Category" }, "value": "category" },
+                { "label": { "ar": "منتج", "en": "Product" }, "value": "product" },
+                { "label": { "ar": "كل المنتجات", "en": "All products" }, "value": "products" },
+                { "label": { "ar": "الصفحة الرئيسية", "en": "Home" }, "value": "home" }
+            ]
+        },
+        {
+            "id": "button_category",
+            "type": "string",
+            "format": "category",
+            "label": {
+                "ar": "تصنيف الزر",
+                "en": "Button category"
+            },
+            "description": {
+                "ar": "اختر التصنيف المطلوب",
+                "en": "Select the category"
+            },
+            "required": false,
+            "conditions": [
+                {
+                    "id": "button_link_type",
+                    "value": "category"
+                }
+            ]
+        },
+        {
+            "id": "button_product",
+            "type": "string",
+            "format": "product",
+            "label": {
+                "ar": "منتج الزر",
+                "en": "Button product"
+            },
+            "description": {
+                "ar": "اختر المنتج المطلوب",
+                "en": "Select the product"
+            },
+            "required": false,
+            "conditions": [
+                {
+                    "id": "button_link_type",
+                    "value": "product"
+                }
+            ]
         },
         {
             "id": "button_url",
             "type": "string",
             "format": "text",
             "label": {
-                "ar": "رابط الزر",
-                "en": "Button link"
+                "ar": "رابط الزر (مخصص)",
+                "en": "Button custom link"
+            },
+            "description": {
+                "ar": "اكتب الرابط المطلوب (صفحة، رابط خارجي، إلخ)",
+                "en": "Enter the URL (page, external link, etc.)"
             },
             "required": false,
             "maxLength": 255,
+            "value": "/products",
             "conditions": [
                 {
-                    "id": "button_text",
-                    "operation": "not_empty"
+                    "id": "button_link_type",
+                    "value": "custom"
                 }
             ]
         },
