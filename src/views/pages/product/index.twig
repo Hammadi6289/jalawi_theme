@@ -31,15 +31,16 @@
         <falak-breadcrumb></falak-breadcrumb>
 
         <header class="page-head">
-            <h1>{{ category ? category.name : trans('common.products') }}</h1>
+            <h1>{{ trans('common.products') }}</h1>
         </header>
 
         {# Subcategories circular avatars row #}
+        {% set subcats = category and category.children is defined and category.children|length > 0 ? category.children : [] %}
         <section class="category-subcategories" data-category-subcategories {% if category %}data-current-category-id="{{ category.id }}"{% endif %} aria-label="{{ trans('common.categories') }}">
-            {% set subcats = category and category.children is defined and category.children|length > 0 ? category.children : [] %}
             <div class="category-subcategories__list" data-subcategories-list>
                 {% for sub in subcats %}
-                    <a href="/products?category_id%5B%5D={{ sub.id }}" class="category-subcard">
+                    {% set is_active = category and sub.id == category.id %}
+                    <a href="/products?category_id%5B%5D={{ sub.id }}" class="category-subcard{{ is_active ? ' is-active' : '' }}">
                         <span class="category-subcard__avatar">
                             {% if sub.image or sub.image_url %}
                                 <img src="{{ sub.image_url|default(sub.image) }}" alt="{{ sub.name }}" loading="lazy">
@@ -131,16 +132,10 @@
                 <div class="product-listing__toolbar">
                     <div class="product-listing__toolbar-start">
                         <h2 class="product-listing__heading-title">
-                            {% if category %}
-                                {{ category.name }}
-                                {% if pagination.total|default(0) > 0 %}
-                                    <span class="product-listing__heading-count">- {{ pagination.total }} {{ trans('common.products_count') }}</span>
-                                {% endif %}
+                            {% if pagination.total|default(0) > 0 %}
+                                <span class="product-listing__heading-count">{{ pagination.total }} {{ trans('common.products_count') }}</span>
                             {% else %}
                                 {{ trans('common.products') }}
-                                {% if pagination.total|default(0) > 0 %}
-                                    <span class="product-listing__heading-count">- {{ pagination.total }} {{ trans('common.products_count') }}</span>
-                                {% endif %}
                             {% endif %}
                         </h2>
                     </div>

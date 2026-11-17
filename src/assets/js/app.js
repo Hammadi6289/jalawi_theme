@@ -1338,7 +1338,14 @@
             catIds = [params.get('category_id')];
         }
 
+        var currentCatEl = document.querySelector('[data-current-category-id]');
+        var currentCatId = currentCatEl ? currentCatEl.getAttribute('data-current-category-id') : null;
+
         catIds.forEach(function (catId) {
+            // If viewing this category page itself, don't repeat the category as an active filter pill
+            if (currentCatId && String(catId) === String(currentCatId) && catIds.length === 1) {
+                return;
+            }
             var label = '';
             var cb = document.querySelector('input[type="checkbox"][id*="' + catId + '"]');
             if (cb) {
@@ -1519,8 +1526,10 @@
                         var avatarContent = catImg
                             ? '<img src="' + catImg + '" alt="' + catName + '" loading="lazy">'
                             : shoppingBagSvg;
+                        var isActive = currentCatId && String(cat.id) === String(currentCatId);
+                        var activeClass = isActive ? ' is-active' : '';
 
-                        return '<a href="/products?category_id%5B%5D=' + cat.id + '" class="category-subcard">' +
+                        return '<a href="/products?category_id%5B%5D=' + cat.id + '" class="category-subcard' + activeClass + '">' +
                             '<span class="category-subcard__avatar">' + avatarContent + '</span>' +
                             '<span class="category-subcard__name">' + catName + '</span>' +
                             '</a>';

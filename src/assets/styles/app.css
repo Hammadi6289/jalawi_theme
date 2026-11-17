@@ -11713,11 +11713,14 @@ html[lang="ar"] .has-reveal [data-reveal="slide-end"] {
 /* -------------------------------------------------------------- listing */
 
 .page-head {
-    padding-block: 2rem 0.5rem;
+    padding-block: 1.5rem 0.5rem;
 }
 
 .page-head h1 {
     margin-bottom: 0.25rem;
+    font-size: clamp(1.5rem, 1.2rem + 1.2vw, 2.1rem);
+    font-weight: 700;
+    color: var(--color-text);
 }
 
 .page-head__meta {
@@ -13573,6 +13576,16 @@ falak-product-card falak-add-product-button button.is-clicked svg path,
     box-shadow: 0 4px 14px rgba(206, 90, 103, 0.2);
 }
 
+.category-subcard.is-active .category-subcard__avatar {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 2px var(--color-primary), 0 4px 14px rgba(206, 90, 103, 0.25);
+}
+
+.category-subcard.is-active .category-subcard__name {
+    color: var(--color-primary);
+    font-weight: 700;
+}
+
 .category-subcard__avatar img {
     inline-size: 100%;
     block-size: 100%;
@@ -13695,8 +13708,10 @@ falak-product-card falak-add-product-button button.is-clicked svg path,
 .product-listing__sidebar-head,
 falak-filters .f-filters__title,
 falak-filters .f-filters__head,
-falak-filters .f-filters__selected {
-    display: none;
+falak-filters .f-filters__selected,
+falak-filters .f-filters__chips,
+falak-filters .f-filters__reset {
+    display: none !important;
 }
 
 falak-filters {
@@ -13924,6 +13939,27 @@ falak-filters .f-filters {
 
 .product-listing__sort select {
     min-inline-size: 11rem;
+    height: 2.6rem;
+    padding-block: 0;
+    padding-inline: 0.75rem 2rem;
+    border-radius: var(--radius-sm, 8px);
+    border: 1px solid var(--color-border, #e5e5e5);
+    background-color: var(--color-surface, #ffffff);
+    color: var(--color-text, #333333);
+    font-size: 0.88rem;
+    font-weight: 500;
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23333333' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 1rem 1rem;
+    cursor: pointer;
+}
+
+[dir="rtl"] .product-listing__sort select {
+    padding-inline: 2rem 0.75rem;
+    background-position: left 0.75rem center;
 }
 
 .product-listing__backdrop {
@@ -14085,15 +14121,35 @@ falak-filters .f-filters {
         min-inline-size: 0;
         min-height: 2.75rem;
         height: 2.75rem;
-        padding-inline: 0.75rem;
+        line-height: 2.75rem;
+        padding-block: 0;
+        padding-inline-start: 0.85rem;
+        padding-inline-end: 2.25rem;
         font-size: 0.88rem;
-        font-weight: 500;
+        font-weight: 600;
         border: 1px solid var(--color-border, #e5e5e5);
         border-radius: var(--radius-sm, 8px);
         background-color: var(--color-surface, #ffffff);
         color: var(--color-text, #333333);
         margin: 0;
         box-sizing: border-box;
+        appearance: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        cursor: pointer;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23333333' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 0.75rem center;
+        background-size: 1rem 1rem;
+    }
+
+    [dir="rtl"] .product-listing__sort select {
+        background-position: left 0.75rem center;
+    }
+
+    .product-listing__sort select:focus-visible {
+        outline: none;
+        border-color: var(--color-primary);
     }
 
     /* Mobile filters side menu / drawer */
