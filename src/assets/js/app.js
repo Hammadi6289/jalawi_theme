@@ -3879,4 +3879,30 @@
             document.documentElement.style.setProperty('--falak-logo-scale', String(scale));
         }
     });
+
+    /* printing: designer dialog */
+    document.addEventListener('click', function (event) {
+        if (!event.target.closest('[data-designer-open]')) return;
+
+        var modal = document.querySelector('[data-product-designer-modal]');
+        if (!modal) return;
+
+        event.preventDefault();
+
+        var picker = document.querySelector('falak-product-options');
+        if (picker && typeof picker.reportValidity === 'function' && !picker.reportValidity()) return;
+
+        if (typeof modal.open === 'function') modal.open();
+        else modal.setAttribute('visible', '');
+    });
+
+    document.addEventListener('success', function (event) {
+        if (!event.target.closest || !event.target.closest('.designer-dialog__add')) return;
+
+        var modal = document.querySelector('[data-product-designer-modal]');
+        if (!modal) return;
+
+        if (typeof modal.close === 'function') modal.close();
+        else modal.removeAttribute('visible');
+    }, true);
 })();

@@ -12813,13 +12813,32 @@ falak-product-card falak-add-product-button button.is-clicked svg path,
     display: grid;
     grid-template-columns: auto minmax(0, 1fr);
     gap: 0.65rem;
-    align-items: stretch;
+    align-items: center;
     margin-block: 1rem 0.6rem;
 }
 
 .buy-box falak-quantity-input {
     min-inline-size: 7.25rem;
+    max-inline-size: 8.5rem;
+    inline-size: 7.25rem;
+    block-size: 2.85rem !important;
+    height: 2.85rem !important;
+    max-height: 2.85rem !important;
+    align-self: center !important;
     display: flex;
+}
+
+.buy-box falak-quantity-input .f-qty {
+    block-size: 100% !important;
+    height: 100% !important;
+    inline-size: 100% !important;
+    width: 100% !important;
+}
+
+.buy-box falak-quantity-input .f-qty__step,
+.buy-box falak-quantity-input .f-qty__input {
+    block-size: 100% !important;
+    height: 100% !important;
 }
 
 .buy-box falak-add-product-button {
@@ -21942,4 +21961,196 @@ a.qv__eyebrow:hover { color: var(--color-primary); }
 @media (prefers-reduced-motion: reduce) {
     .qv__slide { transition: none; }
     .qv__bone { animation: none; }
+}
+
+/* product customization & printing designer */
+.gallery__custom {
+    position: absolute;
+    inset-block-start: 0.9rem;
+    inset-inline-start: 0.9rem;
+    z-index: 2;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.3rem 0.65rem;
+    border-radius: var(--radius-sm);
+    background: #fdf1d8;
+    color: #8a5a00;
+    font-size: 0.82rem;
+    font-weight: 700;
+    line-height: 1.4;
+}
+
+.buy-box__design {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 0.5rem !important;
+    min-block-size: 2.85rem !important;
+    height: 2.85rem !important;
+    margin: 0 !important;
+    width: 100% !important;
+}
+
+.designer-dialog {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.designer-dialog__actions {
+    position: sticky;
+    inset-block-end: 0;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+    padding-block-start: 0.75rem;
+    background: var(--color-surface, #fff);
+    border-block-start: 1px solid var(--color-border, #e5e7eb);
+}
+
+.designer-dialog__add-btn {
+    inline-size: 100%;
+    width: 100%;
+}
+
+[data-product-designer-modal]:has(.designer-dialog--studio) .f-modal__body {
+    max-inline-size: 66rem;
+    overflow: hidden;
+}
+
+[data-product-designer-modal]:has(.designer-dialog--studio) .f-modal__header {
+    display: none;
+}
+
+.designer-dialog--studio {
+    --designer-height: min(40rem, calc(100dvh - 4rem));
+    display: grid;
+    grid-template-columns: minmax(0, 1.45fr) minmax(19rem, 1fr);
+    grid-template-rows: minmax(0, 1fr) auto;
+    gap: 0;
+    block-size: var(--designer-height);
+}
+
+.designer-dialog--studio .f-studio__stage {
+    grid-column: 1;
+    grid-row: 1 / span 2;
+    --f-studio-max-h: calc(var(--designer-height) - 8.5rem);
+}
+
+.designer-dialog--studio .f-studio__panel {
+    grid-column: 2;
+    grid-row: 1;
+}
+
+.designer-dialog--studio .designer-dialog__actions {
+    grid-column: 2;
+    grid-row: 2;
+    position: static;
+    padding: 1rem 1.25rem 1.25rem;
+}
+
+@media (max-width: 820px) {
+    [data-product-designer-modal]:has(.designer-dialog--studio) .f-modal__header {
+        display: flex;
+        padding: 0.9rem 1rem;
+    }
+
+    .designer-dialog--studio {
+        display: flex;
+        flex-direction: column;
+        block-size: auto;
+    }
+
+    .designer-dialog--studio .f-studio__stage {
+        --f-studio-max-h: max(40dvh, calc(100dvh - 17rem));
+    }
+
+    .designer-dialog--studio .designer-dialog__actions {
+        position: sticky;
+        inset-block-end: 0;
+        padding: 0.75rem 1rem;
+        grid-template-columns: 1fr;
+    }
+}
+
+.product-personalization {
+    display: block;
+    width: 100%;
+    margin-block: 0.85rem 0.65rem;
+}
+
+.product-personalization .f-addon {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    padding: 0.85rem 1rem;
+    border: 1px solid var(--color-border, #e5e7eb);
+    border-radius: var(--radius-sm, 6px);
+    background: #fbfbfb;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.product-personalization .f-addon:hover,
+.product-personalization .f-addon:focus-within {
+    border-color: color-mix(in srgb, var(--color-primary) 60%, #e5e7eb);
+}
+
+.product-personalization .f-addon:has(input[type="checkbox"]:checked) {
+    border-color: var(--color-primary);
+    background: #ffffff;
+    box-shadow: 0 0 0 1px var(--color-primary);
+}
+
+.product-personalization .f-addon__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-weight: 600;
+    font-size: 0.92rem;
+    color: var(--color-text, #1e1e1e);
+    cursor: pointer;
+}
+
+.product-personalization .f-addon__fee {
+    font-weight: 700;
+    color: var(--color-primary);
+    font-size: 0.95rem;
+}
+
+.product-personalization .f-addon__body {
+    margin-block-start: 0.65rem;
+}
+
+.product-personalization .f-addon__label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-block-end: 0.35rem;
+    color: var(--color-text, #374151);
+}
+
+.product-personalization .f-addon__input {
+    width: 100%;
+    box-sizing: border-box;
+    border: 1px solid var(--color-border, #d1d5db);
+    border-radius: var(--radius-sm, 4px);
+    padding: 0.65rem 0.85rem;
+    font-size: 0.9rem;
+    font-family: inherit;
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.product-personalization .f-addon__input:focus {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-primary) 20%, transparent);
+}
+
+.product-personalization .f-addon__counter {
+    font-size: 0.78rem;
+    color: var(--color-text-soft, #9ca3af);
+    text-align: end;
+    margin-block-start: 0.25rem;
 }
