@@ -8883,24 +8883,27 @@ falak-announcement:not(.f-announce--scroll) .f-announce__inner {
 }
 
 /* product card — <falak-product-card> skinned to Jalawi's glass card:
-   Frosted glass backdrop, product title, description, price, and side-by-side action buttons. */
+   Frosted glass backdrop, product title (1-line truncate), description (1-line truncate),
+   and a single bottom row with discounted price, original price, cart button, and eye button. */
 .hero-thumb--product .hero-thumb__body {
     position: absolute;
     inset: 0;
     z-index: 5;
-    display: flex !important;
-    flex-direction: column !important;
-    justify-content: space-between !important;
-    padding: clamp(0.6rem, 1.2vw, 0.95rem) clamp(0.7rem, 1.5vw, 1.05rem) !important;
+    display: grid !important;
+    grid-template-columns: 1fr auto !important;
+    grid-template-rows: auto auto 1fr auto !important;
+    align-items: center !important;
+    padding: clamp(0.55rem, 1vw, 0.85rem) clamp(0.65rem, 1.2vw, 0.95rem) !important;
     box-sizing: border-box !important;
     text-align: start !important;
     overflow: hidden !important;
 }
 
-/* Ensure falak-product-card and internal wrappers do not take up extra height or block flex flow */
+/* Ensure falak-product-card and internal wrappers dissolve directly into the grid */
 .hero-thumb falak-product-card,
 .hero-thumb .f-card,
-.hero-thumb .f-card__inner {
+.hero-thumb .f-card__inner,
+.hero-thumb .f-card__body {
     display: contents !important;
     position: static !important;
     background: transparent !important;
@@ -8913,7 +8916,7 @@ falak-announcement:not(.f-announce--scroll) .f-announce__inner {
     max-height: none !important;
 }
 
-/* Hide non-relevant SDK elements from the glass thumbnail card */
+/* Hide non-relevant SDK elements and duplicate action buttons from the glass thumbnail card */
 .hero-thumb .f-card__media,
 .hero-thumb .product-card__media,
 .hero-thumb .product-card__placeholder,
@@ -8929,7 +8932,9 @@ falak-announcement:not(.f-announce--scroll) .f-announce__inner {
 .hero-thumb .f-card__quick-actions,
 .hero-thumb .product-card__quick-actions,
 .hero-thumb falak-rating-stars,
-.hero-thumb falak-wishlist-button {
+.hero-thumb falak-wishlist-button,
+.hero-thumb .hero-thumb__view ~ .hero-thumb__view,
+.hero-thumb .f-card__quick-actions .f-card__quickview {
     display: none !important;
     visibility: hidden !important;
     width: 0 !important;
@@ -8941,112 +8946,184 @@ falak-announcement:not(.f-announce--scroll) .f-announce__inner {
     pointer-events: none !important;
 }
 
-/* Product body content (title, description, price) */
-.hero-thumb .f-card__body {
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 0.2rem !important;
-    padding: 0 !important;
-    margin: 0 !important;
-    background: transparent !important;
-    border: none !important;
-    flex: 1 1 auto !important;
-    min-height: 0 !important;
-    justify-content: flex-start !important;
-}
-
-/* Title: 1 line on small cards, max 2 on large, crisp white */
+/* 1. Title: 1 line truncate with ellipsis */
 .hero-thumb .f-card__title {
-    margin: 0 !important;
+    grid-column: 1 / -1 !important;
+    grid-row: 1 !important;
+    margin: 0 0 0.15rem !important;
     padding: 0 !important;
-    font-size: clamp(0.8rem, 0.7rem + 0.35vw, 1.05rem) !important;
+    font-size: clamp(0.82rem, 0.72rem + 0.35vw, 1rem) !important;
     font-weight: 600 !important;
     line-height: 1.25 !important;
     color: #fff !important;
-    display: -webkit-box !important;
-    -webkit-line-clamp: 1 !important;
-    line-clamp: 1 !important;
-    -webkit-box-orient: vertical !important;
+    display: block !important;
+    white-space: nowrap !important;
     overflow: hidden !important;
     text-overflow: ellipsis !important;
-}
-
-@media (min-width: 1024px) {
-    .hero-thumb .f-card__title {
-        -webkit-line-clamp: 2 !important;
-        line-clamp: 2 !important;
-    }
+    max-width: 100% !important;
 }
 
 .hero-thumb .f-card__link,
 .hero-thumb .f-card__title a {
     color: #fff !important;
     text-decoration: none !important;
-}
-
-/* Description */
-.hero-thumb__desc {
     display: block !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    font-size: clamp(0.72rem, 0.65rem + 0.2vw, 0.85rem) !important;
-    line-height: 1.3 !important;
-    color: rgba(255, 255, 255, 0.82) !important;
-    display: -webkit-box !important;
-    -webkit-line-clamp: 1 !important;
-    line-clamp: 1 !important;
-    -webkit-box-orient: vertical !important;
+    white-space: nowrap !important;
     overflow: hidden !important;
     text-overflow: ellipsis !important;
+    max-width: 100% !important;
+}
+
+/* 2. Description: 2 lines truncate with ellipsis, directly below title */
+.hero-thumb__desc {
+    grid-column: 1 / -1 !important;
+    grid-row: 2 !important;
+    display: -webkit-box !important;
+    -webkit-box-orient: vertical !important;
+    -webkit-line-clamp: 2 !important;
+    line-clamp: 2 !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: normal !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    font-size: clamp(0.68rem, 0.6rem + 0.2vw, 0.8rem) !important;
+    line-height: 1.3 !important;
+    color: rgba(255, 255, 255, 0.82) !important;
+    max-width: 100% !important;
+    max-height: 2.6em !important;
 }
 
 .hero-thumb__desc:empty {
     display: none !important;
 }
 
-/* Price */
+/* 3. Price & Actions: Shared base rules */
 .hero-thumb .f-card__price {
-    display: flex !important;
-    flex-wrap: wrap !important;
-    align-items: baseline !important;
+    display: inline-flex !important;
+    flex-wrap: nowrap !important;
+    align-items: center !important;
     gap: 0.35rem !important;
-    margin: auto 0 0.25rem !important;
     padding: 0 !important;
     color: #fff !important;
+    min-width: 0 !important;
+    height: auto !important;
+    line-height: 1 !important;
+    overflow: hidden !important;
 }
 
 .hero-thumb .f-card__price-now {
-    font-size: clamp(0.85rem, 0.75rem + 0.3vw, 1.15rem) !important;
+    font-size: clamp(0.85rem, 0.75rem + 0.3vw, 1.05rem) !important;
     font-weight: 700 !important;
     color: #fff !important;
+    white-space: nowrap !important;
+    line-height: 1 !important;
 }
 
 .hero-thumb .f-card__price-was {
-    font-size: 0.75rem !important;
+    font-size: clamp(0.7rem, 0.62rem + 0.2vw, 0.8rem) !important;
     color: rgba(255, 255, 255, 0.6) !important;
     text-decoration: line-through !important;
+    white-space: nowrap !important;
+    line-height: 1 !important;
 }
 
-/* Bottom Action Row: Add to cart + View button side by side */
 .hero-thumb .f-card__actions {
-    display: flex !important;
+    display: inline-flex !important;
     flex-direction: row !important;
     align-items: center !important;
-    justify-content: flex-start !important;
-    gap: 0.45rem !important;
+    gap: 0.4rem !important;
     padding: 0 !important;
-    margin: 0 !important;
     background: transparent !important;
     border: none !important;
-    width: 100% !important;
+    width: auto !important;
+    height: auto !important;
+    aspect-ratio: auto !important;
     position: static !important;
     flex-shrink: 0 !important;
 }
 
-/* Buttons styling */
+/* Mobile Screens (< 768px): Natural stacked layout — Price on one row, Actions below it */
+@media (max-width: 767px) {
+    .hero-thumb--product .hero-thumb__body {
+        grid-template-columns: 1fr !important;
+        grid-template-rows: auto auto 1fr auto auto !important;
+        padding: 0.5rem 0.65rem !important;
+    }
+
+    .hero-thumb .f-card__title {
+        grid-column: 1 !important;
+        grid-row: 1 !important;
+    }
+
+    .hero-thumb__desc {
+        grid-column: 1 !important;
+        grid-row: 2 !important;
+        -webkit-line-clamp: 1 !important;
+        line-clamp: 1 !important;
+        max-height: 1.3em !important;
+    }
+
+    .hero-thumb .f-card__price {
+        grid-column: 1 !important;
+        grid-row: 4 !important;
+        margin: auto 0 0.2rem !important;
+        justify-self: start !important;
+        align-self: flex-end !important;
+    }
+
+    .hero-thumb .f-card__actions {
+        grid-column: 1 !important;
+        grid-row: 5 !important;
+        margin: 0 !important;
+        justify-self: end !important;
+        justify-content: flex-end !important;
+        align-self: flex-end !important;
+    }
+}
+
+/* Tablet & Desktop (>= 768px): Single line bottom row with Price (start) and Actions (end) */
+@media (min-width: 768px) {
+    .hero-thumb--product .hero-thumb__body {
+        grid-template-columns: 1fr auto !important;
+        grid-template-rows: auto auto 1fr auto !important;
+    }
+
+    .hero-thumb .f-card__price {
+        grid-column: 1 !important;
+        grid-row: 4 !important;
+        margin: 0 !important;
+        justify-self: start !important;
+        align-self: center !important;
+    }
+
+    .hero-thumb .f-card__actions {
+        grid-column: 2 !important;
+        grid-row: 4 !important;
+        margin: 0 !important;
+        justify-self: end !important;
+        justify-content: flex-end !important;
+        align-self: center !important;
+    }
+}
+
+/* falak-add-product-button wrapper should not have button styles */
+.hero-thumb falak-add-product-button {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    display: inline-flex !important;
+    width: auto !important;
+    height: auto !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+}
+
+/* Button styling (Add to Cart & Single View Button) */
 .hero-thumb .f-card__add,
 .hero-thumb .f-add-product__button,
-.hero-thumb falak-add-product-button,
 .hero-thumb falak-add-product-button button,
 .hero-thumb__btn {
     position: static !important;
@@ -9076,10 +9153,18 @@ falak-announcement:not(.f-announce--scroll) .f-announce__inner {
     transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease !important;
 }
 
+.hero-thumb__btn svg,
+.hero-thumb falak-add-product-button button svg,
+.hero-thumb .f-card__add svg {
+    width: 1rem !important;
+    height: 1rem !important;
+    stroke: #ffffff !important;
+    color: #ffffff !important;
+}
+
 @media (min-width: 768px) {
     .hero-thumb .f-card__add,
     .hero-thumb .f-add-product__button,
-    .hero-thumb falak-add-product-button,
     .hero-thumb falak-add-product-button button,
     .hero-thumb__btn {
         inline-size: 2.1rem !important;

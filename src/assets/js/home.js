@@ -59,29 +59,49 @@
         if (!card) return;
 
         function sync() {
+            var p = card.product;
             // 1. Fill description line if available
-            if (target && !target.textContent) {
-                var p = card.product;
-                if (p) {
-                    var desc = (isArabic && p.subtitle_ar) || p.subtitle || (isArabic && p.description_ar) || p.description || '';
-                    if (desc) {
-                        var tmp = document.createElement('div');
-                        tmp.innerHTML = desc;
-                        target.textContent = (tmp.textContent || '').trim();
-                    }
+            if (target && !target.textContent && p) {
+                var desc = (isArabic && p.subtitle_ar) || p.subtitle || (isArabic && p.description_ar) || p.description || '';
+                if (desc) {
+                    var tmp = document.createElement('div');
+                    tmp.innerHTML = desc;
+                    target.textContent = (tmp.textContent || '').trim();
                 }
             }
 
-            // 2. Ensure Add to Cart button has icon and matches styling
             var actions = card.querySelector('.f-card__actions');
+
+            // 2. Clean up any extra injected buttons inside actions
+            if (actions) {
+                var redundant = actions.querySelectorAll('.f-card__quickview, .f-card__quick-actions');
+                redundant.forEach(function (el) { el.remove(); });
+            }
+
+            // 3. Ensure Add to Cart button has icon and matches styling
             var addBtn = card.querySelector('.f-card__add, .f-add-product__button, falak-add-product-button button');
             if (addBtn && !addBtn.querySelector('svg')) {
                 addBtn.insertAdjacentHTML('afterbegin', HERO_CART_ICON);
             }
 
-            // 3. Keep view (eye) button inside .f-card__actions side by side with add button
-            if (actions && viewBtn && viewBtn.parentNode !== actions) {
-                actions.appendChild(viewBtn);
+            // 4. Keep exactly ONE view (eye) button inside .f-card__actions side by side with add button
+            if (actions && viewBtn) {
+                if (viewBtn.parentNode !== actions) {
+                    actions.appendChild(viewBtn);
+                }
+                if (p) {
+                    viewBtn.setAttribute('data-quick-view', p.id);
+                    var pName = (isArabic && p.name_ar) || p.name || '';
+                    if (pName) viewBtn.setAttribute('data-quick-view-name', pName);
+                    var pImg = p.image || (p.images && p.images[0] && (p.images[0].url || p.images[0])) || '';
+                    if (pImg) viewBtn.setAttribute('data-quick-view-image', pImg);
+                }
+                var allViews = actions.querySelectorAll('.hero-thumb__view');
+                if (allViews.length > 1) {
+                    for (var i = 1; i < allViews.length; i++) {
+                        allViews[i].remove();
+                    }
+                }
             }
 
             return Boolean(card.product && actions);

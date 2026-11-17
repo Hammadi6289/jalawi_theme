@@ -160,7 +160,7 @@
                             {% endif %}
                             <div class="hero-thumb__body">
                                 <falak-product-card product-id="{{ product_id }}" fetch show-add-button hide-offer source="hero">
-                                    <a class="hero-thumb__btn hero-thumb__view" href="/product/{{ product_id }}" aria-label="{{ trans('compare.view') }}">
+                                    <a class="hero-thumb__btn hero-thumb__view" href="/product/{{ product_id }}" data-quick-view="{{ product_id }}" aria-label="{{ trans('compare.view') }}">
                                         <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="1.8"/></svg>
                                     </a>
                                 </falak-product-card>

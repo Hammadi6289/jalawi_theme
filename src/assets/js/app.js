@@ -378,7 +378,7 @@
         // are decorated whenever card actions appear.
         function decorateCards() {
             document.querySelectorAll('.f-card__actions').forEach(function (actions) {
-                if (actions.closest('.hero-thumb')) return; // hero glass cards stay Jalawi's two buttons
+                if (actions.closest('.hero-thumb, .hero-slider, [source="hero"], .hero-thumb--product') || actions.querySelector('.hero-thumb__view')) return; // hero glass cards stay two buttons
                 if (actions.closest('[data-wishlist-grid]') || actions.closest('.wishlist-grid')) return; // wishlist cards stay clean
 
                 var card = actions.closest('.f-card__inner') || actions.closest('.f-card');
