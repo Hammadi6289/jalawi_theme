@@ -3865,4 +3865,18 @@
             image: trigger.getAttribute('data-quick-view-image') || '',
         });
     });
+
+    // Live update for header logo size in customizer
+    window.addEventListener('message', function (e) {
+        if (!e.data) return;
+        var scale = null;
+        if (typeof e.data.logo_scale !== 'undefined') {
+            scale = Number(e.data.logo_scale) / 100;
+        } else if (typeof e.data['--falak-logo-scale'] !== 'undefined') {
+            scale = Number(e.data['--falak-logo-scale']);
+        }
+        if (scale && !isNaN(scale)) {
+            document.documentElement.style.setProperty('--falak-logo-scale', String(scale));
+        }
+    });
 })();

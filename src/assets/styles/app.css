@@ -7975,15 +7975,16 @@ falak-announcement:not(.f-announce--scroll) .f-announce__inner {
     align-items: center;
     gap: 0.6rem;
     font-weight: 700;
-    font-size: 1.15rem;
+    font-size: calc(1.15rem * var(--falak-logo-scale, 1));
     color: inherit;
     text-decoration: none;
     flex-shrink: 0;
 }
 
 .site-header__logo img {
-    width: 42px;
-    height: 42px;
+    width: auto;
+    max-height: calc(42px * var(--falak-logo-scale, 1));
+    max-width: calc(12rem * var(--falak-logo-scale, 1));
     object-fit: contain;
     border-radius: var(--radius-sm);
 }
@@ -17095,14 +17096,14 @@ body.compare-is-open {
 
 .site-header__logo {
     display: block;
-    block-size: 2.5rem;
-    font-size: 1.15rem;
+    block-size: calc(2.5rem * var(--falak-logo-scale, 1));
+    font-size: calc(1.15rem * var(--falak-logo-scale, 1));
 }
 
 .site-header__logo img {
     inline-size: auto;
     block-size: 100%;
-    max-inline-size: 12rem;
+    max-inline-size: calc(12rem * var(--falak-logo-scale, 1));
     object-fit: contain;
     border-radius: 0;
 }
@@ -17243,7 +17244,7 @@ body.compare-is-open {
 
 @media (min-width: 640px) {
     .site-header__logo {
-        block-size: 4rem;
+        block-size: calc(4rem * var(--falak-logo-scale, 1));
     }
 }
 
