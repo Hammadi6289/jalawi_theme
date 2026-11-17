@@ -3,7 +3,9 @@
     Expects `product`: id, name, price (formatted), image, url.
     The name link stretches over the card; the buy button sits above it.
 #}
-<div class="product-card">
+{% set is_wishlist = is_wishlist|default(account_page|default('') == 'wishlist') %}
+
+<div class="product-card" data-product-id="{{ product.id }}">
     <div class="product-card__media-wrap">
         <a class="product-card__media" href="{{ product.url }}">
             {% if product.image %}
@@ -13,21 +15,32 @@
             {% endif %}
         </a>
 
+        {% if is_wishlist %}
+            <button type="button" class="product-card__remove-wishlist" data-wishlist-remove="{{ product.id }}" aria-label="{{ trans('cart.remove')|default('Remove') }}" title="{{ trans('cart.remove')|default('Remove') }}">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+        {% endif %}
+
         <div class="product-card__actions">
-            <div class="product-card__quick-actions">
-                <a href="{{ product.url }}" class="btn--card-icon btn--card-quickview" aria-label="{{ trans('product.view')|default('View') }}">
-                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-                </a>
-                <falak-wishlist-button product-id="{{ product.id }}" button-class="btn btn--card-icon"></falak-wishlist-button>
-                {% if theme.settings.get('compare_enabled', true) %}
-                    <button class="btn btn--card-icon btn--card-compare" type="button" data-compare-toggle="{{ product.id }}" aria-pressed="false" aria-label="{{ trans('compare.add') }}">
-                        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4v10m0 0-3-3m3 3 3-3M17 20V10m0 0-3 3m3-3 3 3M4 20h6M14 4h6"/></svg>
+            {% if not is_wishlist %}
+                <div class="product-card__quick-actions">
+                    <a href="{{ product.url }}" class="btn--card-icon btn--card-quickview" aria-label="{{ trans('product.view')|default('View') }}">
+                        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                    </a>
+                    <falak-wishlist-button product-id="{{ product.id }}" button-class="btn btn--card-icon"></falak-wishlist-button>
+                    {% if theme.settings.get('compare_enabled', true) %}
+                        <button class="btn btn--card-icon btn--card-compare" type="button" data-compare-toggle="{{ product.id }}" aria-pressed="false" aria-label="{{ trans('compare.add') }}">
+                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4v10m0 0-3-3m3 3 3-3M17 20V10m0 0-3 3m3-3 3 3M4 20h6M14 4h6"/></svg>
+                        </button>
+                    {% endif %}
+                    <button class="btn--card-icon btn--card-share" type="button" data-share-url="{{ product.url }}" aria-label="{{ trans('common.share')|default('Share') }}">
+                        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
                     </button>
-                {% endif %}
-                <button class="btn--card-icon btn--card-share" type="button" data-share-url="{{ product.url }}" aria-label="{{ trans('common.share')|default('Share') }}">
-                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-                </button>
-            </div>
+                </div>
+            {% endif %}
 
             <falak-add-product-button product-id="{{ product.id }}"
                                       product-status="{{ (product.in_stock is defined and not product.in_stock) ? 'out' : 'sale' }}"

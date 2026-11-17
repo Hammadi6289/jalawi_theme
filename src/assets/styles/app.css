@@ -11939,6 +11939,61 @@ falak-product-card:hover .f-card__media img,
     pointer-events: auto;
 }
 
+/* Wishlist page: hide floating quick actions */
+.wishlist-grid .product-card__quick-actions,
+.wishlist-grid .f-card__quick-actions,
+.account [data-wishlist-grid] .product-card__quick-actions,
+.account [data-wishlist-grid] .f-card__quick-actions {
+    display: none !important;
+}
+
+/* Dedicated Wishlist Card Remove Button */
+.product-card__remove-wishlist {
+    position: absolute;
+    inset-block-start: 0.75rem;
+    inset-inline-end: 0.75rem;
+    inline-size: 2.15rem;
+    block-size: 2.15rem;
+    border-radius: 50%;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    background: #ffffff;
+    color: var(--color-primary);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 15;
+    pointer-events: auto;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    transition: all 0.2s ease;
+    padding: 0;
+}
+
+.product-card__remove-wishlist svg {
+    width: 1rem;
+    height: 1rem;
+    stroke: var(--color-primary);
+    transition: stroke 0.2s ease;
+}
+
+.product-card__remove-wishlist:hover {
+    background: var(--color-primary);
+    color: var(--color-on-primary, #ffffff);
+    border-color: var(--color-primary);
+    transform: scale(1.08);
+}
+
+.product-card__remove-wishlist:hover svg {
+    stroke: var(--color-on-primary, #ffffff);
+}
+
+[data-theme="dark"] .product-card__remove-wishlist,
+.theme-dark .product-card__remove-wishlist {
+    background: #1f2937;
+    color: var(--color-primary);
+    border-color: rgba(255, 255, 255, 0.12);
+}
+
 /* Action Icon Buttons */
 .f-card__quick-actions a,
 .f-card__quick-actions button,

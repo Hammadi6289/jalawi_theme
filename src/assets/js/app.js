@@ -239,7 +239,7 @@
 
     // Jalawi behaviour: the strips above the main bar (maintenance, top bar)
     // scroll away and only the main bar stays pinned — done with a negative
-    // sticky `top` equal to their height. Past 200px the bar turns to frosted
+    // sticky `top` equal to their height. On small scroll the bar turns to frosted
     // glass (`is-scrolled`).
     var stickyHeader = document.querySelector('.site-header--sticky');
     if (stickyHeader) {
@@ -253,7 +253,7 @@
 
         function checkHeader() {
             headerTicking = false;
-            stickyHeader.classList.toggle('is-scrolled', window.scrollY > 200);
+            stickyHeader.classList.toggle('is-scrolled', window.scrollY > 20);
         }
 
         setStickOffset();
@@ -379,6 +379,7 @@
         function decorateCards() {
             document.querySelectorAll('.f-card__actions').forEach(function (actions) {
                 if (actions.closest('.hero-thumb')) return; // hero glass cards stay Jalawi's two buttons
+                if (actions.closest('[data-wishlist-grid]') || actions.closest('.wishlist-grid')) return; // wishlist cards stay clean
 
                 var card = actions.closest('.f-card__inner') || actions.closest('.f-card');
                 if (!card) return;
@@ -490,6 +491,56 @@
                 });
             } else {
                 showToast(isArabic ? 'تم نسخ رابط المنتج' : 'Product link copied', 'info');
+            }
+        });
+
+        // Wishlist card removal handler
+        document.addEventListener('click', function (event) {
+            var btn = event.target.closest('[data-wishlist-remove]');
+            if (!btn) return;
+            event.preventDefault();
+            event.stopPropagation();
+
+            var card = btn.closest('.product-card') || btn.closest('[data-product-id]') || btn.closest('.f-card');
+            var productId = btn.getAttribute('data-wishlist-remove') || (card && card.getAttribute('data-product-id'));
+            if (!productId || btn.disabled) return;
+
+            btn.disabled = true;
+            btn.style.opacity = '0.5';
+
+            function removeCardFromDom() {
+                if (!card) return;
+                card.style.transition = 'opacity 0.25s ease, transform 0.25s ease';
+                card.style.opacity = '0';
+                card.style.transform = 'scale(0.92)';
+                setTimeout(function () {
+                    var grid = card.closest('[data-wishlist-grid]') || card.parentElement;
+                    card.remove();
+                    if (grid) {
+                        var remaining = grid.querySelectorAll('.product-card, .f-card, [data-product-id]');
+                        var countEl = document.querySelector('.page-head__meta');
+                        if (countEl) {
+                            countEl.textContent = remaining.length + ' item(s)';
+                        }
+                        if (remaining.length === 0) {
+                            var emptyState = document.querySelector('[data-wishlist-empty]');
+                            if (emptyState) emptyState.style.display = 'block';
+                            grid.style.display = 'none';
+                            if (countEl) countEl.style.display = 'none';
+                        }
+                    }
+                }, 250);
+            }
+
+            if (window.falak && window.falak.wishlist && typeof window.falak.wishlist.remove === 'function') {
+                window.falak.wishlist.remove(productId)
+                    .then(removeCardFromDom)
+                    .catch(function (err) {
+                        console.warn('Wishlist remove error:', err);
+                        removeCardFromDom();
+                    });
+            } else {
+                removeCardFromDom();
             }
         });
 
@@ -2062,7 +2113,7 @@
                         return true;
                     }
                 }
-            } catch (e) {}
+            } catch (e) { }
 
             return false;
         }
@@ -2143,21 +2194,21 @@
             overlayEl.innerHTML =
                 '<div class="vc-overlay__backdrop" data-vc-close></div>' +
                 '<div class="vc-overlay__top-bar">' +
-                    '<button type="button" class="vc-overlay__chip vc-overlay__chip--sound" data-vc-sound aria-label="Toggle sound">' +
-                        (isMuted ? SOUND_OFF : SOUND_ON) +
-                    '</button>' +
-                    '<button type="button" class="vc-overlay__chip vc-overlay__chip--close" data-vc-close aria-label="Close">' +
-                        CLOSE_ICON +
-                    '</button>' +
+                '<button type="button" class="vc-overlay__chip vc-overlay__chip--sound" data-vc-sound aria-label="Toggle sound">' +
+                (isMuted ? SOUND_OFF : SOUND_ON) +
+                '</button>' +
+                '<button type="button" class="vc-overlay__chip vc-overlay__chip--close" data-vc-close aria-label="Close">' +
+                CLOSE_ICON +
+                '</button>' +
                 '</div>' +
                 '<div class="vc-overlay__stage">' +
-                    '<button type="button" class="vc-overlay__arrow vc-overlay__arrow--prev" data-vc-prev aria-label="Previous">' +
-                        (isRtl ? CHEVRON_RIGHT : CHEVRON_LEFT) +
-                    '</button>' +
-                    '<div class="vc-overlay__reel" data-vc-reel></div>' +
-                    '<button type="button" class="vc-overlay__arrow vc-overlay__arrow--next" data-vc-next aria-label="Next">' +
-                        (isRtl ? CHEVRON_LEFT : CHEVRON_RIGHT) +
-                    '</button>' +
+                '<button type="button" class="vc-overlay__arrow vc-overlay__arrow--prev" data-vc-prev aria-label="Previous">' +
+                (isRtl ? CHEVRON_RIGHT : CHEVRON_LEFT) +
+                '</button>' +
+                '<div class="vc-overlay__reel" data-vc-reel></div>' +
+                '<button type="button" class="vc-overlay__arrow vc-overlay__arrow--next" data-vc-next aria-label="Next">' +
+                (isRtl ? CHEVRON_LEFT : CHEVRON_RIGHT) +
+                '</button>' +
                 '</div>';
 
             document.body.appendChild(overlayEl);
@@ -2218,15 +2269,15 @@
             var isAr = document.documentElement.dir === 'rtl' || (window.falak && window.falak.lang && window.falak.lang.locale === 'ar');
 
             overlayProducts.forEach(function (product, i) {
-                var clip      = product.video_url || product.clip_url || product.video || '';
-                var poster    = product.video_thumbnail_url || (product.images && product.images[0] && product.images[0].url) || product.image_url || product.image || '';
-                var name      = (isAr && product.name_ar) ? product.name_ar : (product.name || product.title || '');
-                var href      = '/product/' + encodeURIComponent(product.id);
+                var clip = product.video_url || product.clip_url || product.video || '';
+                var poster = product.video_thumbnail_url || (product.images && product.images[0] && product.images[0].url) || product.image_url || product.image || '';
+                var name = (isAr && product.name_ar) ? product.name_ar : (product.name || product.title || '');
+                var href = '/product/' + encodeURIComponent(product.id);
                 var priceHtml = '';
 
                 var priceCents = product.price !== undefined ? product.price : (product.price_cents !== undefined ? product.price_cents : null);
-                var saleCents  = product.discount_price !== undefined ? product.discount_price : (product.discount_price_cents !== undefined ? product.discount_price_cents : null);
-                var curr       = product.currency || '';
+                var saleCents = product.discount_price !== undefined ? product.discount_price : (product.discount_price_cents !== undefined ? product.discount_price_cents : null);
+                var curr = product.currency || '';
 
                 if (priceCents !== null && priceCents !== '') {
                     var pNum = Number(priceCents);
@@ -2250,12 +2301,12 @@
                     '<div class="vc-overlay__media">' + videoTag + '</div>' +
                     '<div class="vc-overlay__scrim"></div>' +
                     '<div class="vc-overlay__info">' +
-                        '<a class="vc-overlay__name" href="' + escHtml(href) + '">' + escHtml(name) + '</a>' +
-                        priceHtml +
-                        '<div class="vc-overlay__actions">' +
-                            '<falak-add-product-button product-id="' + escHtml(product.id) + '" button-class="btn btn--primary vc-overlay__add-btn"></falak-add-product-button>' +
-                            '<falak-wishlist-button product-id="' + escHtml(product.id) + '" button-class="btn btn--card-icon vc-overlay__wishlist-btn"></falak-wishlist-button>' +
-                        '</div>' +
+                    '<a class="vc-overlay__name" href="' + escHtml(href) + '">' + escHtml(name) + '</a>' +
+                    priceHtml +
+                    '<div class="vc-overlay__actions">' +
+                    '<falak-add-product-button product-id="' + escHtml(product.id) + '" button-class="btn btn--primary vc-overlay__add-btn"></falak-add-product-button>' +
+                    '<falak-wishlist-button product-id="' + escHtml(product.id) + '" button-class="btn btn--card-icon vc-overlay__wishlist-btn"></falak-wishlist-button>' +
+                    '</div>' +
                     '</div>';
 
                 reel.appendChild(slide);
@@ -2317,7 +2368,7 @@
                     if (vid) {
                         vid.muted = isMuted;
                         var p = vid.play();
-                        if (p && p.catch) p.catch(function () {});
+                        if (p && p.catch) p.catch(function () { });
                     }
                     ensureWishlistHearts(slide);
                 } else {
@@ -2395,7 +2446,7 @@
 
             // Pause all preview videos on the page
             document.querySelectorAll('.vc-card video').forEach(function (v) {
-                try { v.pause(); } catch (e) {}
+                try { v.pause(); } catch (e) { }
             });
 
             renderOverlaySlides();
@@ -2439,7 +2490,7 @@
                 try {
                     v.pause();
                     v.currentTime = 0;
-                } catch (e) {}
+                } catch (e) { }
             });
 
             // Remove active classes
@@ -2454,18 +2505,18 @@
 
         /* --------------------------- Grid Card Builder --------------------------- */
         function buildCard(product, section, index, allProductsList) {
-            var badge     = section.getAttribute('data-badge') || '';
-            var actions   = section.getAttribute('data-actions') === '1';
-            var clip      = product.video_url || product.clip_url || product.video || '';
-            var poster    = product.video_thumbnail_url || (product.images && product.images[0] && product.images[0].url) || product.image_url || product.image || '';
-            var isAr      = document.documentElement.dir === 'rtl' || (window.falak && window.falak.lang && window.falak.lang.locale === 'ar');
-            var name      = (isAr && product.name_ar) ? product.name_ar : (product.name || product.title || '');
-            var href      = '/product/' + encodeURIComponent(product.id);
+            var badge = section.getAttribute('data-badge') || '';
+            var actions = section.getAttribute('data-actions') === '1';
+            var clip = product.video_url || product.clip_url || product.video || '';
+            var poster = product.video_thumbnail_url || (product.images && product.images[0] && product.images[0].url) || product.image_url || product.image || '';
+            var isAr = document.documentElement.dir === 'rtl' || (window.falak && window.falak.lang && window.falak.lang.locale === 'ar');
+            var name = (isAr && product.name_ar) ? product.name_ar : (product.name || product.title || '');
+            var href = '/product/' + encodeURIComponent(product.id);
             var priceHtml = '';
 
             var priceCents = product.price !== undefined ? product.price : (product.price_cents !== undefined ? product.price_cents : null);
-            var saleCents  = product.discount_price !== undefined ? product.discount_price : (product.discount_price_cents !== undefined ? product.discount_price_cents : null);
-            var curr       = product.currency || '';
+            var saleCents = product.discount_price !== undefined ? product.discount_price : (product.discount_price_cents !== undefined ? product.discount_price_cents : null);
+            var curr = product.currency || '';
 
             if (priceCents !== null && priceCents !== '') {
                 var pNum = Number(priceCents);
@@ -2502,9 +2553,9 @@
                 '<div class="vc-card__scrim" aria-hidden="true"></div>' +
                 badgeHtml +
                 '<div class="vc-card__info">' +
-                    '<a class="vc-card__name" href="' + escHtml(href) + '">' + escHtml(name) + '</a>' +
-                    priceHtml +
-                    actionsHtml +
+                '<a class="vc-card__name" href="' + escHtml(href) + '">' + escHtml(name) + '</a>' +
+                priceHtml +
+                actionsHtml +
                 '</div>';
 
             // Clicking title or actions lets those actions execute.
@@ -2543,7 +2594,7 @@
 
             function play() {
                 var p = video.play();
-                if (p && p.catch) p.catch(function () {});
+                if (p && p.catch) p.catch(function () { });
                 li.classList.add('is-playing');
             }
             function pause() {
@@ -2599,9 +2650,9 @@
 
             fetchProducts().then(function (products) {
                 sections.forEach(function (section) {
-                    var limit    = parseInt(section.getAttribute('data-limit'), 10) || 4;
+                    var limit = parseInt(section.getAttribute('data-limit'), 10) || 4;
                     var playback = section.getAttribute('data-playback') || 'inview';
-                    var grid     = section.querySelector('[data-vc-grid]');
+                    var grid = section.querySelector('[data-vc-grid]');
                     if (!grid) return;
 
                     var slice = products.slice(0, limit);
@@ -2675,7 +2726,7 @@
                     }, 150);
                 }
             }).observe(document.body, { childList: true, subtree: true });
-        } catch (e) {}
+        } catch (e) { }
     }
 
     videoCommerce();
@@ -2843,26 +2894,26 @@
                 return '<figure class="testimonial-card">'
                     + (text ? '<blockquote class="testimonial-card__quote" data-falak-part="quote">' + this.escape(text) + '</blockquote>' : '')
                     + '<div class="testimonial-card__footer">'
-                        + '<div class="testimonial-card__author" data-falak-part="author">'
-                            + '<div class="testimonial-card__avatar testimonial-card__avatar--placeholder" data-falak-part="picture" aria-hidden="true">'
-                                + '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>'
-                            + '</div>'
-                            + '<div class="testimonial-card__meta">'
-                                + '<figcaption class="testimonial-card__name" data-falak-part="author_name">' + this.escape(name) + '</figcaption>'
-                            + '</div>'
-                        + '</div>'
-                        + starsHtml
+                    + '<div class="testimonial-card__author" data-falak-part="author">'
+                    + '<div class="testimonial-card__avatar testimonial-card__avatar--placeholder" data-falak-part="picture" aria-hidden="true">'
+                    + '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>'
                     + '</div>'
-                + '</figure>';
+                    + '<div class="testimonial-card__meta">'
+                    + '<figcaption class="testimonial-card__name" data-falak-part="author_name">' + this.escape(name) + '</figcaption>'
+                    + '</div>'
+                    + '</div>'
+                    + starsHtml
+                    + '</div>'
+                    + '</figure>';
             }).join('');
 
             this.innerHTML = '<div class="testimonials-slider-wrap">'
                 + '<falak-slider class="testimonials-slider" slides-per-view="3" gap="1.5rem" show-controls loop>'
-                    + '<div slot="items" class="testimonials-grid">'
-                        + cardsHtml
-                    + '</div>'
+                + '<div slot="items" class="testimonials-grid">'
+                + cardsHtml
+                + '</div>'
                 + '</falak-slider>'
-            + '</div>';
+                + '</div>';
         }
     }
 
