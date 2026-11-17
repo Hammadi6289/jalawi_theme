@@ -27,7 +27,12 @@
         <div class="product-card__actions">
             {% if not is_wishlist %}
                 <div class="product-card__quick-actions">
-                    <a href="{{ product.url }}" class="btn--card-icon btn--card-quickview" aria-label="{{ trans('product.view')|default('View') }}">
+                    <a href="{{ product.url }}"
+                       class="btn--card-icon btn--card-quickview"
+                       data-quick-view="{{ product.id }}"
+                       data-quick-view-name="{{ product.name }}"
+                       data-quick-view-image="{{ product.image }}"
+                       aria-label="{{ trans('product.quick_view')|default('Quick view') }}">
                         <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
                     </a>
                     <falak-wishlist-button product-id="{{ product.id }}" button-class="btn btn--card-icon"></falak-wishlist-button>

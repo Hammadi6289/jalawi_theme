@@ -20996,5 +20996,777 @@ custom-falak-blog-comments {
 }
 
 .blog-comments {
+    margin-block-start: 2.5rem;
+    padding-block-start: 2rem;
+    border-block-start: 1px solid var(--color-border);
+    text-align: start;
+}
+.blog-comments__title {
+    margin: 0 0 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1.125rem;
+    font-weight: 700;
+}
+.blog-comments__count {
+    min-inline-size: 1.5rem;
+    padding: 0.1rem 0.5rem;
+    border-radius: 999px;
+    background: var(--color-surface);
+    color: var(--color-text-soft);
+    font-size: 0.8125rem;
+    font-weight: 400;
+    text-align: center;
+}
+.blog-comments__list {
+    list-style: none;
+    margin: 0 0 1.75rem;
+    padding: 0;
+    display: grid;
+    gap: 1rem;
+}
+.blog-comment {
+    display: grid;
+    grid-template-columns: 2.5rem minmax(0, 1fr);
+    gap: 0.85rem;
+    align-items: start;
+}
+.blog-comment__avatar {
+    inline-size: 2.5rem;
+    block-size: 2.5rem;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: color-mix(in srgb, var(--color-primary) 14%, var(--color-bg, #fff));
+    color: var(--color-primary);
+    font-weight: 700;
+}
+.blog-comment__body {
+    padding: 0.85rem 1rem;
+    border-radius: var(--radius, 0.75rem);
+    background: var(--color-surface);
+}
+.blog-comment__meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.75rem;
+    margin: 0 0 0.35rem;
+}
+.blog-comment__author { font-weight: 700; font-size: 0.9375rem; color: var(--color-text); }
+.blog-comment__date { font-size: 0.75rem; color: var(--color-text-soft); }
+.blog-comment__text {
+    margin: 0;
+    font-size: 0.9375rem;
+    line-height: 1.75;
+    color: var(--color-text-soft);
+    overflow-wrap: anywhere;
+    white-space: pre-line;
+}
+.blog-comments__empty {
+    margin: 0 0 1.75rem;
+    color: var(--color-text-soft);
+    font-size: 0.9375rem;
+}
+.blog-comments__form { display: grid; gap: 0.75rem; }
+.blog-comments__input {
+    inline-size: 100%;
+    padding: 0.9rem 1rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm, 0.5rem);
+    background: var(--color-bg, #fff);
+    color: var(--color-text);
+    font: inherit;
+    font-size: 0.9375rem;
+    line-height: 1.7;
+    resize: vertical;
+    box-sizing: border-box;
+}
+.blog-comments__input:focus {
+    outline: none;
+    border-color: var(--color-primary);
+}
+.blog-comments__submit { justify-self: end; min-inline-size: 8rem; }
+.blog-comments__status {
+    margin: 0;
+    font-size: 0.875rem;
+    color: var(--color-danger, #dc2626);
+}
+.blog-comments__status[hidden] { display: none; }
+.blog-comments__signin {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1.15rem 1.25rem;
+    border-radius: var(--radius, 0.75rem);
+    background: var(--color-surface);
+}
+.blog-comments__signin p { margin: 0; color: var(--color-text-soft); font-size: 0.9375rem; }
 
-... [truncated for diff preview]
+/* quick-view dialog (onyx)
+
+   The card's eye icon opens the product here instead of leaving the listing:
+   the gallery down one side, a short buy box down the other. Built by
+   <custom-falak-quick-view> in app.js.
+
+   Everything is written in LOGICAL properties, and the two columns are placed
+   in DOM order â€” so the picture sits on the left in English and on the right in
+   Arabic without a second rule, which is exactly how the reference behaves.
+
+   Sized against the DIALOG, not the viewport: this is a preview, and a box that
+   fills the screen has stopped being one. 64rem wide with a stage that is never
+   taller than 60% of the viewport keeps the add-to-cart on screen on a laptop,
+   which is the whole point of not sending the shopper to the page.
+    */
+
+.f-quick-view .f-modal__body {
+    inline-size: min(76rem, 95vw);
+    max-inline-size: 76rem !important;
+    padding: 0;
+    overflow: hidden;
+}
+
+/*
+   The header is only ever the close button here â€” no title. Lifting it out of
+   the flow and into the corner is what lets the picture run to the dialog's top
+   edge; left in place it pushed both columns down by a row of empty space.
+*/
+.f-quick-view .f-modal__header {
+    position: absolute;
+    inset-block-start: 0.75rem;
+    inset-inline-end: 0.75rem;
+    z-index: 4;
+}
+
+.f-quick-view .f-modal__close {
+    inline-size: 2.4rem;
+    block-size: 2.4rem;
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    color: var(--color-text-soft);
+    font-size: 1.5rem;
+    transition: color 0.2s ease, border-color 0.2s ease;
+}
+
+.f-quick-view .f-modal__close:hover {
+    background: var(--color-bg);
+    color: var(--color-primary);
+    border-color: var(--color-primary);
+}
+
+/* The dialog and its skeleton stacked in one cell; the skeleton on top until
+   the dialog is ready, then faded off and removed. */
+.qv-shell { display: grid; }
+
+.qv-shell > .qv { grid-area: 1 / 1; }
+
+.qv {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+    align-items: stretch;
+    min-block-size: 26rem;
+}
+
+.qv--loading {
+    position: relative;
+    z-index: 3;
+    background: var(--color-bg);
+    transition: opacity 0.25s ease;
+}
+
+.qv--loading.is-done { opacity: 0; pointer-events: none; }
+
+/* media */
+
+/*
+   The gallery is a padded column: a tinted, rounded frame holding the photo,
+   and a strip of thumbs under it. The frame is SQUARE â€” the one shape that
+   treats portrait, square and landscape photographs all decently with
+   `contain` â€” but capped, so on a short laptop screen it gives up height
+   before it pushes the thumbs out of the dialog.
+*/
+.qv__media {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding: 1rem;
+    min-inline-size: 0;
+    background: var(--color-bg);
+}
+
+/* Fills the whole column, however tall the buy box beside it makes the
+   dialog â€” a fixed square left empty bands around the picture. */
+.qv__frame {
+    position: relative;
+    flex: 1 1 auto;
+    inline-size: 100%;
+    min-block-size: 24rem;
+    border-radius: var(--radius);
+    background: var(--color-surface);
+    overflow: hidden;
+}
+
+.qv__stage {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+}
+
+.qv__slide {
+    position: absolute;
+    inset: 0;
+    margin: 0;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.qv__slide.is-active { opacity: 1; }
+
+/*
+   Pinned to the slide rather than laid out inside it â€” a centring grid sizes
+   its row to the media's intrinsic height and a portrait clip overflowed the
+   stage. `cover`, so the picture always fills the frame edge to edge whatever
+   its own shape â€” letterboxing left blank bands beside it.
+*/
+.qv__slide img,
+.qv__slide video {
+    position: absolute;
+    inset: 0;
+    inline-size: 100%;
+    block-size: 100%;
+    object-fit: cover;
+}
+
+.qv__slide--empty { background: var(--color-surface); opacity: 1; }
+
+.qv__nav {
+    position: absolute;
+    inset-block-start: 50%;
+    translate: 0 -50%;
+    z-index: 2;
+    inline-size: 2.4rem;
+    block-size: 2.4rem;
+    display: grid;
+    place-items: center;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: var(--color-bg);
+    color: var(--color-text);
+    box-shadow: var(--shadow-icon-disc);
+    cursor: pointer;
+    transition: color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.qv__nav:hover { color: var(--color-primary); box-shadow: var(--shadow-icon-disc-hover); }
+
+.qv__nav--prev { inset-inline-start: 0.75rem; }
+.qv__nav--next { inset-inline-end: 0.75rem; }
+
+/* The chevrons are drawn for LTR; in Arabic "previous" sits on the right and
+   must point right. */
+[dir="rtl"] .qv__nav svg { scale: -1 1; }
+
+.qv__badge {
+    position: absolute;
+    inset-block-start: 0.75rem;
+    inset-inline-start: 0.75rem;
+    z-index: 2;
+    padding: 0.2rem 0.55rem;
+    border-radius: 999px;
+    background: var(--color-sale, var(--color-danger));
+    color: #fff;
+    font-size: 0.75rem;
+    font-weight: 700;
+    line-height: 1.4;
+    font-variant-numeric: tabular-nums;
+}
+
+.qv__counter {
+    position: absolute;
+    inset-block-end: 0.75rem;
+    inset-inline-end: 0.75rem;
+    z-index: 2;
+    padding: 0.15rem 0.55rem;
+    border-radius: 999px;
+    background: rgba(16, 22, 49, 0.6);
+    color: #fff;
+    font-size: 0.75rem;
+    font-weight: 600;
+    line-height: 1.5;
+    font-variant-numeric: tabular-nums;
+}
+
+.qv__thumbs {
+    display: flex;
+    gap: 0.5rem;
+    overflow-x: auto;
+    scrollbar-width: none;
+    /* Room for the active tile's ring, which the scroller would clip. */
+    padding: 2px;
+}
+
+.qv__thumbs::-webkit-scrollbar { display: none; }
+
+.qv__thumb {
+    flex: 0 0 auto;
+    inline-size: 3.75rem;
+    block-size: 3.75rem;
+    padding: 0;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    background: var(--color-surface);
+    overflow: hidden;
+    cursor: pointer;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.qv__thumb img { inline-size: 100%; block-size: 100%; object-fit: cover; display: block; }
+
+.qv__thumb:hover { border-color: var(--color-primary); }
+
+.qv__thumb.is-active {
+    border-color: var(--color-primary-dark);
+    box-shadow: 0 0 0 1px var(--color-primary-dark);
+}
+
+/* ------------------------------------------------------------------- info */
+
+/*
+   A scrolling body over a pinned footer: however many option groups the
+   product has, the stepper and the add button never leave the dialog.
+*/
+.qv__info {
+    display: flex;
+    flex-direction: column;
+    min-block-size: 0;
+    max-block-size: min(85vh, 46rem);
+    border-inline-start: 1px solid var(--color-border);
+    background: var(--color-bg);
+}
+
+.qv__desc {
+    font-size: 0.875rem;
+    line-height: 1.65;
+    color: var(--color-text-soft);
+    margin-block: 0.25rem 0.5rem;
+    max-block-size: 8.5rem;
+    overflow-y: auto;
+    padding-inline-end: 0.35rem;
+    scrollbar-width: thin;
+}
+
+.qv__desc p {
+    margin: 0 0 0.5rem;
+}
+
+.qv__desc p:last-child {
+    margin-bottom: 0;
+}
+
+.f-quick-view .product-specs {
+    display: none !important;
+}
+
+.qv__body {
+    flex: 1 1 auto;
+    min-block-size: 0;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding: 1.25rem 1.5rem 1.5rem;
+}
+
+.qv__body > * { margin-block: 0; }
+
+/*
+   Category on the start edge; wishlist, share, a hairline and then the
+   dialog's own close button on the end edge. The close button is the modal's
+   and is positioned absolutely onto this row (see .f-modal__header below), so
+   the row keeps room for it.
+*/
+.qv__tools {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding-inline-end: 3rem;
+    min-block-size: 2.25rem;
+}
+
+.qv__tools::after {
+    content: "";
+    inline-size: 1px;
+    block-size: 1.25rem;
+    margin-inline-start: 0.35rem;
+    background: var(--color-border);
+}
+
+.qv__eyebrow {
+    margin-inline-end: auto;
+    min-inline-size: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 0.8rem;
+    color: var(--color-text-faint);
+    text-decoration: none;
+}
+
+a.qv__eyebrow:hover { color: var(--color-primary); }
+
+.qv__tool { position: relative; display: block; }
+
+/* One shape for both, whether the button is the theme's own (share) or the
+   wishlist component's, which takes the class through `button-class`. */
+.qv__tool-btn {
+    inline-size: 2.25rem;
+    block-size: 2.25rem;
+    display: grid;
+    place-items: center;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    color: var(--color-text);
+    cursor: pointer;
+    transition: color 0.2s ease, background 0.2s ease;
+}
+
+.qv__tool-btn:hover { color: var(--color-primary); background: var(--color-surface); }
+
+.qv__tool-btn[aria-pressed="true"],
+.qv__tool .f-wishlist-btn.is-added { color: var(--color-danger); }
+
+/* The share row, parked as a popover under its trigger. The component still
+   renders its own list; this only decides when it is on screen. */
+.qv__share-sheet {
+    position: absolute;
+    inset-block-start: calc(100% + 0.5rem);
+    inset-inline-end: 0;
+    z-index: 3;
+    /* Without max-content the absolutely positioned sheet shrink-fits inside
+       its 2.25rem trigger and the networks wrap into a vertical strip. */
+    inline-size: max-content;
+    padding: 0.45rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    background: var(--color-bg);
+    box-shadow: var(--shadow);
+    opacity: 0;
+    visibility: hidden;
+    translate: 0 -6px;
+    transition: opacity 0.2s ease, translate 0.2s ease, visibility 0.2s;
+}
+
+.qv__share.is-open .qv__share-sheet { opacity: 1; visibility: visible; translate: none; }
+
+.qv__share-sheet .f-social__list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    gap: 0.3rem;
+}
+
+.qv__share-sheet .f-social__link {
+    inline-size: 2.1rem;
+    block-size: 2.1rem;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    color: var(--color-text-soft);
+    transition: background 0.2s ease, color 0.2s ease;
+}
+
+.qv__share-sheet .f-social__link:hover {
+    background: var(--color-primary-tint);
+    color: var(--color-primary-dark);
+}
+
+.qv__title {
+    font-size: 1.6rem;
+    line-height: 1.3;
+    font-weight: 700;
+    color: var(--color-text);
+    text-wrap: balance;
+}
+
+.qv__title a { color: inherit; text-decoration: none; }
+.qv__title a:hover { color: var(--color-primary); }
+
+.qv__price {
+    display: flex;
+    align-items: baseline;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+}
+
+.qv__amount {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--color-primary-dark);
+    font-variant-numeric: tabular-nums;
+}
+
+.qv__was {
+    font-size: 0.95rem;
+    color: var(--color-text-faint);
+    font-variant-numeric: tabular-nums;
+}
+
+.qv__was[hidden] { display: none; }
+
+.qv__rating {
+    display: inline-flex;
+    align-items: center;
+    inline-size: fit-content;
+    text-decoration: none;
+}
+
+/*
+   Stock Â· SKU Â· VAT on one quiet line. It carries the divider because it is
+   the one row that is always there, whichever of the rest a product has.
+*/
+.qv__status {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.25rem 0;
+    padding-block-end: 1rem;
+    border-block-end: 1px solid var(--color-border);
+    font-size: 0.8rem;
+    color: var(--color-text-faint);
+}
+
+.qv__status > * + *::before {
+    content: "Â·";
+    margin-inline: 0.5rem;
+    color: var(--color-text-faint);
+}
+
+.qv__status > [hidden] { display: none; }
+
+.qv__stock {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-weight: 600;
+    color: var(--color-success);
+}
+
+/* Always the line's first item, so its ::before is free for the dot. */
+.qv__stock::before {
+    content: "";
+    inline-size: 0.45rem;
+    block-size: 0.45rem;
+    border-radius: 50%;
+    background: currentColor;
+}
+
+.qv__stock--out { color: var(--color-danger); }
+
+.qv__options { display: block; }
+
+/* ----------------------------------------------------------------- footer */
+
+.qv__footer {
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding: 1rem 1.5rem 1.15rem;
+    border-block-start: 1px solid var(--color-border);
+    background: var(--color-bg);
+}
+
+/* The stepper is only ever as wide as its three cells; the button takes the
+   rest. */
+.qv__actions {
+    display: flex;
+    align-items: stretch;
+    gap: 0.75rem;
+}
+
+.qv__add { flex: 1 1 auto; min-inline-size: 0; }
+
+/* Skinned through its inner button only, so the component keeps every one of
+   its own states (busy, sold out, "choose options"). */
+.qv__add-btn {
+    inline-size: 100%;
+    min-block-size: 3rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.45rem;
+    border-radius: var(--radius-sm);
+    font-family: inherit;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.qv__qty { flex: 0 0 auto; display: flex; align-items: stretch; }
+.qv__qty .f-qty { block-size: 100%; border-radius: var(--radius-sm); background: var(--color-bg); }
+.qv__qty .f-qty__step { inline-size: 2.6rem; block-size: 100%; color: var(--color-text); }
+/* One outlined box, no dividers between the cells â€” the reference's stepper. */
+.qv__qty .f-qty__input { inline-size: 2.25rem; block-size: 100%; border-inline: 0; font-weight: 600; }
+
+.qv__notify { display: block; }
+
+.qv__foot-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    font-size: 0.8rem;
+}
+
+.qv__summary {
+    min-inline-size: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: var(--color-text-faint);
+}
+
+.qv__details {
+    flex: 0 0 auto;
+    margin-inline-start: auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-weight: 600;
+    color: var(--color-text);
+    text-decoration: none;
+}
+
+.qv__details:hover { color: var(--color-primary); }
+
+[dir="rtl"] .qv__arrow { scale: -1 1; }
+
+/* ---------------------------------------------------- loading and failure */
+
+/* Centred over the frame; the disc keeps it readable on any photograph. */
+.qv__spinner {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    inline-size: 2.5rem;
+    block-size: 2.5rem;
+    margin: auto;
+    border: 3px solid var(--color-border);
+    border-block-start-color: var(--color-primary);
+    border-radius: 50%;
+    background: color-mix(in srgb, var(--color-bg) 80%, transparent);
+    animation: f-spin 0.7s linear infinite;
+}
+
+/* The skeleton's placeholder bars, in the same shimmer as the card skeletons. */
+.qv__bone {
+    display: block;
+    block-size: 0.9rem;
+    border-radius: var(--radius-sm);
+    background: linear-gradient(90deg,
+        color-mix(in srgb, var(--color-text) 7%, transparent) 25%,
+        color-mix(in srgb, var(--color-text) 13%, transparent) 37%,
+        color-mix(in srgb, var(--color-text) 7%, transparent) 63%);
+    background-size: 400% 100%;
+    animation: f-shimmer 1.4s ease infinite;
+}
+
+.qv__bone--fill { position: absolute; inset: 0; block-size: auto; border-radius: 0; }
+.qv__bone--thumb { flex: 0 0 auto; inline-size: 3.75rem; block-size: 3.75rem; }
+.qv__bone--eyebrow { inline-size: 30%; block-size: 0.75rem; }
+.qv__bone--title { inline-size: 80%; block-size: 1.5rem; }
+.qv__bone--price { inline-size: 35%; block-size: 1.6rem; margin-block-end: 0.5rem; }
+.qv__bone--line { inline-size: 100%; }
+.qv__bone--short { inline-size: 60%; }
+.qv__bone--qty { flex: 0 0 auto; inline-size: 7.5rem; block-size: 3rem; }
+.qv__bone--button { flex: 1 1 auto; block-size: 3rem; }
+
+.qv__failed {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    padding: 3rem 1.5rem;
+    text-align: center;
+    color: var(--color-text-soft);
+}
+
+/* desktop */
+
+/*
+   The close button joins the tools row: borderless, at the row's end edge,
+   past the hairline. Desktop only â€” on a phone it stays the disc on the
+   picture's corner.
+*/
+@media (min-width: 48.01rem) {
+    .f-quick-view .f-modal__header {
+        inset-block-start: 1.25rem;
+        inset-inline-end: 1.25rem;
+    }
+
+    .f-quick-view .f-modal__close,
+    .f-quick-view .f-modal__close:hover {
+        inline-size: 2.25rem;
+        block-size: 2.25rem;
+        border-color: transparent;
+        background: transparent;
+    }
+
+    .f-quick-view .f-modal__close { color: var(--color-text); }
+    .f-quick-view .f-modal__close:hover { color: var(--color-primary); }
+}
+
+/* phone */
+
+/*
+   One column, picture first, and the whole dialog scrolls as one â€” two
+   independently scrolling columns on a 380px screen is a trap. The desktop
+   additions that only cost height here (thumbs, the hairline in the tools
+   row) are dropped.
+*/
+@media (max-width: 48rem) {
+    .f-quick-view .f-modal__body { max-inline-size: 100%; }
+
+    .qv { grid-template-columns: minmax(0, 1fr); min-block-size: 0; }
+
+    .qv__media { padding: 0; gap: 0; }
+
+    .qv__frame { flex: none; min-block-size: 0; aspect-ratio: 1 / 1; max-block-size: 50vh; border-radius: 0; }
+
+    .qv__thumbs { display: none; }
+
+    .qv__info { max-block-size: none; border-inline-start: 0; }
+
+    .qv__body { overflow: visible; padding: 1.25rem 1.25rem 0.5rem; }
+
+    /* The close button is up on the picture at this width. */
+    .qv__tools { padding-inline-end: 0; }
+    .qv__tools::after { content: none; }
+
+    .qv__title { font-size: 1.1rem; }
+    .qv__amount { font-size: 1.25rem; }
+
+    .qv__footer { border-block-start: 0; padding: 0.5rem 1.25rem 1.25rem; }
+
+    /* Side by side at this width leaves the button too narrow to read. */
+    .qv__actions { flex-direction: column; }
+    .qv__qty { align-self: flex-start; }
+
+    /* Stacked, the row no longer lends the stepper the button's height. */
+    .qv__qty .f-qty__step,
+    .qv__qty .f-qty__input { block-size: 2.75rem; }
+}
+
+/* A shopper who asked for less motion gets the slide swapped, not faded. */
+@media (prefers-reduced-motion: reduce) {
+    .qv__slide { transition: none; }
+    .qv__bone { animation: none; }
+}

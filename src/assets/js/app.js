@@ -403,6 +403,13 @@
                     var qvBtn = document.createElement('a');
                     qvBtn.className = 'f-card__quickview f-card__icon-btn';
                     qvBtn.href = productUrl;
+                    if (productId) {
+                        qvBtn.setAttribute('data-quick-view', productId);
+                        var nameEl = card.querySelector('.f-card__title, .f-card__name');
+                        if (nameEl) qvBtn.setAttribute('data-quick-view-name', (nameEl.textContent || '').trim());
+                        var imgEl = card.querySelector('img');
+                        if (imgEl && imgEl.src) qvBtn.setAttribute('data-quick-view-image', imgEl.src);
+                    }
                     qvBtn.setAttribute('aria-label', isArabic ? 'عرض سريع' : 'Quick view');
                     qvBtn.innerHTML = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>';
                     quickActions.appendChild(qvBtn);
@@ -2920,6 +2927,933 @@
     customElements.define('custom-falak-testimonials', CustomFalakTestimonials);
 })();
 
+/**
+ * Quick View Web Component
+ *
+ * WHAT IS STILL THE LIBRARY'S, and is not reimplemented here:
+ *
+ *   falak-modal                 the dialog itself â€” focus, scroll lock, escape
+ *   falak-rating-stars          the stars
+ *   falak-product-options       the variant pills, availability per pill
+ *   falak-quantity-input        the stepper
+ *   falak-add-product-button    the add â€” it calls the cart API itself
+ *   falak-product-availability  "notify me", shown only while sold out
+ *   falak-wishlist-button       the heart
+ *   falak-social mode=share     the share sheet
+ *
+ * Only the gallery and the layout are the theme's, for the same reason they
+ * are on the product page: the library has no gallery component.
+ *
+ * Driven either by a trigger in the page â€”
+ *
+ *     <a href="/product/12" data-quick-view="12"
+ *        data-quick-view-name="â€¦" data-quick-view-image="â€¦">
+ *
+ * â€” or from the bus, for anything that holds no element:
+ *
+ *     falak.event.dispatch('quick-view::open', { id: 12 })
+ */
+(function () {
+    'use strict';
 
+    if (window.customElements && customElements.get('custom-falak-quick-view')) return;
 
+    class CustomFalakQuickView extends HTMLElement {
 
+        /*
+         * One element serves the whole page, created the first time something
+         * asks for it. Each open builds a FRESH <falak-modal>, because the
+         * modal snapshots its content on first render and re-renders from that
+         * snapshot â€” the same arrangement <falak-quick-add> uses.
+         */
+        static open(seed) {
+            let host = document.querySelector('custom-falak-quick-view');
+
+            if (!host) {
+                host = document.createElement('custom-falak-quick-view');
+                document.body.appendChild(host);
+            }
+
+            return host.open(seed);
+        }
+
+        /**
+         * @param {{ id: number|string, name?: string, image?: string }} seed
+         *   Whatever the trigger already knew. It is painted immediately so the
+         *   dialog opens on the product rather than on an empty box, and is
+         *   replaced by the real record once the fetch lands.
+         */
+        async open(seed) {
+            const falak = window.falak;
+            if (!falak) return null;
+
+            const id = seed && (seed.id !== undefined ? seed.id : seed.productId);
+            if (!id) return null;
+
+            /* A second open while one is on screen replaces it rather than
+               stacking two dialogs for two different products. */
+            if (this._modal) this._modal.remove();
+
+            const modal = document.createElement('falak-modal');
+            modal.className = 'f-quick-view';
+            modal.setAttribute('width', 'xl');
+            modal.setAttribute('aria-label', falak.lang.get('product.quick_view'));
+            /* The real dialog and the skeleton share one grid cell. The real
+               one is filled behind the skeleton and stays inert until it is
+               worth looking at; only then does the skeleton fade off it. */
+            modal.innerHTML = '<div class="qv-shell">'
+                + '<div class="qv" data-qv-root inert></div>'
+                + '<div class="qv qv--loading" data-qv-loader>' + this.skeleton(seed) + '</div>'
+            + '</div>';
+
+            this.appendChild(modal);
+            this._modal = modal;
+            this.dropOnClose(modal);
+
+            // Let the modal render before opening so its transition plays.
+            await Promise.resolve();
+            modal.open();
+
+            const product = await this.load(id);
+
+            /* Closed, or replaced by another product, while the request was in
+               flight â€” painting now would either resurrect a dead dialog or
+               overwrite the newer one. */
+            if (this._modal !== modal || !modal.isConnected) return modal;
+
+            const root = modal.querySelector('[data-qv-root]');
+
+            if (root) root.innerHTML = this.body(this.read(product, seed));
+
+            this.wireGallery(modal);
+            this.wireShare(modal);
+            this.wireOptions(modal);
+            this.closeOnAdd(modal);
+
+            /* Enter in the stepper would submit the column's form and reload
+               the page under the dialog. */
+            const form = modal.querySelector('[data-qv-form]');
+            if (form) form.addEventListener('submit', event => event.preventDefault());
+
+            await this.settle(root);
+            if (this._modal !== modal || !modal.isConnected) return modal;
+            this.reveal(modal);
+
+            falak.event.dispatch('quick-view::opened', { productId: id });
+
+            return modal;
+        }
+
+        /*
+         * Resolves once the lead picture (or clip) can be shown, so the
+         * skeleton never lifts onto an empty frame that then pops in. Capped:
+         * a slow CDN is no reason to hold the buy box hostage.
+         */
+        settle(root) {
+            const media = root && root.querySelector('.qv__slide.is-active img, .qv__slide.is-active video');
+            const loaded = new Promise(resolve => {
+                if (!media) return resolve();
+                if (media.tagName === 'VIDEO') {
+                    if (media.readyState >= 2) return resolve();
+                    media.addEventListener('loadeddata', resolve, { once: true });
+                } else {
+                    if (media.complete) return resolve();
+                    media.addEventListener('load', resolve, { once: true });
+                }
+                media.addEventListener('error', resolve, { once: true });
+            });
+
+            /* One frame more, so the SDK elements in the buy box have drawn. */
+            return Promise.race([loaded, new Promise(resolve => setTimeout(resolve, 4000))])
+                .then(() => new Promise(resolve => requestAnimationFrame(() => resolve())));
+        }
+
+        reveal(modal) {
+            const root = modal.querySelector('[data-qv-root]');
+            const loader = modal.querySelector('[data-qv-loader]');
+
+            if (root) root.removeAttribute('inert');
+            if (!loader) return;
+
+            loader.classList.add('is-done');
+            setTimeout(() => loader.remove(), 300);
+        }
+
+        close() {
+            if (this._modal) this._modal.close();
+        }
+
+        /*
+         * The product record, memoised for the life of the page.
+         *
+         * A shopper comparing four items in a grid opens, closes and reopens
+         * the same dialog; without this, every reopen is another round trip for
+         * a record that has not changed. The variations travel with it, which
+         * is also what saves <falak-product-options> from a second request of
+         * its own â€” it is given them rather than told to `fetch`.
+         */
+        async load(id) {
+            this._records = this._records || {};
+            if (this._records[id]) return this._records[id];
+
+            const falak = window.falak;
+
+            try {
+                const response = await falak.api.withoutNotifier(() => falak.product.show(id));
+                const product = (response && response.data) ? response.data : response;
+
+                if (product) this._records[id] = product;
+
+                return product;
+            } catch (error) {
+                falak.logger.warn('custom-falak-quick-view: fetch failed', error);
+                return null;
+            }
+        }
+
+        /*
+         * Both product shapes, the way the card's normaliser reads them:
+         *
+         *   the API's raw row       price_cents, discount_price_cents, images[]
+         *   the server's mapProduct price_amount, compare_at, images[]
+         *
+         * The dialog is fed by the API, but a caller that already holds a
+         * mapped record can pass it straight in and skip the fetch.
+         */
+        /*
+         * A category's name in the page language, whichever shape carried it:
+         * the resolved `name` + `name_ar` the product endpoints send, the
+         * `name_json` pair the categories endpoint adds, or `name` as the
+         * {ar, en} map straight off the model. The last one is what a raw
+         * Category row serializes to, and reading it as text printed
+         * "Category: [object Object]" under the product name. The fallback
+         * order is the server's: asked-for language, then Arabic, then English.
+         */
+        categoryName(row) {
+            if (!row) return '';
+            const locale = window.falak.lang.locale;
+            const pair = row.name_json || (row.name && typeof row.name === 'object' ? row.name : null);
+            if (pair) return pair[locale] || pair.ar || pair.en || '';
+            return (locale === 'ar' && row.name_ar ? row.name_ar : row.name) || '';
+        }
+
+        read(raw, seed) {
+            const falak = window.falak;
+            const locale = falak.lang.locale;
+            const p = raw || {};
+            const s = seed || {};
+
+            const mapped = p.price_cents === undefined && p.price_amount !== undefined;
+            const list = mapped ? Number(p.price_amount || 0) : Number(p.price_cents || 0);
+            const discount = mapped ? 0 : Number(p.discount_price_cents || 0);
+            const onSale = discount > 0 && discount < list;
+
+            /* Every picture the product has, lead first. The lead is added only
+               when the relation did not already carry it â€” a repeated first
+               slide reads as a broken gallery, not as emphasis. */
+            const images = (Array.isArray(p.images) ? p.images : [])
+                .map(img => this.media(typeof img === 'string' ? img : (img.url || img.image_path)))
+                .filter(Boolean);
+
+            const lead = this.media(p.image_path || p.image) || s.image || null;
+            if (lead && images.indexOf(lead) === -1) images.unshift(lead);
+
+            const variations = Array.isArray(p.variations) ? p.variations : [];
+            /* The merchant's display config for those variations â€” order,
+               labels, swatch colours. Carried for the same reason as
+               `variations`: read() builds this object field by field, so
+               anything it does not name is dropped, and without this the
+               dialog drew plain pills while the product page drew swatches. */
+            const options = Array.isArray(p.options) ? p.options : [];
+            const backorders = !!p.allow_backorders;
+
+            /* A variant product is in stock while ANY variant is â€” the same
+               rule the server's productInStock() applies.
+
+               A null (or absent) quantity is UNLIMITED, not zero: a store that
+               does not count stock sends no number at all, and reading that as
+               "none left" put "Out of stock" on its whole catalogue. */
+            const inStock = mapped
+                ? p.in_stock !== false
+                : (backorders || (variations.length
+                    ? variations.some(v => v.quantity === null || v.quantity === undefined || Number(v.quantity) > 0)
+                    : (p.quantity === null || p.quantity === undefined || Number(p.quantity) > 0)));
+
+            const unlimited = backorders || p.quantity === null || p.quantity === undefined;
+            const available = mapped
+                ? (p.available === undefined ? null : p.available)
+                : (unlimited ? null : Math.max(0, Number(p.quantity)));
+
+            const categories = Array.isArray(p.categories) ? p.categories : [];
+            const category = categories.length
+                ? {
+                    name: this.categoryName(categories[0]),
+                    url: falak.url.category(categories[0].id),
+                }
+                : (p.category
+                    ? { name: this.categoryName(p.category), url: p.category.url || falak.url.category(p.category.id) }
+                    : null);
+
+            const id = p.id !== undefined ? p.id : s.id;
+
+            return {
+                id: id,
+                name: ((locale === 'ar' && p.name_ar ? p.name_ar : p.name) || s.name || ''),
+                url: falak.url.product(id),
+                images: images,
+                price: onSale ? discount : list,
+                /* A number from the raw shape; mapProduct hands compare_at over
+                   ALREADY FORMATTED. Both are kept as they come and the
+                   renderer decides â€” running a formatted string back through
+                   money() produces nonsense. */
+                compareAt: onSale ? list : (mapped ? (p.compare_at || null) : null),
+                /*
+                 * The clip, for a product that has NO still at all.
+                 *
+                 * The video-commerce wall's cards are the ones that hit this:
+                 * a merchant who uploaded a clip and no photograph. The shopper
+                 * clicked a card that was showing them something, so opening on
+                 * a grey placeholder reads as a broken dialog. This is a
+                 * fallback only â€” a product with photographs shows the
+                 * photographs, exactly as its own page does.
+                 */
+                video: this.media(p.video_url || p.video_path),
+                poster: this.media(p.video_thumbnail_path),
+                variations: variations,
+                options: options,
+                category: category && category.name ? category : null,
+                sku: p.sku || null,
+                description: ((locale === 'ar' && p.description_ar ? p.description_ar : p.description) || p.short_description || p.details || '').trim(),
+                specs: this.specs(p),
+                rating: p.reviews_avg_rating !== undefined && p.reviews_avg_rating !== null
+                    ? p.reviews_avg_rating
+                    : (p.rating !== undefined && p.rating !== null ? p.rating : null),
+                reviews: Number(p.reviews_count || 0),
+                isTaxable: !!p.is_taxable,
+                /*
+                 * A PRINTING product (a photo mug, a printed shirt) is designed
+                 * before it is bought, so its add button must open the design
+                 * dialog rather than add a blank product. `is_printing` is the
+                 * server-rendered (mapProduct) flag; the raw API row carries
+                 * product_type instead.
+                 */
+                isPrinting: p.is_printing !== undefined
+                    ? !!p.is_printing
+                    : p.product_type === 'printing',
+                /* A SERVICE is booked through the wizard, not added. */
+                isService: p.is_service !== undefined
+                    ? !!p.is_service
+                    : p.product_type === 'service',
+                inStock: inStock,
+                available: available,
+                /* The record never arrived â€” everything below the name would be
+                   a guess, so the dialog says so and offers the page instead. */
+                partial: !raw,
+            };
+        }
+
+        /* ------------------------------------------------------------ markup */
+
+        /* What is on screen until the dialog is ready: the picture and the
+           name the trigger already carried, with a spinner over the picture,
+           and shimmering bars where the price and the buy box are about to be. */
+        skeleton(seed) {
+            const s = seed || {};
+            const bone = mod => '<span class="qv__bone' + (mod ? ' qv__bone--' + mod : '') + '"></span>';
+
+            return ''
+                + '<div class="qv__media">'
+                    + '<div class="qv__frame">'
+                        + (s.image
+                            ? '<figure class="qv__slide is-active"><img src="' + this.escape(s.image) + '" alt=""></figure>'
+                            : '<figure class="qv__slide qv__slide--empty is-active">' + bone('fill') + '</figure>')
+                        + '<span class="qv__spinner" role="status" aria-live="polite"'
+                            + ' aria-label="' + this.escape(this.trans('common.loading')) + '"></span>'
+                    + '</div>'
+                    + '<div class="qv__thumbs">' + bone('thumb') + bone('thumb') + bone('thumb') + '</div>'
+                + '</div>'
+                + '<div class="qv__info">'
+                    + '<div class="qv__body">'
+                        + bone('eyebrow')
+                        + (s.name ? '<h2 class="qv__title">' + this.escape(s.name) + '</h2>' : bone('title'))
+                        + bone('price')
+                        + bone('line')
+                        + bone('line')
+                        + bone('short')
+                    + '</div>'
+                    + '<div class="qv__footer">'
+                        + '<div class="qv__actions">' + bone('qty') + bone('button') + '</div>'
+                    + '</div>'
+                + '</div>';
+        }
+
+        body(p) {
+            const falak = window.falak;
+            const t = key => this.trans(key);
+
+            if (p.partial) {
+                return '<div class="qv__failed">'
+                    + '<p>' + this.escape(t('product.quick_view_failed')) + '</p>'
+                    + '<a class="btn btn--primary" href="' + this.escape(p.url) + '">'
+                        + this.escape(t('product.full_details'))
+                    + '</a>'
+                + '</div>';
+            }
+
+            const many = p.images.length > 1;
+
+            const slides = p.images.length
+                ? p.images.map((src, index) =>
+                    '<figure class="qv__slide' + (index === 0 ? ' is-active' : '') + '"'
+                        + ' data-qv-slide data-index="' + index + '">'
+                        + '<img src="' + this.escape(src) + '" alt="' + this.escape(p.name) + '"'
+                            + (index === 0 ? '' : ' loading="lazy"') + '>'
+                    + '</figure>').join('')
+                : p.video
+                    /* Autoplaying muted and looping, with no controls: this is
+                       the same treatment the card gave the clip, and a dialog
+                       the shopper opened to look at one product is exactly
+                       where the clip should keep running. */
+                    ? '<figure class="qv__slide is-active">'
+                        + '<video autoplay muted loop playsinline preload="metadata"'
+                            + (p.poster ? ' poster="' + this.escape(p.poster) + '"' : '')
+                            + ' src="' + this.escape(p.video) + '"></video>'
+                    + '</figure>'
+                    : '<figure class="qv__slide qv__slide--empty is-active"></figure>';
+
+            /* Arrows on the stage, a "1 / 5" counter in its corner and a thumb
+               strip under it. The strip is desktop-only (CSS): on a phone the
+               stage is the full width and a row of tiles just pushes the buy
+               box further below the fold. */
+            const nav = many
+                ? '<button type="button" class="qv__nav qv__nav--prev" data-qv-prev'
+                        + ' aria-label="' + this.escape(t('common.previous')) + '">' + this.chevron('start') + '</button>'
+                    + '<button type="button" class="qv__nav qv__nav--next" data-qv-next'
+                        + ' aria-label="' + this.escape(t('common.next')) + '">' + this.chevron('end') + '</button>'
+                    + '<span class="qv__counter" data-qv-counter dir="ltr">1 / ' + p.images.length + '</span>'
+                : '';
+
+            const thumbs = many
+                ? '<div class="qv__thumbs">'
+                    + p.images.map((src, index) =>
+                        '<button type="button" class="qv__thumb' + (index === 0 ? ' is-active' : '') + '"'
+                            + ' data-qv-thumb="' + index + '" aria-label="' + (index + 1) + ' / ' + p.images.length + '">'
+                            + '<img src="' + this.escape(src) + '" alt="" loading="lazy">'
+                        + '</button>').join('')
+                + '</div>'
+                : '';
+
+            /* Only off a numeric compare price: mapProduct hands it over
+               already formatted, and a percentage worked out of a string is a
+               guess. */
+            const off = typeof p.compareAt === 'number' && p.compareAt > p.price
+                ? Math.round((1 - p.price / p.compareAt) * 100)
+                : 0;
+
+            /* Server-rendered from the record already in hand rather than
+               `fetch`: the dialog has just paid for the product and its
+               variations came with it, and a second request would land after
+               the pills were expected on screen. */
+            const options = p.variations.length
+                ? '<falak-product-options class="qv__options" data-qv-options'
+                    + ' product-id="' + this.escape(p.id) + '"'
+                    /* The merchant's display config travels with the record too
+                       (product.show eager-loads it), so the dialog draws the same
+                       swatches the product page does instead of plain pills. */
+                    + (p.options && p.options.length
+                        ? ' options="' + this.escape(JSON.stringify(p.options)) + '"'
+                        : '')
+                    + ' variations="' + this.escape(JSON.stringify(p.variations)) + '"></falak-product-options>'
+                : '';
+
+            const money = v => (typeof v === 'number' ? falak.money(v) : v);
+
+            return ''
+                + '<div class="qv__media">'
+                    + '<div class="qv__frame">'
+                        + '<div class="qv__stage" data-qv-stage>' + slides + '</div>'
+                        + (off > 0 ? '<span class="qv__badge" dir="ltr">-' + off + '%</span>' : '')
+                        + nav
+                    + '</div>'
+                    + thumbs
+                + '</div>'
+
+                /* A form, so <falak-add-product-button> resolves its stepper
+                   and its options INSIDE the dialog. Both selectors are scoped
+                   to the nearest form first and only then page-wide, which is
+                   what keeps a quick view opened from a product page off that
+                   page's own stepper. It is the whole column because the
+                   options scroll in the body while the stepper and the button
+                   stay pinned in the footer. */
+                + '<form class="qv__info" data-qv-form novalidate>'
+                  + '<div class="qv__body">'
+                    + '<div class="qv__tools">'
+                        + (p.category
+                            ? '<a class="qv__eyebrow" href="' + this.escape(p.category.url) + '">' + this.escape(p.category.name) + '</a>'
+                            : '<span class="qv__eyebrow"></span>')
+                        + '<falak-wishlist-button class="qv__tool" product-id="' + this.escape(p.id) + '"'
+                            + ' button-class="qv__tool-btn"></falak-wishlist-button>'
+
+                        /* <falak-social mode="share"> has no trigger of its own
+                           â€” it always draws its row inline â€” so the trigger is
+                           the theme's and the component keeps owning the
+                           networks and the URLs. Same wrapper as the product
+                           page's gallery. */
+                        + '<div class="qv__tool qv__share" data-qv-share>'
+                            + '<button type="button" class="qv__tool-btn" data-qv-share-toggle'
+                                + ' aria-expanded="false" aria-label="' + this.escape(t('footer.share')) + '">'
+                                + this.shareGlyph()
+                            + '</button>'
+                            + '<falak-social class="qv__share-sheet" mode="share" hide-title'
+                                /* Absolute: a share link is opened on another
+                                   site, where "/product/12" resolves to
+                                   nothing at all. */
+                                + ' share-url="' + this.escape(window.location.origin + p.url) + '"'
+                                + ' share-text="' + this.escape(p.name) + '"></falak-social>'
+                        + '</div>'
+                    + '</div>'
+
+                    + '<h2 class="qv__title"><a href="' + this.escape(p.url) + '">' + this.escape(p.name) + '</a></h2>'
+
+                    + '<p class="qv__price">'
+                        + '<span class="qv__amount" data-qv-amount>' + this.escape(falak.money(p.price)) + '</span>'
+                        + '<del class="qv__was" data-qv-was' + (p.compareAt ? '' : ' hidden') + '>'
+                            + this.escape(p.compareAt ? money(p.compareAt) : '')
+                        + '</del>'
+                    + '</p>'
+
+                    /* Server values, not `fetch`: the record already carries the
+                       aggregate, and a fetched rating pops in and shoves the buy
+                       box down inside a box this short. */
+                    + (p.reviews > 0
+                        ? '<a class="qv__rating" href="' + this.escape(p.url) + '#product-reviews">'
+                            + '<falak-rating-stars value="' + this.escape(p.rating || 0) + '"'
+                                + ' total="' + p.reviews + '"></falak-rating-stars>'
+                        + '</a>'
+                        : '')
+
+                    /* Stock and SKU on one quiet line, both repainted when a
+                       variant is chosen (see wireOptions). */
+                    + '<p class="qv__status">'
+                        + '<span class="qv__stock' + (p.inStock ? '' : ' qv__stock--out') + '" data-qv-stock>'
+                            + this.escape(t(p.inStock ? 'product.in_stock' : 'product.out_of_stock'))
+                        + '</span>'
+                        + '<span class="qv__sku" data-qv-sku-wrap' + (p.sku ? '' : ' hidden') + '>'
+                            + this.escape(t('product.sku')) + ' '
+                            + '<span dir="ltr" data-qv-sku>' + this.escape(p.sku || '') + '</span>'
+                        + '</span>'
+                        + (p.isTaxable ? '<span class="qv__tax">' + this.escape(t('product.tax_included')) + '</span>' : '')
+                    + '</p>'
+
+                    + (p.description ? '<div class="qv__desc">' + p.description + '</div>' : '')
+
+                    + options
+                  + '</div>'
+
+                  + '<div class="qv__footer">'
+                    + '<div class="qv__actions">'
+                        + '<falak-quantity-input class="qv__qty" data-qv-qty value="1" min="1"'
+                            + (p.available ? ' max="' + p.available + '"' : '')
+                            + ' label="' + this.escape(t('product.quantity')) + '"></falak-quantity-input>'
+
+                        + '<falak-add-product-button class="qv__add"'
+                            + ' product-id="' + this.escape(p.id) + '"'
+                            + ' product-status="' + (p.inStock ? 'sale' : 'out') + '"'
+                            + ' quantity-selector="[data-qv-qty]"'
+                            + (p.variations.length ? ' options-selector="[data-qv-options]"' : '')
+                            /* A printing product: the button opens the design
+                               dialog over this one rather than adding undesigned. */
+                            + (p.isPrinting
+                                ? ' requires-design'
+                                    + ' product-url="' + this.escape(p.url) + '"'
+                                    + ' product-name="' + this.escape(p.name) + '"'
+                                    + ' product-image="' + this.escape((p.images && p.images[0]) || '') + '"'
+                                    + ' product-price="' + this.escape(window.falak.money(p.price)) + '"'
+                                : '')
+                            /* A service: the button opens the booking wizard. */
+                            + (p.isService ? ' product-type="booking"' : '')
+                            + ' source="quick-view"'
+                            + ' button-class="btn btn--primary qv__add-btn">'
+                            + (p.isService
+                                ? '<span data-booking-label>' + this.escape(t('product.book_now')) + '</span>'
+                                : this.bagGlyph()
+                                    + '<span>' + this.escape(t(p.isPrinting ? 'product.design_now' : 'product.add_to_cart')) + '</span>')
+                        + '</falak-add-product-button>'
+                    + '</div>'
+
+                    /* Shows itself only while the product (or the chosen
+                       variant) is sold out, so it needs no condition. */
+                    + '<falak-product-availability class="qv__notify"'
+                        + ' product-id="' + this.escape(p.id) + '"'
+                        + ' product-status="' + (p.inStock ? 'sale' : 'out') + '"'
+                        + ' button-class="btn btn--outline"></falak-product-availability>'
+
+                    /* The dialog is a preview, not a replacement: the long
+                       description, the tabs, the reviews and the Q&A are all
+                       still only on the page. The line beside it echoes the
+                       shopper's choice back to them. */
+                    + '<div class="qv__foot-meta">'
+                        + '<span class="qv__summary" data-qv-summary></span>'
+                        + '<a class="qv__details" href="' + this.escape(p.url) + '">'
+                            + this.escape(t('product.full_details'))
+                            + this.arrow()
+                        + '</a>'
+                    + '</div>'
+                  + '</div>'
+                + '</form>';
+        }
+
+        /* ----------------------------------------------------------- wiring */
+
+        /*
+         * The gallery: the slides are all in the markup and only ever toggled,
+         * never rebuilt â€” so the browser keeps the decoded images and switching
+         * back to one that has been seen is instant. Same rule as the product
+         * page's own gallery.
+         */
+        wireGallery(modal) {
+            const stage = modal.querySelector('[data-qv-stage]');
+            if (!stage) return;
+
+            const slides = [...stage.querySelectorAll('[data-qv-slide]')];
+            if (slides.length < 2) return;
+
+            let current = 0;
+
+            const counter = modal.querySelector('[data-qv-counter]');
+            const thumbs = [...modal.querySelectorAll('[data-qv-thumb]')];
+
+            const show = (index) => {
+                current = (index + slides.length) % slides.length;
+                slides.forEach((slide, i) => slide.classList.toggle('is-active', i === current));
+                thumbs.forEach((thumb, i) => thumb.classList.toggle('is-active', i === current));
+                if (counter) counter.textContent = (current + 1) + ' / ' + slides.length;
+            };
+
+            const prev = modal.querySelector('[data-qv-prev]');
+            const next = modal.querySelector('[data-qv-next]');
+
+            if (prev) prev.addEventListener('click', () => show(current - 1));
+            if (next) next.addEventListener('click', () => show(current + 1));
+
+            thumbs.forEach(thumb => thumb.addEventListener('click', () => {
+                show(Number(thumb.getAttribute('data-qv-thumb')));
+            }));
+
+            /* Arrow keys move the gallery, but only while focus is not in a
+               field â€” there the arrows belong to the stepper. */
+            modal.addEventListener('keydown', (event) => {
+                if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
+                if (event.target.closest('input, select, textarea')) return;
+
+                /* In RTL the left arrow means "the next one along", so the step
+                   is read off the document's direction rather than assumed. */
+                const rtl = document.documentElement.getAttribute('dir') === 'rtl';
+                const forward = rtl ? event.key === 'ArrowLeft' : event.key === 'ArrowRight';
+
+                event.preventDefault();
+                show(current + (forward ? 1 : -1));
+            });
+        }
+
+        /* Only decides when the share row is on screen; the component still
+           renders it. Scoped to the modal, so the product page's own share
+           popover behind the dialog is left alone. */
+        wireShare(modal) {
+            const share = modal.querySelector('[data-qv-share]');
+            if (!share) return;
+
+            const toggle = share.querySelector('[data-qv-share-toggle]');
+
+            const close = () => {
+                share.classList.remove('is-open');
+                toggle.setAttribute('aria-expanded', 'false');
+            };
+
+            toggle.addEventListener('click', (event) => {
+                event.stopPropagation();
+                const open = share.classList.toggle('is-open');
+                toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+            });
+
+            /* A share link inside the sheet must still work, so this only
+               closes on a click that landed outside the whole wrapper. The
+               listener dies with the dialog. */
+            modal.addEventListener('click', (event) => {
+                if (!share.contains(event.target)) close();
+            });
+        }
+
+        /*
+         * The price, stock, SKU and the "Chalk Â· Brown"
+         * summary follow the chosen variant.
+         *
+         * Read off the options element's own bubbling `changed` event rather
+         * than the bus: the bus also carries the product page's options, and a
+         * quick view opened over a product page must not repaint from those.
+         * Each value falls back to the product's own until the choice is
+         * complete, so an unfinished choice never shows a stale variant.
+         */
+        wireOptions(modal) {
+            const options = modal.querySelector('[data-qv-options]');
+            if (!options) return;
+
+            const falak = window.falak;
+            const t = key => this.trans(key);
+            const pick = sel => modal.querySelector(sel);
+
+            const amount = pick('[data-qv-amount]');
+            const was = pick('[data-qv-was]');
+            const stock = pick('[data-qv-stock]');
+            const skuWrap = pick('[data-qv-sku-wrap]');
+            const sku = pick('[data-qv-sku]');
+            const summary = pick('[data-qv-summary]');
+
+            const base = {
+                amount: amount ? amount.textContent : '',
+                was: was ? was.textContent : '',
+                wasHidden: was ? was.hidden : true,
+                stock: stock ? stock.textContent : '',
+                out: stock ? stock.classList.contains('qv__stock--out') : false,
+                sku: sku ? sku.textContent : '',
+            };
+
+            const paint = (detail) => {
+                const d = detail || {};
+                const price = Number(d.price);
+                const compare = Number(d.comparePrice);
+                const hasPrice = d.complete && Number.isFinite(price) && price > 0;
+                const text = hasPrice ? falak.money(price) : base.amount;
+
+                if (amount) amount.textContent = text;
+
+                if (was) {
+                    const hasCompare = hasPrice && Number.isFinite(compare) && compare > price;
+                    was.textContent = hasCompare ? falak.money(compare) : (hasPrice ? '' : base.was);
+                    was.hidden = hasCompare ? false : (hasPrice ? true : base.wasHidden);
+                }
+
+                if (stock) {
+                    const known = d.complete && d.inStock !== null && d.inStock !== undefined;
+                    const out = known ? !d.inStock : base.out;
+                    stock.textContent = known ? t(out ? 'product.out_of_stock' : 'product.in_stock') : base.stock;
+                    stock.classList.toggle('qv__stock--out', out);
+                }
+
+                if (sku && skuWrap) {
+                    const value = (d.complete && d.sku) || base.sku;
+                    sku.textContent = value;
+                    skuWrap.hidden = !value;
+                }
+
+                if (summary) {
+                    /* The merchant's value labels, in the component's own group
+                       order â€” the same words the pills show. */
+                    const selected = d.selected || options.selected || {};
+                    const groups = Array.isArray(options.groups) ? options.groups : [];
+                    summary.textContent = groups
+                        .filter(g => selected[g.key] !== undefined)
+                        .map(g => (typeof options.valueLabel === 'function' ? options.valueLabel(g, selected[g.key]) : selected[g.key]))
+                        .join(' Â· ');
+                }
+            };
+
+            options.addEventListener('changed', event => paint(event.detail));
+
+            /* A choice the component pre-selected on its first render landed
+               before this listener existed. */
+            requestAnimationFrame(() => paint({
+                complete: options.isComplete,
+                selected: options.selected,
+                price: options.variation ? options.variation.price : null,
+                comparePrice: options.variation ? options.variation.comparePrice : null,
+                inStock: options.variation ? options.variation.inStock : null,
+                sku: options.variation ? options.variation.sku : null,
+            }));
+        }
+
+        /*
+         * Added: the shopper is done here. The dialog was opened to look at one
+         * product, and leaving it up over the grid afterwards just makes them
+         * dismiss it themselves. The pause lets the button's own "Added âœ“" be
+         * read first.
+         */
+        closeOnAdd(modal) {
+            modal.addEventListener('success', (event) => {
+                if (!event.target.matches('falak-add-product-button')) return;
+                window.setTimeout(() => modal.close(), 700);
+            });
+        }
+
+        /*
+         * Drop the modal once it closes, rather than leaving it parked in the
+         * document until the next open.
+         *
+         * It carries a loaded <falak-product-options> for this product, and
+         * <falak-add-product-button> looks for its options element across the
+         * whole document. A closed dialog left in the tree would be found by
+         * the CARD's button on the next click. Escape and backdrop clicks close
+         * the modal without telling this component, so the attribute is watched
+         * rather than hooking close().
+         */
+        dropOnClose(modal) {
+            const watcher = new MutationObserver(() => {
+                if (modal.hasAttribute('visible')) return;
+
+                watcher.disconnect();
+
+                // After the close transition, so the dialog is not yanked mid-fade.
+                window.setTimeout(() => {
+                    if (this._modal === modal) this._modal = null;
+                    modal.remove();
+                }, 400);
+            });
+
+            watcher.observe(modal, { attributes: true, attributeFilter: ['visible'] });
+        }
+
+        /* ---------------------------------------------------------- helpers */
+
+        /* Weight and dimensions, for the same chips the product page draws
+           under its variants. The API sends the decimals as strings ("12.00");
+           Number() drops the padding, and a blank or zero field is left out
+           rather than printed as "0 cm". */
+        specs(p) {
+            return [
+                ['weight', 'product.weight_unit'],
+                ['length', 'product.dimension_unit'],
+                ['width', 'product.dimension_unit'],
+                ['height', 'product.dimension_unit'],
+            ]
+                .map(([key, unit]) => ({ key: key, unit: unit, value: Number(p[key]) || 0 }))
+                .filter(s => s.value > 0);
+        }
+
+        specsMarkup(specs) {
+            return '';
+        }
+
+        trans(key) {
+            return window.falak.lang.get(key);
+        }
+
+        /* The API returns media as bare storage paths ('products/x.jpg'), so
+           anything not already absolute is resolved against the public disk. */
+        media(v) {
+            const s = String(v || '').trim();
+            if (!s) return null;
+            if (/^(https?:)?\/\//i.test(s) || s.indexOf('data:') === 0) return s;
+            if (s.charAt(0) === '/') return s;
+            return '/storage/' + s.replace(/^\/+/, '');
+        }
+
+        escape(v) {
+            return String(v === null || v === undefined ? '' : v).replace(/[&<>"']/g, function (c) {
+                return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+            });
+        }
+
+        /* Logical, not physical: `start` points back the way the page reads, so
+           one set of markup is correct in both directions. */
+        chevron(side) {
+            return '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"'
+                + ' stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'
+                + (side === 'start' ? '<path d="m15 18-6-6 6-6"/>' : '<path d="m9 18 6-6-6-6"/>')
+                + '</svg>';
+        }
+
+        /* Points the way the page reads, so it flips in Arabic. */
+        arrow() {
+            return '<svg class="qv__arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"'
+                + ' stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'
+                + '<path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg>';
+        }
+
+        shareGlyph() {
+            return '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor"'
+                + ' stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'
+                + '<circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>'
+                + '<path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg>';
+        }
+
+        bagGlyph() {
+            return '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"'
+                + ' stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'
+                + '<path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/>'
+                + '<path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>';
+        }
+    }
+
+    customElements.define('custom-falak-quick-view', CustomFalakQuickView);
+
+    /*
+     * The bus entry point, subscribed HERE rather than in the element's
+     * connectedCallback.
+     *
+     * The element is created on demand â€” the first open is what makes it â€” so a
+     * listener registered on the element itself could only ever hear the SECOND
+     * dispatch. A Twig page or a merchant script driving the dialog from the bus
+     * would have found its first call silently ignored.
+     *
+     * falak.init() runs in the page before this deferred script, so the bus is
+     * already there; the guard is for the customizer, which evaluates the
+     * theme's script in isolation.
+     */
+    if (window.falak) {
+        window.falak.event.on('quick-view::open', function (payload) {
+            CustomFalakQuickView.open(payload || {});
+        });
+    }
+
+    /*
+     * One delegated listener for every trigger on the page, however it got
+     * there â€” a card the SDK slider built after this ran is covered without
+     * re-wiring, which a per-element listener could not do.
+     *
+     * The trigger stays an <a href> pointing at the product page: a
+     * middle-click, a modifier-click, and a page whose JavaScript has not run
+     * yet (or failed) all still reach the product. The dialog is the
+     * enhancement, never the only way through.
+     */
+    document.addEventListener('click', function (event) {
+        const trigger = event.target.closest('[data-quick-view]');
+        if (!trigger || !window.falak) return;
+
+        // Anything but a plain left click is the shopper asking for a new tab.
+        if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+
+        event.preventDefault();
+
+        /*
+         * A PRINTING product's eye opens the design dialog instead: the
+         * SDK's <falak-quick-add> in design mode, the same studio window
+         * the card's add button and the product page open, so the shopper
+         * lands in the customizer rather than in a buy box that could only
+         * send them there. Without the component (an SDK build that left
+         * it out) the quick view stays the fallback â€” its own add button
+         * carries `requires-design`, so the design is still never skipped.
+         */
+        if (trigger.hasAttribute('data-quick-view-design')) {
+            const FalakQuickAdd = window.customElements && customElements.get('falak-quick-add');
+
+            if (FalakQuickAdd && typeof FalakQuickAdd.open === 'function') {
+                const id = trigger.getAttribute('data-quick-view');
+
+                FalakQuickAdd.open({
+                    productId: id,
+                    name: trigger.getAttribute('data-quick-view-name') || '',
+                    image: trigger.getAttribute('data-quick-view-image') || '',
+                    price: trigger.getAttribute('data-quick-view-price') || '',
+                    url: trigger.getAttribute('href') || window.falak.url.product(id),
+                }, { design: true });
+                return;
+            }
+        }
+
+        CustomFalakQuickView.open({
+            id: trigger.getAttribute('data-quick-view'),
+            name: trigger.getAttribute('data-quick-view-name') || '',
+            image: trigger.getAttribute('data-quick-view-image') || '',
+        });
+    });
+})();
