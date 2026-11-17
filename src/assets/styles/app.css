@@ -10823,6 +10823,20 @@ html[lang="ar"] .has-reveal [data-reveal="slide-end"] {
     }
 }
 
+.block--photo-grid,
+.block--cats {
+    overflow-x: clip;
+}
+
+.cats__slider,
+.cats__slider .f-slider,
+.cats__slider .f-slider__body,
+.cats__slider .f-slider__viewport {
+    overflow-y: hidden !important;
+    scrollbar-width: none !important;
+    -ms-overflow-style: none !important;
+}
+
 .cats__slider {
     --cats-gap: 15px;
     /* Cards per row: the merchant's pick on large screens, capped at 3 below. */
@@ -10832,7 +10846,21 @@ html[lang="ar"] .has-reveal [data-reveal="slide-end"] {
 .cats__slider .f-slider__track {
     gap: var(--cats-gap);
     grid-auto-columns: calc((100% - (var(--cats-visible) - 1) * var(--cats-gap)) / var(--cats-visible));
-    padding-block-end: 0;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    padding-block-end: 0.5rem !important;
+    scrollbar-width: none !important;
+    -ms-overflow-style: none !important;
+}
+
+.cats__slider::-webkit-scrollbar,
+.cats__slider .f-slider::-webkit-scrollbar,
+.cats__slider .f-slider__body::-webkit-scrollbar,
+.cats__slider .f-slider__viewport::-webkit-scrollbar,
+.cats__slider .f-slider__track::-webkit-scrollbar {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
 }
 
 @media (min-width: 1280px) {
@@ -10959,7 +10987,10 @@ html[lang="ar"] .has-reveal [data-reveal="slide-end"] {
     flex-direction: column;
     justify-content: center;
     gap: 0.75rem;
+    box-sizing: border-box !important;
     block-size: 100%;
+    max-block-size: 100% !important;
+    overflow-y: hidden !important;
     margin: 0;
     padding: 20px;
     list-style: none;
