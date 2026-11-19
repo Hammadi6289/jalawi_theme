@@ -12059,16 +12059,34 @@ falak-product-card:hover .f-card__media img,
     color: var(--color-text, #111827);
 }
 
-.f-card__price-now {
+.f-card__price-now,
+.product-card__price-now {
     font-size: 0.95rem;
     font-weight: 700;
     color: var(--color-text, #111827);
 }
 
-.f-card__price-was {
+.f-card__price-was,
+.product-card__price-was,
+.product-card__price del {
     font-size: 0.8rem;
     color: var(--color-text-faint, #9ca3af);
     text-decoration: line-through;
+    font-weight: 400;
+}
+
+.product-card__badge {
+    position: absolute;
+    inset-block-start: 0.5rem;
+    inset-inline-start: 0.5rem;
+    padding: 0.125rem 0.5rem;
+    border-radius: 0.25rem;
+    background: var(--color-primary, #ce5a67);
+    color: #ffffff;
+    font-size: 0.7rem;
+    font-weight: 700;
+    z-index: 2;
+    pointer-events: none;
 }
 
 /* Actions Overlay (Square matching media area) */
@@ -13691,6 +13709,33 @@ falak-product-card falak-add-product-button button.is-clicked svg path,
 .cart-page:has(.f-placeholder) .page-head,
 .cart-page:has([data-cart-empty]) .page-head {
     display: none;
+}
+
+/*
+    Product listing container & breadcrumbs breathing space
+*/
+.product-listing {
+    padding-block-start: 1.25rem;
+    padding-block-end: 3.5rem;
+}
+
+falak-breadcrumb,
+.f-breadcrumb {
+    display: block;
+    margin-block: 0.75rem 1.25rem;
+    padding-inline: 0;
+    font-size: 0.875rem;
+    color: var(--color-text-soft, #6b7280);
+}
+
+@media (max-width: 768px) {
+    .product-listing {
+        padding-block-start: 0.75rem;
+    }
+    falak-breadcrumb,
+    .f-breadcrumb {
+        margin-block: 0.5rem 1rem;
+    }
 }
 
 /*

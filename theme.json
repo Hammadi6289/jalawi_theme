@@ -1604,6 +1604,16 @@
                     "value": true
                 },
                 {
+                    "id": "category_show_breadcrumbs",
+                    "type": "boolean",
+                    "format": "switch",
+                    "label": {
+                        "ar": "إظهار مسار التنقل في صفحة التصنيف والمنتجات",
+                        "en": "Show breadcrumbs on category and listing pages"
+                    },
+                    "value": true
+                },
+                {
                     "id": "compare_enabled",
                     "type": "boolean",
                     "format": "switch",

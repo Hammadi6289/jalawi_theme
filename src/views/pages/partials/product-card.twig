@@ -15,6 +15,11 @@
             {% endif %}
         </a>
 
+        {% set has_sale = (product.compare_at and product.compare_at != product.price) or (product.compare_at_price and product.compare_at_price != product.price) or (product.compare_at_amount is defined and product.price_amount is defined and product.compare_at_amount > product.price_amount) or (product.old_price and product.old_price != product.price) %}
+        {% if has_sale %}
+            <span class="product-card__badge f-card__badge">{{ trans('product.sale')|default('Sale') }}</span>
+        {% endif %}
+
         {% if is_wishlist %}
             <button type="button" class="product-card__remove-wishlist" data-wishlist-remove="{{ product.id }}" aria-label="{{ trans('cart.remove')|default('Remove') }}" title="{{ trans('cart.remove')|default('Remove') }}">
                 <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -71,6 +76,19 @@
             <span class="product-card__category">{{ product.category.name }}</span>
         {% endif %}
         <h3><a class="product-card__link" href="{{ product.url }}">{{ product.name }}</a></h3>
-        <p class="product-card__price">{{ product.price }}</p>
+        <p class="product-card__price">
+            <span class="product-card__price-now">{{ product.price }}</span>
+            {% if product.compare_at and product.compare_at != product.price %}
+                <del class="product-card__price-was">{{ product.compare_at }}</del>
+            {% elseif product.compare_at_price and product.compare_at_price != product.price %}
+                <del class="product-card__price-was">{{ product.compare_at_price }}</del>
+            {% elseif product.compare_at_amount and product.price_amount is defined and product.compare_at_amount > product.price_amount %}
+                <del class="product-card__price-was">{{ falak_currency(product.compare_at_amount) }}</del>
+            {% elseif product.old_price and product.old_price != product.price %}
+                <del class="product-card__price-was">{{ product.old_price }}</del>
+            {% elseif product.regular_price and product.regular_price != product.price %}
+                <del class="product-card__price-was">{{ product.regular_price }}</del>
+            {% endif %}
+        </p>
     </div>
 </div>

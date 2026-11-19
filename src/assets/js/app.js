@@ -478,6 +478,25 @@
                         }
                     }
                 }
+                // Price compare_at sync if missing on .product-card
+                var priceEl = card.querySelector('.product-card__price');
+                if (priceEl && !priceEl.querySelector('del, .product-card__price-was')) {
+                    var addBtn = card.querySelector('falak-add-product-button[product-compare-price]');
+                    if (addBtn) {
+                        var compareVal = addBtn.getAttribute('product-compare-price');
+                        if (compareVal && compareVal.trim()) {
+                            var curr = addBtn.getAttribute('product-currency') || 'SAR';
+                            var formatted = /^\d+(\.\d+)?$/.test(compareVal.trim()) ? money(Number(compareVal), curr) : compareVal.trim();
+                            var nowPrice = (priceEl.querySelector('.product-card__price-now') || priceEl).textContent.trim();
+                            if (formatted && formatted !== nowPrice) {
+                                var del = document.createElement('del');
+                                del.className = 'product-card__price-was';
+                                del.textContent = formatted;
+                                priceEl.appendChild(del);
+                            }
+                        }
+                    }
+                }
             });
             syncCompareUi();
         }
