@@ -4047,4 +4047,25 @@
         if (typeof modal.close === 'function') modal.close();
         else modal.removeAttribute('visible');
     }, true);
+
+    /* account menu: no notifications */
+    /*
+        This theme has no notifications page, matching other platform themes.
+        The shared <falak-user-menu> redraws its list on auth events, so watch
+        each menu and drop the row whenever it appears.
+    */
+    function dropNotificationRows(root) {
+        (root || document).querySelectorAll(
+            'falak-user-menu .f-user__link[href*="notifications"], .f-user__link[href*="notifications"], [href="/customer/notifications"]'
+        ).forEach(function (link) {
+            var row = link.closest('.f-user__item') || link.closest('li') || link;
+            row.remove();
+        });
+    }
+
+    dropNotificationRows();
+    document.querySelectorAll('falak-user-menu').forEach(function (menu) {
+        new MutationObserver(function () { dropNotificationRows(menu); })
+            .observe(menu, { childList: true, subtree: true });
+    });
 })();

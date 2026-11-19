@@ -6142,6 +6142,15 @@ body:has(.compare-panel:not([hidden])) {
     padding-inline: 0;
 }
 
+/* The account dropdown is the shared <falak-user-menu>; this theme has no
+   notifications page, matching other platform themes. Hide notifications row. */
+.f-user__item:has(> .f-user__link[href*="notifications"]),
+.f-user__item:has(.f-user__link[href*="notifications"]),
+.f-user__link[href*="notifications"],
+.f-user__link[href="/customer/notifications"] {
+    display: none !important;
+}
+
 /* ========================================================================
    Localization sheet
    ======================================================================== */
