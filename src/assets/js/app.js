@@ -688,6 +688,54 @@
             return '<strong>' + esc(money(price, p.currency)) + '</strong>';
         }
 
+        function isProductInStock(p) {
+            if (!p) return false;
+            if (p.in_stock === false || p.is_in_stock === false) return false;
+            if (p.allow_backorders) return true;
+
+            var isUnlimited = Boolean(
+                p.unlimited_quantity ||
+                p.has_unlimited_quantity ||
+                p.is_unlimited ||
+                p.manage_inventory === false ||
+                p.manage_inventory === 0
+            );
+            var isQuantityMissing = p.quantity === null || p.quantity === undefined;
+
+            if (isUnlimited || (isQuantityMissing && p.manage_inventory !== true && p.manage_inventory !== 1)) {
+                return true;
+            }
+
+            var variations = Array.isArray(p.variations) ? p.variations : [];
+            if (variations.length > 0) {
+                return variations.some(function (v) {
+                    if (v.in_stock === false || v.is_in_stock === false) return false;
+                    return v.quantity === null || v.quantity === undefined || Number(v.quantity) > 0;
+                });
+            }
+
+            if (p.quantity !== null && p.quantity !== undefined) {
+                return Number(p.quantity) > 0;
+            }
+
+            return p.in_stock !== false;
+        }
+
+        function getCategoryTitle(c) {
+            if (!c) return '';
+            if (typeof c === 'string') return c.trim();
+            if (typeof c === 'object') {
+                var pair = c.name_json || (c.name && typeof c.name === 'object' ? c.name : null);
+                if (pair) {
+                    var localized = isArabic ? (pair.ar || pair.en) : (pair.en || pair.ar);
+                    if (localized) return String(localized).trim();
+                }
+                var val = (isArabic && (c.name_ar || c.title_ar)) || c.name || c.title || c.name_en || '';
+                if (typeof val === 'string') return val.trim();
+            }
+            return '';
+        }
+
         function renderCompare() {
             if (!compareIds.length) {
                 compareBody.innerHTML = '<p class="compare-panel__empty">' + esc(t('compare.empty')) + '</p>';
@@ -707,15 +755,22 @@
 
                 row(t('compare.price'), priceCell);
                 row(t('compare.availability'), function (p) {
-                    var inStock = Number(p.quantity) > 0 || p.allow_backorders;
+                    var inStock = isProductInStock(p);
                     return '<span class="compare-panel__stock' + (inStock ? '' : ' is-out') + '">' + esc(t(inStock ? 'product.in_stock' : 'product.out_of_stock')) + '</span>';
                 });
                 row(t('product.rating'), function (p) {
                     return p.reviews_avg_rating ? esc(Number(p.reviews_avg_rating).toFixed(1)) + ' ★ <small>(' + esc(p.reviews_count || 0) + ')</small>' : '—';
                 });
                 row(t('compare.category'), function (p) {
-                    var c = p.categories && p.categories[0];
-                    return c ? esc((isArabic && c.name_ar) || c.name) : '—';
+                    var catList = [];
+                    if (Array.isArray(p.categories) && p.categories.length > 0) {
+                        catList = p.categories.map(getCategoryTitle).filter(Boolean);
+                    } else if (p.category) {
+                        var single = getCategoryTitle(p.category);
+                        if (single) catList.push(single);
+                    }
+                    var separator = isArabic ? '، ' : ', ';
+                    return catList.length ? esc(catList.join(separator)) : '—';
                 });
                 row(t('compare.weight'), function (p) { return p.weight ? esc(p.weight) : '—'; });
 
