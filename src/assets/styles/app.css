@@ -123,9 +123,16 @@ a {
    offering it. The fallback is the theme's own width, so an unstyled section is
    exactly as it was. */
 .container {
+    width: 100%;
     max-width: var(--falak-container, var(--container));
     margin-inline: auto;
     padding-inline: 1rem;
+}
+
+@media (max-width: 640px) {
+    .container {
+        padding-inline: 0.75rem;
+    }
 }
 
 .skip-link {
@@ -3105,16 +3112,52 @@ falak-button[width="wide"] .f-btn-wrap {
 .f-modal {
     position: fixed;
     inset: 0;
-    z-index: 1000;
+    z-index: 10000 !important;
     display: none;
+}
+
+custom-falak-quick-view {
+    position: fixed;
+    inset: 0;
+    z-index: 10000 !important;
+    pointer-events: none;
+}
+
+custom-falak-quick-view > * {
+    pointer-events: auto;
+}
+
+falak-modal {
+    position: relative;
+    z-index: 10000 !important;
 }
 
 .f-modal[data-visible="true"] {
     display: block;
 }
 
-body.f-modal-open {
-    overflow: hidden;
+html.f-modal-open,
+body.f-modal-open,
+html.modal-open,
+body.modal-open,
+html.compare-is-open,
+body.compare-is-open,
+html.mega-is-open,
+body.mega-is-open,
+html:has(.f-modal[data-visible="true"]),
+body:has(.f-modal[data-visible="true"]),
+html:has(.f-modal.is-open),
+body:has(.f-modal.is-open),
+html:has(.f-modal--open),
+body:has(.f-modal--open),
+html:has(falak-modal[visible]),
+body:has(falak-modal[visible]),
+html:has([data-product-designer-modal][visible]),
+body:has([data-product-designer-modal][visible]),
+html:has(.compare-panel:not([hidden])),
+body:has(.compare-panel:not([hidden])) {
+    overflow: hidden !important;
+    overscroll-behavior: none !important;
 }
 
 .f-modal__overlay {
@@ -3122,6 +3165,8 @@ body.f-modal-open {
     inset: 0;
     background: rgba(8, 14, 12, 0.55);
     animation: f-fade 0.18s ease;
+    touch-action: none;
+    overscroll-behavior: contain;
 }
 
 .f-modal__wrapper {
@@ -3131,6 +3176,8 @@ body.f-modal-open {
     justify-content: center;
     padding: 1rem;
     overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
 }
 
 .f-modal__wrapper--middle {
@@ -16479,13 +16526,15 @@ html[lang="ar"] #falak-search .f-search__list:not(:empty)::before {
     background: var(--color-topbar-bg, var(--color-primary));
     color: #ffffff;
     overflow: hidden;
-    max-width: 100vw;
+    width: 100%;
+    max-width: 100%;
 }
 
 .site-topbar__marquee {
     padding-block: 0.5rem;
     overflow: hidden;
-    max-width: 100vw;
+    width: 100%;
+    max-width: 100%;
 }
 
 .site-topbar__mask {
@@ -16598,8 +16647,10 @@ html[lang="ar"] #falak-search .f-search__list:not(:empty)::before {
 .site-topbar__row {
     display: flex;
     align-items: center;
-    min-block-size: 48px;
-    padding-block: 0.5rem;
+    width: 100%;
+    max-width: 100%;
+    min-block-size: 40px;
+    padding-block: 0.35rem;
 }
 
 .site-topbar__row-inner {
@@ -16608,7 +16659,8 @@ html[lang="ar"] #falak-search .f-search__list:not(:empty)::before {
     align-items: center;
     justify-content: space-between;
     gap: 0.5rem;
-    inline-size: 100%;
+    width: 100%;
+    max-width: 100%;
 }
 
 .site-topbar__contact {
@@ -16666,12 +16718,14 @@ html[lang="ar"] #falak-search .f-search__list:not(:empty)::before {
     align-items: center;
     justify-content: flex-end;
     margin-inline-start: auto;
+    flex-shrink: 0;
 }
 
 .site-topbar__locale .f-locale__trigger {
-    padding: 0;
-    font-size: 0.875rem;
+    padding: 0.2rem 0.4rem;
+    font-size: 0.82rem;
     color: inherit;
+    white-space: nowrap;
 }
 
 .site-topbar__locale .f-locale__trigger:hover {
@@ -16737,7 +16791,7 @@ html[lang="ar"] #falak-search .f-search__list:not(:empty)::before {
     position: fixed;
     left: 1.25rem;
     top: 50%;
-    z-index: 89;
+    z-index: 45;
     display: flex;
     align-items: center;
     gap: 0.6rem;
@@ -16752,6 +16806,37 @@ html[lang="ar"] #falak-search .f-search__list:not(:empty)::before {
     writing-mode: vertical-rl;
     transform: translateY(-50%) rotate(180deg);
     box-shadow: 0 4px 14px rgba(16, 24, 40, 0.18);
+    transition: opacity 0.2s ease, visibility 0.2s ease, background-color 0.2s ease;
+}
+
+.compare-tab[hidden],
+.compare-tab.is-hidden {
+    display: none !important;
+}
+
+/* Elevate header stacking context ONLY when an internal modal (e.g. localization dialog) inside header is open */
+.site-header:has(.f-modal[data-visible="true"]) {
+    z-index: 10000 !important;
+}
+
+/* Hide comparison tab and floating actions when any modal or preference sheet is open */
+body.f-modal-open .compare-tab,
+body.modal-open .compare-tab,
+body.compare-is-open .compare-tab,
+body:has(.f-modal[data-visible="true"]) .compare-tab,
+body:has(.f-modal.is-open) .compare-tab,
+body:has(.f-modal--open) .compare-tab,
+body:has(falak-modal[visible]) .compare-tab,
+body:has([data-product-designer-modal][visible]) .compare-tab,
+body:has(.compare-panel:not([hidden])) .compare-tab,
+body.f-modal-open .floating-actions,
+body.modal-open .floating-actions,
+body:has(.f-modal[data-visible="true"]) .floating-actions,
+body:has(falak-modal[visible]) .floating-actions {
+    opacity: 0 !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+    z-index: -1 !important;
 }
 
 .compare-tab:hover {
@@ -16843,10 +16928,11 @@ html[lang="en"] .compare-tab,
 .compare-panel {
     position: fixed;
     inset: 0;
-    z-index: 1000;
+    z-index: 10000 !important;
     display: grid;
     place-items: center;
     padding: 1rem;
+    overscroll-behavior: contain;
 }
 
 .compare-panel[hidden] {
@@ -16857,6 +16943,8 @@ html[lang="en"] .compare-tab,
     position: absolute;
     inset: 0;
     background: rgba(15, 18, 25, 0.55);
+    touch-action: none;
+    overscroll-behavior: contain;
 }
 
 .compare-panel__sheet {
@@ -16869,6 +16957,7 @@ html[lang="en"] .compare-tab,
     background: #ffffff;
     box-shadow: 0 20px 50px rgba(16, 24, 40, 0.3);
     overflow: hidden;
+    overscroll-behavior: contain;
 }
 
 .compare-panel__head {
@@ -16919,6 +17008,8 @@ html[lang="en"] .compare-tab,
 .compare-panel__body {
     overflow: auto;
     padding: 1rem 1.25rem 1.25rem;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
 }
 
 .compare-panel__body[aria-busy="true"] {
@@ -16987,8 +17078,10 @@ html[lang="en"] .compare-tab,
     max-inline-size: 9rem;
     aspect-ratio: 1;
     border-radius: var(--radius);
-    background: var(--color-bg);
+    background: var(--color-surface, #f8f9fb);
+    border: 1px solid var(--color-border, #e8eaef);
     overflow: hidden;
+    position: relative;
 }
 
 .compare-panel__media img {
@@ -16998,9 +17091,25 @@ html[lang="en"] .compare-tab,
 }
 
 .compare-panel__placeholder {
-    display: block;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     inline-size: 100%;
     block-size: 100%;
+    background: var(--color-surface, #f8f9fb);
+    color: var(--color-text-faint, #9aa1ad);
+}
+
+.compare-panel__placeholder-icon {
+    inline-size: 2.25rem;
+    block-size: 2.25rem;
+    stroke: currentColor;
+    opacity: 0.55;
+    transition: opacity var(--transition);
+}
+
+.compare-panel__media:hover .compare-panel__placeholder-icon {
+    opacity: 0.85;
 }
 
 .compare-panel__name {
@@ -17018,6 +17127,7 @@ html[lang="en"] .compare-tab,
     position: absolute;
     inset-block-start: -0.25rem;
     inset-inline-end: -0.25rem;
+    z-index: 2;
     display: grid;
     place-items: center;
     inline-size: 1.75rem;
@@ -17029,6 +17139,7 @@ html[lang="en"] .compare-tab,
     font-size: 1.1rem;
     line-height: 1;
     cursor: pointer;
+    box-shadow: var(--shadow-sm);
 }
 
 .compare-panel__remove:hover {
@@ -17081,35 +17192,34 @@ body.compare-is-open {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 1rem;
+    gap: 0.5rem;
     min-height: 0;
     padding-block: 0.625rem;
-}
-
-.site-header__start,
-.site-header__center,
-.site-header__actions {
-    flex: 1 1 0;
-    min-width: 0;
+    width: 100%;
+    max-width: 100%;
 }
 
 .site-header__start {
+    flex: 0 0 auto;
     display: flex;
     align-items: center;
     justify-content: flex-start;
 }
 
 .site-header__center {
+    flex: 1 1 auto;
+    min-width: 0;
     display: flex;
     justify-content: center;
     margin-block: 0.25rem;
 }
 
 .site-header__actions {
+    flex: 0 0 auto;
     display: flex;
     align-items: center;
     justify-content: flex-end;
-    gap: 0.5rem;
+    gap: 0.4rem;
     margin-inline-start: 0;
 }
 
@@ -17261,6 +17371,35 @@ body.compare-is-open {
     color: inherit;
 }
 
+@media (max-width: 640px) {
+    .site-header__topbar-inner {
+        gap: 0.35rem;
+        padding-inline: 0.75rem;
+    }
+
+    .site-header__actions {
+        gap: 0.3rem;
+    }
+
+    .site-header__actions .f-user__avatar {
+        inline-size: 1.75rem;
+        block-size: 1.75rem;
+        font-size: 0.7rem;
+    }
+
+    .site-header__actions .f-user__trigger {
+        padding: 0 !important;
+    }
+
+    .site-header__actions .f-search__trigger,
+    .site-header__actions .f-wishlist-drawer__trigger,
+    .site-header__actions .f-user__trigger,
+    .site-header__actions .f-cart-summary__link {
+        min-inline-size: 1.35rem;
+        min-block-size: 1.35rem;
+    }
+}
+
 @media (min-width: 640px) {
     .site-header__logo {
         block-size: calc(4rem * var(--falak-logo-scale, 1));
@@ -17276,6 +17415,7 @@ body.compare-is-open {
     }
 
     .site-header__topbar-inner {
+        gap: 1rem;
         padding-block: 0.25rem;
     }
 
@@ -17305,6 +17445,8 @@ body.compare-is-open {
     opacity: 0;
     visibility: hidden;
     transition: opacity 0.5s ease, visibility 0s linear 0.5s;
+    touch-action: none;
+    overscroll-behavior: contain;
 }
 
 body.mega-is-open .mega-overlay {
@@ -17328,6 +17470,7 @@ body.mega-is-open .mega-overlay {
     transform: translateX(-100%);
     visibility: hidden;
     transition: transform 0.5s ease, visibility 0s linear 0.5s;
+    overscroll-behavior: contain;
 }
 
 [dir="rtl"] .mega-menu {
@@ -17372,6 +17515,8 @@ body.mega-is-open {
     flex: 1;
     overflow-y: auto;
     padding: 4rem 0.75rem 0.75rem;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
 }
 
 .mega-menu__banner {

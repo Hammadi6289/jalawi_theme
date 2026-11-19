@@ -62,6 +62,7 @@
             megaMenu.removeAttribute('inert');
             megaMenu.setAttribute('aria-hidden', 'false');
             document.body.classList.add('mega-is-open');
+            document.documentElement.classList.add('mega-is-open');
             megaTrigger.setAttribute('aria-expanded', 'true');
             var close = megaMenu.querySelector('.mega-menu__close');
             if (close) close.focus({ preventScroll: true });
@@ -70,6 +71,7 @@
         function closeMega() {
             if (!document.body.classList.contains('mega-is-open')) return;
             document.body.classList.remove('mega-is-open');
+            document.documentElement.classList.remove('mega-is-open');
             megaMenu.setAttribute('aria-hidden', 'true');
             megaMenu.setAttribute('inert', '');
             megaTrigger.setAttribute('aria-expanded', 'false');
@@ -348,6 +350,20 @@
         function syncCompareUi() {
             var count = document.querySelector('[data-compare-count]');
             if (count) count.textContent = String(compareIds.length);
+
+            // Hide comparison floating tab if 0 products; show only if compareIds.length > 0
+            if (compareTab) {
+                if (compareIds.length > 0) {
+                    compareTab.hidden = false;
+                    compareTab.removeAttribute('hidden');
+                    compareTab.classList.remove('is-hidden');
+                } else {
+                    compareTab.hidden = true;
+                    compareTab.setAttribute('hidden', '');
+                    compareTab.classList.add('is-hidden');
+                }
+            }
+
             document.querySelectorAll('[data-compare-toggle]').forEach(function (btn) {
                 var on = compareIds.indexOf(btn.getAttribute('data-compare-toggle')) !== -1;
                 btn.classList.toggle('is-active', on);
@@ -609,13 +625,55 @@
             return window.falak && window.falak.money ? window.falak.money(amount, currency) : String(amount);
         }
 
+        var comparePlaceholderSvg = '<span class="compare-panel__placeholder" aria-hidden="true">' +
+            '<svg class="compare-panel__placeholder-icon" viewBox="0 0 24 24" width="36" height="36" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+            '<rect width="18" height="18" x="3" y="3" rx="2" ry="2"></rect>' +
+            '<circle cx="9" cy="9" r="2"></circle>' +
+            '<path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"></path>' +
+            '</svg>' +
+            '</span>';
+
+        function extractProductImage(p) {
+            if (!p) return '';
+            if (Array.isArray(p.images) && p.images.length > 0) {
+                var first = p.images[0];
+                if (typeof first === 'string' && first.trim()) return first.trim();
+                if (first && typeof first === 'object') {
+                    var u = first.url || first.src || first.path || first.original || '';
+                    if (typeof u === 'string' && u.trim()) return u.trim();
+                }
+            }
+            if (p.image) {
+                if (typeof p.image === 'string' && p.image.trim()) return p.image.trim();
+                if (typeof p.image === 'object' && p.image.url) return p.image.url;
+            }
+            if (typeof p.main_image === 'string' && p.main_image.trim()) return p.main_image.trim();
+            if (typeof p.thumbnail === 'string' && p.thumbnail.trim()) return p.thumbnail.trim();
+            if (typeof p.cover === 'string' && p.cover.trim()) return p.cover.trim();
+            return '';
+        }
+
         function productCell(p, id) {
             var name = (isArabic && p.name_ar) || p.name || '';
-            var image = p.images && p.images[0] ? p.images[0].url : '';
+            var image = extractProductImage(p);
+            var mediaHtml;
+            if (image) {
+                mediaHtml = '<img src="' + esc(image) + '" alt="' + esc(name) + '" loading="lazy" onerror="this.style.display=\'none\';if(this.nextElementSibling)this.nextElementSibling.style.display=\'flex\';">' +
+                    '<span class="compare-panel__placeholder" style="display:none;" aria-hidden="true">' +
+                    '<svg class="compare-panel__placeholder-icon" viewBox="0 0 24 24" width="36" height="36" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+                    '<rect width="18" height="18" x="3" y="3" rx="2" ry="2"></rect>' +
+                    '<circle cx="9" cy="9" r="2"></circle>' +
+                    '<path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"></path>' +
+                    '</svg>' +
+                    '</span>';
+            } else {
+                mediaHtml = comparePlaceholderSvg;
+            }
+
             return '<div class="compare-panel__product">' +
                 '<button class="compare-panel__remove" type="button" data-compare-toggle="' + esc(id) + '" aria-label="' + esc(t('compare.remove')) + '">&times;</button>' +
                 '<a href="/product/' + encodeURIComponent(id) + '" class="compare-panel__media">' +
-                (image ? '<img src="' + esc(image) + '" alt="" loading="lazy">' : '<span class="compare-panel__placeholder"></span>') +
+                mediaHtml +
                 '</a>' +
                 '<a href="/product/' + encodeURIComponent(id) + '" class="compare-panel__name">' + esc(name) + '</a>' +
                 '</div>';
@@ -677,6 +735,7 @@
             compareReturnFocus = document.activeElement;
             comparePanel.hidden = false;
             document.body.classList.add('compare-is-open');
+            document.documentElement.classList.add('compare-is-open');
             renderCompare();
             var close = comparePanel.querySelector('.compare-panel__close');
             if (close) close.focus();
@@ -686,6 +745,7 @@
             if (comparePanel.hidden) return;
             comparePanel.hidden = true;
             document.body.classList.remove('compare-is-open');
+            document.documentElement.classList.remove('compare-is-open');
             if (compareReturnFocus && compareReturnFocus.focus) compareReturnFocus.focus();
         }
 
@@ -710,7 +770,15 @@
         syncCompareUi();
     }
 
-    /* --------------------------------------------------- announcement bar */
+    /* modal backdrop scroll lock */
+    // Prevent touch dragging on modal backdrops / overlays from scrolling background page
+    document.addEventListener('touchmove', function (event) {
+        if (event.target.closest('.f-modal__overlay, .compare-panel__backdrop, .mega-overlay')) {
+            event.preventDefault();
+        }
+    }, { passive: false });
+
+    /*  announcement bar */
     // Now <falak-announcement> (platform component): dashboard declarations,
     // the customizer text, the welcome fallback, marquee and per-text
     // dismissal all live there. Nothing for the theme to do.
