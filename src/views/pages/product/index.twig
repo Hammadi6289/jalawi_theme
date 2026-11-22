@@ -36,13 +36,13 @@
             <h1>{{ trans('common.products') }}</h1>
         </header>
 
-        {# Subcategories circular avatars row #}
-        {% set subcats = category and category.children is defined and category.children|length > 0 ? category.children : [] %}
+        {# Categories circular avatars row #}
+        {% set subcats = categories|default([]) %}
         <section class="category-subcategories" data-category-subcategories {% if category %}data-current-category-id="{{ category.id }}"{% endif %} aria-label="{{ trans('common.categories') }}">
             <div class="category-subcategories__list" data-subcategories-list>
                 {% for sub in subcats %}
                     {% set is_active = category and sub.id == category.id %}
-                    <a href="/products?category_id%5B%5D={{ sub.id }}" class="category-subcard{{ is_active ? ' is-active' : '' }}">
+                    <a href="{{ sub.url|default('/products?category_id%5B%5D=' ~ sub.id) }}" class="category-subcard{{ is_active ? ' is-active' : '' }}" data-category-id="{{ sub.id }}">
                         <span class="category-subcard__avatar">
                             {% if sub.image or sub.image_url %}
                                 <img src="{{ sub.image_url|default(sub.image) }}" alt="{{ sub.name }}" loading="lazy">
@@ -275,17 +275,11 @@
                         </a>
                     </div>
 
-                    {#
-                        An empty CATEGORY is not an empty store, so offer a way onward
-                        rather than a dead end. Guarded on `category` on purpose: with
-                        no filter the listing is empty because the store itself is, and
-                        the component would render a second empty message under the
-                        first one.
-                    #}
                     {% if category and not filtered %}
-                        <section class="product-listing__fallback">
+                        {# Fallback products ONLY for child categories whose parent has products #}
+                        <section class="product-listing__fallback" data-parent-fallback data-category-id="{{ category.id }}" hidden>
                             <h2>{{ trans('product.other_products') }}</h2>
-                            <falak-products-list limit="4" columns="4" source="listing.empty"></falak-products-list>
+                            <div data-fallback-container></div>
                         </section>
                     {% endif %}
                 {% endif %}

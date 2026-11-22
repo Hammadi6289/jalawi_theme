@@ -1669,59 +1669,260 @@
         subcatSection.__hasHydrated = true;
         var subcatList = subcatSection.querySelector('[data-subcategories-list]');
         var currentCatId = subcatSection.getAttribute('data-current-category-id');
+        var urlParams = new URL(window.location.href).searchParams;
+        var selectedCatIds = urlParams.getAll('category_id[]');
+        if (!selectedCatIds.length && urlParams.has('category_id')) {
+            selectedCatIds = [urlParams.get('category_id')];
+        }
+        if (currentCatId && selectedCatIds.indexOf(String(currentCatId)) === -1) {
+            selectedCatIds.push(String(currentCatId));
+        }
 
-        if (subcatList && subcatList.children.length === 0) {
-            fetch('/api/storefront/categories')
-                .then(function (res) { return res.json(); })
-                .then(function (data) {
-                    var categories = (data && data.data) ? data.data : (Array.isArray(data) ? data : []);
-                    if (!categories || !categories.length) return;
+        fetch('/api/storefront/categories')
+            .then(function (res) { return res.json(); })
+            .then(function (data) {
+                var categories = (data && data.data) ? data.data : (Array.isArray(data) ? data : []);
+                if (!categories || !categories.length) return;
 
-                    var itemsToRender = [];
-                    if (currentCatId) {
-                        var targetCat = null;
-                        function findCat(cats) {
-                            for (var i = 0; i < cats.length; i++) {
-                                if (String(cats[i].id) === String(currentCatId)) return cats[i];
-                                if (cats[i].children && cats[i].children.length) {
-                                    var f = findCat(cats[i].children);
-                                    if (f) return f;
-                                }
+                var itemsToRender = [];
+                if (currentCatId) {
+                    var targetCat = null;
+                    var parentCat = null;
+                    function findCat(cats, parent) {
+                        for (var i = 0; i < cats.length; i++) {
+                            if (String(cats[i].id) === String(currentCatId)) {
+                                targetCat = cats[i];
+                                parentCat = parent;
+                                return;
                             }
-                            return null;
+                            if (cats[i].children && cats[i].children.length) {
+                                findCat(cats[i].children, cats[i]);
+                                if (targetCat) return;
+                            }
                         }
-                        targetCat = findCat(categories);
+                    }
+                    findCat(categories, null);
 
-                        if (targetCat && targetCat.children && targetCat.children.length) {
-                            itemsToRender = targetCat.children;
-                        } else {
-                            itemsToRender = categories.filter(function (c) { return !c.parent_id; });
-                        }
+                    if (targetCat && targetCat.children && targetCat.children.length) {
+                        itemsToRender = targetCat.children;
+                    } else if (parentCat && parentCat.children && parentCat.children.length) {
+                        itemsToRender = parentCat.children;
                     } else {
                         itemsToRender = categories.filter(function (c) { return !c.parent_id; });
                     }
+                } else {
+                    itemsToRender = categories.filter(function (c) { return !c.parent_id; });
+                }
 
-                    if (!itemsToRender.length) return;
+                if (!itemsToRender.length) return;
 
-                    var isRtl = document.documentElement.getAttribute('dir') === 'rtl';
-                    var shoppingBagSvg = '<svg class="category-subcard__icon" version="1.1" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><title>shopping-bag</title><path d="M28 10.667h-4v-2.667c0-4.412-3.588-8-8-8s-8 3.588-8 8v2.667h-4c-0.736 0-1.333 0.596-1.333 1.333v13.333c0 3.676 2.991 6.667 6.667 6.667h13.333c3.676 0 6.667-2.991 6.667-6.667v-13.333c0-0.737-0.597-1.333-1.333-1.333zM10.667 8c0-2.941 2.392-5.333 5.333-5.333s5.333 2.392 5.333 5.333v2.667h-10.667zM26.667 25.333c0 2.205-1.795 4-4 4h-13.333c-2.205 0-4-1.795-4-4v-12h2.667v2.667c0 0.737 0.597 1.333 1.333 1.333s1.333-0.596 1.333-1.333v-2.667h10.667v2.667c0 0.737 0.597 1.333 1.333 1.333s1.333-0.596 1.333-1.333v-2.667h2.667z"></path></svg>';
+                var isRtl = document.documentElement.getAttribute('dir') === 'rtl';
+                var shoppingBagSvg = '<svg class="category-subcard__icon" version="1.1" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><title>shopping-bag</title><path d="M28 10.667h-4v-2.667c0-4.412-3.588-8-8-8s-8 3.588-8 8v2.667h-4c-0.736 0-1.333 0.596-1.333 1.333v13.333c0 3.676 2.991 6.667 6.667 6.667h13.333c3.676 0 6.667-2.991 6.667-6.667v-13.333c0-0.737-0.597-1.333-1.333-1.333zM10.667 8c0-2.941 2.392-5.333 5.333-5.333s5.333 2.392 5.333 5.333v2.667h-10.667zM26.667 25.333c0 2.205-1.795 4-4 4h-13.333c-2.205 0-4-1.795-4-4v-12h2.667v2.667c0 0.737 0.597 1.333 1.333 1.333s1.333-0.596 1.333-1.333v-2.667h10.667v2.667c0 0.737 0.597 1.333 1.333 1.333s1.333-0.596 1.333-1.333v-2.667h2.667z"></path></svg>';
 
+                if (subcatList) {
                     subcatList.innerHTML = itemsToRender.map(function (cat) {
                         var catName = (cat.name_json && cat.name_json[isRtl ? 'ar' : 'en']) || cat.name || '';
                         var catImg = cat.image_url || cat.image;
                         var avatarContent = catImg
                             ? '<img src="' + catImg + '" alt="' + catName + '" loading="lazy">'
                             : shoppingBagSvg;
-                        var isActive = currentCatId && String(cat.id) === String(currentCatId);
+                        var isActive = selectedCatIds.some(function (id) { return String(id) === String(cat.id); });
                         var activeClass = isActive ? ' is-active' : '';
 
-                        return '<a href="/products?category_id%5B%5D=' + cat.id + '" class="category-subcard' + activeClass + '">' +
+                        return '<a href="/products?category_id%5B%5D=' + cat.id + '" class="category-subcard' + activeClass + '" data-category-id="' + cat.id + '">' +
                             '<span class="category-subcard__avatar">' + avatarContent + '</span>' +
                             '<span class="category-subcard__name">' + catName + '</span>' +
                             '</a>';
                     }).join('');
+                }
+
+                // Sync all categories (both root and subcategories, including 0-product categories like kids makeup)
+                // into <falak-filters> uniquely while ensuring categories with products show their true live product count.
+                var uniqueCats = {};
+                var parentCatsWithChildren = [];
+                function collectUniqueCats(list) {
+                    if (!Array.isArray(list)) return;
+                    for (var i = 0; i < list.length; i++) {
+                        var cat = list[i];
+                        if (!cat || cat.id == null) continue;
+                        var idKey = String(cat.id);
+                        if (!uniqueCats[idKey]) {
+                            uniqueCats[idKey] = cat;
+                        }
+                        if (Array.isArray(cat.children) && cat.children.length > 0) {
+                            parentCatsWithChildren.push(cat);
+                            collectUniqueCats(cat.children);
+                        }
+                    }
+                }
+                collectUniqueCats(categories);
+
+                var childCounts = {};
+                var countFetches = parentCatsWithChildren.map(function (parent) {
+                    return fetch('/api/storefront/products/filters?category_id=' + parent.id)
+                        .then(function (r) { return r.json(); })
+                        .then(function (res) {
+                            var filterArr = (res && res.data) ? res.data : (Array.isArray(res) ? res : []);
+                            for (var f = 0; f < filterArr.length; f++) {
+                                if (filterArr[f] && filterArr[f].key === 'category_id' && Array.isArray(filterArr[f].values)) {
+                                    filterArr[f].values.forEach(function (v) {
+                                        if (v && v.key != null) {
+                                            childCounts[String(v.key)] = typeof v.count === 'number' ? v.count : 0;
+                                        }
+                                    });
+                                }
+                            }
+                        })
+                        .catch(function () {});
+                });
+
+                function syncFilters() {
+                    var filtersEl = document.querySelector('falak-filters');
+                    if (!filtersEl) return;
+                    try {
+                        var filterList = JSON.parse(filtersEl.getAttribute('filters') || '[]');
+                        var catGrp = null;
+                        for (var f = 0; f < filterList.length; f++) {
+                            if (filterList[f] && filterList[f].key === 'category_id') {
+                                catGrp = filterList[f];
+                                break;
+                            }
+                        }
+                        if (!catGrp) {
+                            catGrp = { key: 'category_id', label: null, type: 'values', values: [] };
+                            filterList.unshift(catGrp);
+                        }
+
+                        // Map of unique category ID -> option item
+                        var isRtl = document.documentElement.getAttribute('dir') === 'rtl';
+                        var catMap = {};
+
+                        // Seed with existing backend values first
+                        if (Array.isArray(catGrp.values)) {
+                            catGrp.values.forEach(function (v) {
+                                if (v && v.key != null) {
+                                    catMap[String(v.key)] = {
+                                        key: v.key,
+                                        value: v.value,
+                                        count: typeof v.count === 'number' ? v.count : 0
+                                    };
+                                }
+                            });
+                        }
+
+                        // Merge all unique categories from store tree
+                        Object.keys(uniqueCats).forEach(function (idKey) {
+                            var cat = uniqueCats[idKey];
+                            var catName = (cat.name_json && cat.name_json[isRtl ? 'ar' : 'en']) || cat.name || '';
+                            if (!catName) return;
+
+                            var count = 0;
+                            if (childCounts[idKey] !== undefined) {
+                                count = childCounts[idKey];
+                            } else if (catMap[idKey] && typeof catMap[idKey].count === 'number') {
+                                count = catMap[idKey].count;
+                            }
+
+                            var numId = Number(cat.id);
+                            catMap[idKey] = {
+                                key: isNaN(numId) ? cat.id : numId,
+                                value: (catMap[idKey] && catMap[idKey].value) || catName,
+                                count: count
+                            };
+                        });
+
+                        // Convert deduped map to array
+                        var newValues = [];
+                        Object.keys(catMap).forEach(function (k) {
+                            newValues.push(catMap[k]);
+                        });
+
+                        catGrp.values = newValues;
+                        filtersEl.setAttribute('filters', JSON.stringify(filterList));
+                        if (typeof filtersEl.connectedCallback === 'function') {
+                            filtersEl.connectedCallback();
+                        }
+                    } catch (e) {}
+                }
+
+                // Initial sync ensures every category is visible immediately without duplicates
+                syncFilters();
+
+                // Re-sync with accurate child counts once fetched
+                if (countFetches.length > 0) {
+                    Promise.all(countFetches).then(function () {
+                        syncFilters();
+                    });
+                }
+            })
+            .catch(function () { });
+    }
+
+    /* listing: empty category parent fallback */
+    var fallbackSection = document.querySelector('[data-parent-fallback]');
+    if (fallbackSection) {
+        var fallbackCatId = fallbackSection.getAttribute('data-category-id');
+        var fallbackContainer = fallbackSection.querySelector('[data-fallback-container]');
+
+        if (fallbackCatId && fallbackContainer) {
+            fetch('/api/storefront/categories')
+                .then(function (res) { return res.json(); })
+                .then(function (data) {
+                    var categories = (data && data.data) ? data.data : (Array.isArray(data) ? data : []);
+                    if (!categories || !categories.length) return;
+
+                    var parentCat = null;
+                    function checkParent(list, currentParent) {
+                        if (!Array.isArray(list)) return;
+                        for (var i = 0; i < list.length; i++) {
+                            var item = list[i];
+                            if (!item) continue;
+                            if (String(item.id) === String(fallbackCatId)) {
+                                parentCat = currentParent;
+                                return;
+                            }
+                            if (item.children && item.children.length) {
+                                checkParent(item.children, item);
+                                if (parentCat) return;
+                            }
+                        }
+                    }
+                    checkParent(categories, null);
+
+                    // If category has NO parent (main category like CATA), DO NOT show fallback products!
+                    if (!parentCat || !parentCat.id) {
+                        return;
+                    }
+
+                    // Category IS a child category (e.g. Kids Makeup whose parent is Makeup).
+                    // Render products list scoped strictly to that parent category.
+                    var prodList = document.createElement('falak-products-list');
+                    prodList.setAttribute('limit', '4');
+                    prodList.setAttribute('columns', '4');
+                    prodList.setAttribute('category', String(parentCat.id));
+                    prodList.setAttribute('card-button', '');
+                    prodList.setAttribute('source', 'home.products');
+
+                    fallbackContainer.appendChild(prodList);
+
+                    var observer = new MutationObserver(function () {
+                        var cards = fallbackContainer.querySelectorAll('.f-card, .product-card, falak-product-card');
+                        if (cards.length > 0) {
+                            fallbackSection.removeAttribute('hidden');
+                            observer.disconnect();
+                        }
+                    });
+                    observer.observe(fallbackContainer, { childList: true, subtree: true });
+
+                    setTimeout(function () {
+                        observer.disconnect();
+                        var cards = fallbackContainer.querySelectorAll('.f-card, .product-card, falak-product-card');
+                        if (cards.length > 0) {
+                            fallbackSection.removeAttribute('hidden');
+                        }
+                    }, 2500);
                 })
-                .catch(function () { });
+                .catch(function () {});
         }
     }
 
