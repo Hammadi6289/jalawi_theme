@@ -6293,10 +6293,47 @@ body:has(.compare-panel:not([hidden])) {
     font-weight: 600;
 }
 
-.f-locale__code {
-    font-size: 0.72rem;
-    color: var(--f-text-faint);
+.f-locale__code,
+.f-currency__code {
+    order: -1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: none;
+    min-inline-size: 2.5rem;
+    block-size: 1.7rem;
+    padding-inline: 0.45rem;
+    border-radius: 999px;
+    background: #eef1f5;
+    color: var(--color-text, #1e293b) !important;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
     font-variant-numeric: tabular-nums;
+    transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.f-locale__option:hover .f-locale__code,
+.f-currency__option:hover .f-currency__code {
+    color: var(--color-primary, #c25867) !important;
+}
+
+.f-locale__option.is-current .f-locale__code,
+.f-currency__option.is-current .f-currency__code {
+    background: var(--color-primary, #c25867) !important;
+    color: #ffffff !important;
+    font-weight: 700 !important;
+}
+
+falak-localization-modal .f-locale__code,
+falak-localization-modal .f-currency__code {
+    color: var(--color-text, #1e293b) !important;
+}
+
+falak-localization-modal .f-locale__option.is-current .f-locale__code,
+falak-localization-modal .f-currency__option.is-current .f-currency__code {
+    color: #ffffff !important;
+    background: var(--color-primary, #c25867) !important;
 }
 
 /* ========================================================================

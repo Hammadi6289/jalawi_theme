@@ -481,7 +481,7 @@
                 // Resolve product record once from host property or JSON attribute
                 var p = cardHost ? cardHost.product : null;
                 if (!p && cardHost && cardHost.hasAttribute('product')) {
-                    try { p = JSON.parse(cardHost.getAttribute('product')); } catch (e) {}
+                    try { p = JSON.parse(cardHost.getAttribute('product')); } catch (e) { }
                 }
 
                 // Category line above title
@@ -1773,7 +1773,7 @@
                                 }
                             }
                         })
-                        .catch(function () {});
+                        .catch(function () { });
                 });
 
                 function syncFilters() {
@@ -1842,7 +1842,7 @@
                         if (typeof filtersEl.connectedCallback === 'function') {
                             filtersEl.connectedCallback();
                         }
-                    } catch (e) {}
+                    } catch (e) { }
                 }
 
                 // Initial sync ensures every category is visible immediately without duplicates
@@ -1922,7 +1922,7 @@
                         }
                     }, 2500);
                 })
-                .catch(function () {});
+                .catch(function () { });
         }
     }
 
@@ -3400,7 +3400,7 @@
             modal.innerHTML = '<div class="qv-shell">'
                 + '<div class="qv" data-qv-root inert></div>'
                 + '<div class="qv qv--loading" data-qv-loader>' + this.skeleton(seed) + '</div>'
-            + '</div>';
+                + '</div>';
 
             this.appendChild(modal);
             this._modal = modal;
@@ -3659,27 +3659,27 @@
 
             return ''
                 + '<div class="qv__media">'
-                    + '<div class="qv__frame">'
-                        + (s.image
-                            ? '<figure class="qv__slide is-active"><img src="' + this.escape(s.image) + '" alt=""></figure>'
-                            : '<figure class="qv__slide qv__slide--empty is-active">' + bone('fill') + '</figure>')
-                        + '<span class="qv__spinner" role="status" aria-live="polite"'
-                            + ' aria-label="' + this.escape(this.trans('common.loading')) + '"></span>'
-                    + '</div>'
-                    + '<div class="qv__thumbs">' + bone('thumb') + bone('thumb') + bone('thumb') + '</div>'
+                + '<div class="qv__frame">'
+                + (s.image
+                    ? '<figure class="qv__slide is-active"><img src="' + this.escape(s.image) + '" alt=""></figure>'
+                    : '<figure class="qv__slide qv__slide--empty is-active">' + bone('fill') + '</figure>')
+                + '<span class="qv__spinner" role="status" aria-live="polite"'
+                + ' aria-label="' + this.escape(this.trans('common.loading')) + '"></span>'
+                + '</div>'
+                + '<div class="qv__thumbs">' + bone('thumb') + bone('thumb') + bone('thumb') + '</div>'
                 + '</div>'
                 + '<div class="qv__info">'
-                    + '<div class="qv__body">'
-                        + bone('eyebrow')
-                        + (s.name ? '<h2 class="qv__title">' + this.escape(s.name) + '</h2>' : bone('title'))
-                        + bone('price')
-                        + bone('line')
-                        + bone('line')
-                        + bone('short')
-                    + '</div>'
-                    + '<div class="qv__footer">'
-                        + '<div class="qv__actions">' + bone('qty') + bone('button') + '</div>'
-                    + '</div>'
+                + '<div class="qv__body">'
+                + bone('eyebrow')
+                + (s.name ? '<h2 class="qv__title">' + this.escape(s.name) + '</h2>' : bone('title'))
+                + bone('price')
+                + bone('line')
+                + bone('line')
+                + bone('short')
+                + '</div>'
+                + '<div class="qv__footer">'
+                + '<div class="qv__actions">' + bone('qty') + bone('button') + '</div>'
+                + '</div>'
                 + '</div>';
         }
 
@@ -3691,9 +3691,9 @@
                 return '<div class="qv__failed">'
                     + '<p>' + this.escape(t('product.quick_view_failed')) + '</p>'
                     + '<a class="btn btn--primary" href="' + this.escape(p.url) + '">'
-                        + this.escape(t('product.full_details'))
+                    + this.escape(t('product.full_details'))
                     + '</a>'
-                + '</div>';
+                    + '</div>';
             }
 
             const many = p.images.length > 1;
@@ -3701,9 +3701,9 @@
             const slides = p.images.length
                 ? p.images.map((src, index) =>
                     '<figure class="qv__slide' + (index === 0 ? ' is-active' : '') + '"'
-                        + ' data-qv-slide data-index="' + index + '">'
-                        + '<img src="' + this.escape(src) + '" alt="' + this.escape(p.name) + '"'
-                            + (index === 0 ? '' : ' loading="lazy"') + '>'
+                    + ' data-qv-slide data-index="' + index + '">'
+                    + '<img src="' + this.escape(src) + '" alt="' + this.escape(p.name) + '"'
+                    + (index === 0 ? '' : ' loading="lazy"') + '>'
                     + '</figure>').join('')
                 : p.video
                     /* Autoplaying muted and looping, with no controls: this is
@@ -3711,9 +3711,9 @@
                        the shopper opened to look at one product is exactly
                        where the clip should keep running. */
                     ? '<figure class="qv__slide is-active">'
-                        + '<video autoplay muted loop playsinline preload="metadata"'
-                            + (p.poster ? ' poster="' + this.escape(p.poster) + '"' : '')
-                            + ' src="' + this.escape(p.video) + '"></video>'
+                    + '<video autoplay muted loop playsinline preload="metadata"'
+                    + (p.poster ? ' poster="' + this.escape(p.poster) + '"' : '')
+                    + ' src="' + this.escape(p.video) + '"></video>'
                     + '</figure>'
                     : '<figure class="qv__slide qv__slide--empty is-active"></figure>';
 
@@ -3723,19 +3723,19 @@
                box further below the fold. */
             const nav = many
                 ? '<button type="button" class="qv__nav qv__nav--prev" data-qv-prev'
-                        + ' aria-label="' + this.escape(t('common.previous')) + '">' + this.chevron('start') + '</button>'
-                    + '<button type="button" class="qv__nav qv__nav--next" data-qv-next'
-                        + ' aria-label="' + this.escape(t('common.next')) + '">' + this.chevron('end') + '</button>'
-                    + '<span class="qv__counter" data-qv-counter dir="ltr">1 / ' + p.images.length + '</span>'
+                + ' aria-label="' + this.escape(t('common.previous')) + '">' + this.chevron('start') + '</button>'
+                + '<button type="button" class="qv__nav qv__nav--next" data-qv-next'
+                + ' aria-label="' + this.escape(t('common.next')) + '">' + this.chevron('end') + '</button>'
+                + '<span class="qv__counter" data-qv-counter dir="ltr">1 / ' + p.images.length + '</span>'
                 : '';
 
             const thumbs = many
                 ? '<div class="qv__thumbs">'
-                    + p.images.map((src, index) =>
-                        '<button type="button" class="qv__thumb' + (index === 0 ? ' is-active' : '') + '"'
-                            + ' data-qv-thumb="' + index + '" aria-label="' + (index + 1) + ' / ' + p.images.length + '">'
-                            + '<img src="' + this.escape(src) + '" alt="" loading="lazy">'
-                        + '</button>').join('')
+                + p.images.map((src, index) =>
+                    '<button type="button" class="qv__thumb' + (index === 0 ? ' is-active' : '') + '"'
+                    + ' data-qv-thumb="' + index + '" aria-label="' + (index + 1) + ' / ' + p.images.length + '">'
+                    + '<img src="' + this.escape(src) + '" alt="" loading="lazy">'
+                    + '</button>').join('')
                 + '</div>'
                 : '';
 
@@ -3752,26 +3752,26 @@
                the pills were expected on screen. */
             const options = p.variations.length
                 ? '<falak-product-options class="qv__options" data-qv-options'
-                    + ' product-id="' + this.escape(p.id) + '"'
-                    /* The merchant's display config travels with the record too
-                       (product.show eager-loads it), so the dialog draws the same
-                       swatches the product page does instead of plain pills. */
-                    + (p.options && p.options.length
-                        ? ' options="' + this.escape(JSON.stringify(p.options)) + '"'
-                        : '')
-                    + ' variations="' + this.escape(JSON.stringify(p.variations)) + '"></falak-product-options>'
+                + ' product-id="' + this.escape(p.id) + '"'
+                /* The merchant's display config travels with the record too
+                   (product.show eager-loads it), so the dialog draws the same
+                   swatches the product page does instead of plain pills. */
+                + (p.options && p.options.length
+                    ? ' options="' + this.escape(JSON.stringify(p.options)) + '"'
+                    : '')
+                + ' variations="' + this.escape(JSON.stringify(p.variations)) + '"></falak-product-options>'
                 : '';
 
             const money = v => (typeof v === 'number' ? falak.money(v) : v);
 
             return ''
                 + '<div class="qv__media">'
-                    + '<div class="qv__frame">'
-                        + '<div class="qv__stage" data-qv-stage>' + slides + '</div>'
-                        + (off > 0 ? '<span class="qv__badge" dir="ltr">-' + off + '%</span>' : '')
-                        + nav
-                    + '</div>'
-                    + thumbs
+                + '<div class="qv__frame">'
+                + '<div class="qv__stage" data-qv-stage>' + slides + '</div>'
+                + (off > 0 ? '<span class="qv__badge" dir="ltr">-' + off + '%</span>' : '')
+                + nav
+                + '</div>'
+                + thumbs
                 + '</div>'
 
                 /* A form, so <falak-add-product-button> resolves its stepper
@@ -3782,120 +3782,120 @@
                    options scroll in the body while the stepper and the button
                    stay pinned in the footer. */
                 + '<form class="qv__info" data-qv-form novalidate>'
-                  + '<div class="qv__body">'
-                    + '<div class="qv__tools">'
-                        + (p.category
-                            ? '<a class="qv__eyebrow" href="' + this.escape(p.category.url) + '">' + this.escape(p.category.name) + '</a>'
-                            : '<span class="qv__eyebrow"></span>')
-                        + '<falak-wishlist-button class="qv__tool" product-id="' + this.escape(p.id) + '"'
-                            + ' button-class="qv__tool-btn"></falak-wishlist-button>'
+                + '<div class="qv__body">'
+                + '<div class="qv__tools">'
+                + (p.category
+                    ? '<a class="qv__eyebrow" href="' + this.escape(p.category.url) + '">' + this.escape(p.category.name) + '</a>'
+                    : '<span class="qv__eyebrow"></span>')
+                + '<falak-wishlist-button class="qv__tool" product-id="' + this.escape(p.id) + '"'
+                + ' button-class="qv__tool-btn"></falak-wishlist-button>'
 
-                        /* <falak-social mode="share"> has no trigger of its own
-                           â€” it always draws its row inline â€” so the trigger is
-                           the theme's and the component keeps owning the
-                           networks and the URLs. Same wrapper as the product
-                           page's gallery. */
-                        + '<div class="qv__tool qv__share" data-qv-share>'
-                            + '<button type="button" class="qv__tool-btn" data-qv-share-toggle'
-                                + ' aria-expanded="false" aria-label="' + this.escape(t('footer.share')) + '">'
-                                + this.shareGlyph()
-                            + '</button>'
-                            + '<falak-social class="qv__share-sheet" mode="share" hide-title'
-                                /* Absolute: a share link is opened on another
-                                   site, where "/product/12" resolves to
-                                   nothing at all. */
-                                + ' share-url="' + this.escape(window.location.origin + p.url) + '"'
-                                + ' share-text="' + this.escape(p.name) + '"></falak-social>'
-                        + '</div>'
-                    + '</div>'
+                /* <falak-social mode="share"> has no trigger of its own
+                   â€” it always draws its row inline â€” so the trigger is
+                   the theme's and the component keeps owning the
+                   networks and the URLs. Same wrapper as the product
+                   page's gallery. */
+                + '<div class="qv__tool qv__share" data-qv-share>'
+                + '<button type="button" class="qv__tool-btn" data-qv-share-toggle'
+                + ' aria-expanded="false" aria-label="' + this.escape(t('footer.share')) + '">'
+                + this.shareGlyph()
+                + '</button>'
+                + '<falak-social class="qv__share-sheet" mode="share" hide-title'
+                /* Absolute: a share link is opened on another
+                   site, where "/product/12" resolves to
+                   nothing at all. */
+                + ' share-url="' + this.escape(window.location.origin + p.url) + '"'
+                + ' share-text="' + this.escape(p.name) + '"></falak-social>'
+                + '</div>'
+                + '</div>'
 
-                    + '<h2 class="qv__title"><a href="' + this.escape(p.url) + '">' + this.escape(p.name) + '</a></h2>'
+                + '<h2 class="qv__title"><a href="' + this.escape(p.url) + '">' + this.escape(p.name) + '</a></h2>'
 
-                    + '<p class="qv__price">'
-                        + '<span class="qv__amount" data-qv-amount>' + this.escape(falak.money(p.price)) + '</span>'
-                        + '<del class="qv__was" data-qv-was' + (p.compareAt ? '' : ' hidden') + '>'
-                            + this.escape(p.compareAt ? money(p.compareAt) : '')
-                        + '</del>'
-                    + '</p>'
+                + '<p class="qv__price">'
+                + '<span class="qv__amount" data-qv-amount>' + this.escape(falak.money(p.price)) + '</span>'
+                + '<del class="qv__was" data-qv-was' + (p.compareAt ? '' : ' hidden') + '>'
+                + this.escape(p.compareAt ? money(p.compareAt) : '')
+                + '</del>'
+                + '</p>'
 
-                    /* Server values, not `fetch`: the record already carries the
-                       aggregate, and a fetched rating pops in and shoves the buy
-                       box down inside a box this short. */
-                    + (p.reviews > 0
-                        ? '<a class="qv__rating" href="' + this.escape(p.url) + '#product-reviews">'
-                            + '<falak-rating-stars value="' + this.escape(p.rating || 0) + '"'
-                                + ' total="' + p.reviews + '"></falak-rating-stars>'
-                        + '</a>'
-                        : '')
+                /* Server values, not `fetch`: the record already carries the
+                   aggregate, and a fetched rating pops in and shoves the buy
+                   box down inside a box this short. */
+                + (p.reviews > 0
+                    ? '<a class="qv__rating" href="' + this.escape(p.url) + '#product-reviews">'
+                    + '<falak-rating-stars value="' + this.escape(p.rating || 0) + '"'
+                    + ' total="' + p.reviews + '"></falak-rating-stars>'
+                    + '</a>'
+                    : '')
 
-                    /* Stock and SKU on one quiet line, both repainted when a
-                       variant is chosen (see wireOptions). */
-                    + '<p class="qv__status">'
-                        + '<span class="qv__stock' + (p.inStock ? '' : ' qv__stock--out') + '" data-qv-stock>'
-                            + this.escape(t(p.inStock ? 'product.in_stock' : 'product.out_of_stock'))
-                        + '</span>'
-                        + '<span class="qv__sku" data-qv-sku-wrap' + (p.sku ? '' : ' hidden') + '>'
-                            + this.escape(t('product.sku')) + ' '
-                            + '<span dir="ltr" data-qv-sku>' + this.escape(p.sku || '') + '</span>'
-                        + '</span>'
-                        + (p.isTaxable ? '<span class="qv__tax">' + this.escape(t('product.tax_included')) + '</span>' : '')
-                    + '</p>'
+                /* Stock and SKU on one quiet line, both repainted when a
+                   variant is chosen (see wireOptions). */
+                + '<p class="qv__status">'
+                + '<span class="qv__stock' + (p.inStock ? '' : ' qv__stock--out') + '" data-qv-stock>'
+                + this.escape(t(p.inStock ? 'product.in_stock' : 'product.out_of_stock'))
+                + '</span>'
+                + '<span class="qv__sku" data-qv-sku-wrap' + (p.sku ? '' : ' hidden') + '>'
+                + this.escape(t('product.sku')) + ' '
+                + '<span dir="ltr" data-qv-sku>' + this.escape(p.sku || '') + '</span>'
+                + '</span>'
+                + (p.isTaxable ? '<span class="qv__tax">' + this.escape(t('product.tax_included')) + '</span>' : '')
+                + '</p>'
 
-                    + (p.description ? '<div class="qv__desc">' + p.description + '</div>' : '')
+                + (p.description ? '<div class="qv__desc">' + p.description + '</div>' : '')
 
-                    + options
-                  + '</div>'
+                + options
+                + '</div>'
 
-                  + '<div class="qv__footer">'
-                    + '<div class="qv__actions">'
-                        + '<falak-quantity-input class="qv__qty" data-qv-qty value="1" min="1"'
-                            + (p.available ? ' max="' + p.available + '"' : '')
-                            + ' label="' + this.escape(t('product.quantity')) + '"></falak-quantity-input>'
+                + '<div class="qv__footer">'
+                + '<div class="qv__actions">'
+                + '<falak-quantity-input class="qv__qty" data-qv-qty value="1" min="1"'
+                + (p.available ? ' max="' + p.available + '"' : '')
+                + ' label="' + this.escape(t('product.quantity')) + '"></falak-quantity-input>'
 
-                        + '<falak-add-product-button class="qv__add"'
-                            + ' product-id="' + this.escape(p.id) + '"'
-                            + ' product-status="' + (p.inStock ? 'sale' : 'out') + '"'
-                            + ' quantity-selector="[data-qv-qty]"'
-                            + (p.variations.length ? ' options-selector="[data-qv-options]"' : '')
-                            /* A printing product: the button opens the design
-                               dialog over this one rather than adding undesigned. */
-                            + (p.isPrinting
-                                ? ' requires-design'
-                                    + ' product-url="' + this.escape(p.url) + '"'
-                                    + ' product-name="' + this.escape(p.name) + '"'
-                                    + ' product-image="' + this.escape((p.images && p.images[0]) || '') + '"'
-                                    + ' product-price="' + this.escape(window.falak.money(p.price)) + '"'
-                                : '')
-                            /* A service: the button opens the booking wizard. */
-                            + (p.isService ? ' product-type="booking"' : '')
-                            + ' source="quick-view"'
-                            + ' button-class="btn btn--primary qv__add-btn">'
-                            + (p.isService
-                                ? '<span data-booking-label>' + this.escape(t('product.book_now')) + '</span>'
-                                : this.bagGlyph()
-                                    + '<span>' + this.escape(t(p.isPrinting ? 'product.design_now' : 'product.add_to_cart')) + '</span>')
-                        + '</falak-add-product-button>'
-                    + '</div>'
+                + '<falak-add-product-button class="qv__add"'
+                + ' product-id="' + this.escape(p.id) + '"'
+                + ' product-status="' + (p.inStock ? 'sale' : 'out') + '"'
+                + ' quantity-selector="[data-qv-qty]"'
+                + (p.variations.length ? ' options-selector="[data-qv-options]"' : '')
+                /* A printing product: the button opens the design
+                   dialog over this one rather than adding undesigned. */
+                + (p.isPrinting
+                    ? ' requires-design'
+                    + ' product-url="' + this.escape(p.url) + '"'
+                    + ' product-name="' + this.escape(p.name) + '"'
+                    + ' product-image="' + this.escape((p.images && p.images[0]) || '') + '"'
+                    + ' product-price="' + this.escape(window.falak.money(p.price)) + '"'
+                    : '')
+                /* A service: the button opens the booking wizard. */
+                + (p.isService ? ' product-type="booking"' : '')
+                + ' source="quick-view"'
+                + ' button-class="btn btn--primary qv__add-btn">'
+                + (p.isService
+                    ? '<span data-booking-label>' + this.escape(t('product.book_now')) + '</span>'
+                    : this.bagGlyph()
+                    + '<span>' + this.escape(t(p.isPrinting ? 'product.design_now' : 'product.add_to_cart')) + '</span>')
+                + '</falak-add-product-button>'
+                + '</div>'
 
-                    /* Shows itself only while the product (or the chosen
-                       variant) is sold out, so it needs no condition. */
-                    + '<falak-product-availability class="qv__notify"'
-                        + ' product-id="' + this.escape(p.id) + '"'
-                        + ' product-status="' + (p.inStock ? 'sale' : 'out') + '"'
-                        + ' button-class="btn btn--outline"></falak-product-availability>'
+                /* Shows itself only while the product (or the chosen
+                   variant) is sold out, so it needs no condition. */
+                + '<falak-product-availability class="qv__notify"'
+                + ' product-id="' + this.escape(p.id) + '"'
+                + ' product-status="' + (p.inStock ? 'sale' : 'out') + '"'
+                + ' button-class="btn btn--outline"></falak-product-availability>'
 
-                    /* The dialog is a preview, not a replacement: the long
-                       description, the tabs, the reviews and the Q&A are all
-                       still only on the page. The line beside it echoes the
-                       shopper's choice back to them. */
-                    + '<div class="qv__foot-meta">'
-                        + '<span class="qv__summary" data-qv-summary></span>'
-                        + '<a class="qv__details" href="' + this.escape(p.url) + '">'
-                            + this.escape(t('product.full_details'))
-                            + this.arrow()
-                        + '</a>'
-                    + '</div>'
-                  + '</div>'
+                /* The dialog is a preview, not a replacement: the long
+                   description, the tabs, the reviews and the Q&A are all
+                   still only on the page. The line beside it echoes the
+                   shopper's choice back to them. */
+                + '<div class="qv__foot-meta">'
+                + '<span class="qv__summary" data-qv-summary></span>'
+                + '<a class="qv__details" href="' + this.escape(p.url) + '">'
+                + this.escape(t('product.full_details'))
+                + this.arrow()
+                + '</a>'
+                + '</div>'
+                + '</div>'
                 + '</form>';
         }
 
@@ -4354,7 +4354,7 @@
             var orderRaw = summary.getAttribute('order');
             var orderData = null;
             if (orderRaw) {
-                try { orderData = JSON.parse(orderRaw); } catch (e) {}
+                try { orderData = JSON.parse(orderRaw); } catch (e) { }
             }
             if (!orderData && summary.order) {
                 orderData = summary.order;
@@ -4391,8 +4391,42 @@
                             var del = document.createElement('del');
                             del.className = 'f-order__item-was cart-item__was-price';
                             var qty = Number(itemData.quantity) || 1;
-                            del.textContent = (window.falak && window.falak.currency) ? window.falak.currency.format(orig * qty) : String(orig * qty);
+                            var totalText = (totalEl.textContent || '').trim();
+                            var curSymbol = totalText.replace(/[\d\s.,]/g, '').trim();
+                            var formattedOrig = (orig * qty).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                            if (window.falak && typeof window.falak.money === 'function') {
+                                del.textContent = window.falak.money(orig * qty, (oData && oData.currency) || curSymbol);
+                            } else if (curSymbol) {
+                                if (/\d\s*[^\d\s.,]+$/.test(totalText)) {
+                                    del.textContent = formattedOrig + ' ' + curSymbol;
+                                } else {
+                                    del.textContent = curSymbol + ' ' + formattedOrig;
+                                }
+                            } else if (oData && oData.currency) {
+                                del.textContent = formattedOrig + ' ' + oData.currency;
+                            } else {
+                                del.textContent = formattedOrig;
+                            }
                             totalEl.parentNode.insertBefore(del, totalEl.nextSibling);
+                        }
+                    }
+                });
+
+                // Tidy raw shipment courier code (e.g. "via PRIVATE_COURIER" -> "via Private courier")
+                summary.querySelectorAll('.f-order__row, .f-order__kv, .cart-summary__row').forEach(function (row) {
+                    var walker = document.createTreeWalker(row, NodeFilter.SHOW_TEXT, null, false);
+                    var node;
+                    while ((node = walker.nextNode())) {
+                        if (/PRIVATE_COURIER/i.test(node.nodeValue)) {
+                            var courierName = (oData && oData.shipment && oData.shipment.carrier && oData.shipment.carrier !== 'private_courier' && oData.shipment.carrier !== 'PRIVATE_COURIER')
+                                ? oData.shipment.carrier
+                                : ((oData && oData.shipping_company) || (oData && oData.courier_name) || '');
+                            if (!courierName) {
+                                courierName = (window.falak && window.falak.lang && window.falak.lang.get('account.shipment_type.private_courier') !== 'account.shipment_type.private_courier')
+                                    ? window.falak.lang.get('account.shipment_type.private_courier')
+                                    : (document.documentElement.lang === 'ar' ? 'توصيل خاص' : 'Private courier');
+                            }
+                            node.nodeValue = node.nodeValue.replace(/PRIVATE_COURIER/gi, courierName);
                         }
                     }
                 });
@@ -4409,7 +4443,7 @@
                         var o = res && (res.order || res.data || res);
                         if (o) applyPrices(o);
                     })
-                    .catch(function () {});
+                    .catch(function () { });
             }
         });
     }
