@@ -395,114 +395,123 @@
         function decorateCards() {
             document.querySelectorAll('.f-card__actions').forEach(function (actions) {
                 if (actions.closest('.hero-thumb, .hero-slider, [source="hero"], .hero-thumb--product') || actions.querySelector('.hero-thumb__view')) return; // hero glass cards stay two buttons
-                if (actions.closest('[data-wishlist-grid]') || actions.closest('.wishlist-grid')) return; // wishlist cards stay clean
 
                 var card = actions.closest('.f-card__inner') || actions.closest('.f-card');
                 if (!card) return;
 
+                var cardHost = card.closest('falak-product-card');
                 var source = actions.querySelector('[product-id]');
-                var productId = source ? source.getAttribute('product-id') : null;
+                var productId = (source && source.getAttribute('product-id')) || (cardHost && cardHost.getAttribute('product-id')) || null;
                 var productUrl = null;
                 var linkEl = card.querySelector('a.f-card__link') || card.querySelector('a.f-card__media');
                 if (linkEl) productUrl = linkEl.getAttribute('href');
 
-                // Quick actions column at top-end corner of card
-                var quickActions = actions.querySelector('.f-card__quick-actions');
-                if (!quickActions) {
-                    quickActions = document.createElement('div');
-                    quickActions.className = 'f-card__quick-actions';
-                    actions.appendChild(quickActions);
-                }
+                var isWishlistCard = !!(actions.closest('[data-wishlist-grid]') || actions.closest('.wishlist-grid'));
 
-                // 1. Quick view (Eye icon)
-                if (!quickActions.querySelector('.f-card__quickview') && productUrl) {
-                    var qvBtn = document.createElement('a');
-                    qvBtn.className = 'f-card__quickview f-card__icon-btn';
-                    qvBtn.href = productUrl;
-                    if (productId) {
-                        qvBtn.setAttribute('data-quick-view', productId);
-                        var nameEl = card.querySelector('.f-card__title, .f-card__name');
-                        if (nameEl) qvBtn.setAttribute('data-quick-view-name', (nameEl.textContent || '').trim());
-                        var imgEl = card.querySelector('img');
-                        if (imgEl && imgEl.src) qvBtn.setAttribute('data-quick-view-image', imgEl.src);
+                if (isWishlistCard) {
+                    if (productId && !card.querySelector('[data-wishlist-remove]')) {
+                        var removeBtn = document.createElement('button');
+                        removeBtn.type = 'button';
+                        removeBtn.className = 'product-card__remove-wishlist';
+                        removeBtn.setAttribute('data-wishlist-remove', productId);
+                        var removeLabel = isArabic ? 'إزالة' : 'Remove';
+                        removeBtn.setAttribute('aria-label', removeLabel);
+                        removeBtn.setAttribute('title', removeLabel);
+                        removeBtn.innerHTML = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>';
+                        actions.appendChild(removeBtn);
                     }
-                    qvBtn.setAttribute('aria-label', isArabic ? 'عرض سريع' : 'Quick view');
-                    qvBtn.innerHTML = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>';
-                    quickActions.appendChild(qvBtn);
+                } else {
+                    // Quick actions column at top-end corner of card
+                    var quickActions = actions.querySelector('.f-card__quick-actions');
+                    if (!quickActions) {
+                        quickActions = document.createElement('div');
+                        quickActions.className = 'f-card__quick-actions';
+                        actions.appendChild(quickActions);
+                    }
+
+                    // 1. Quick view (Eye icon)
+                    if (!quickActions.querySelector('.f-card__quickview') && productUrl) {
+                        var qvBtn = document.createElement('a');
+                        qvBtn.className = 'f-card__quickview f-card__icon-btn';
+                        qvBtn.href = productUrl;
+                        if (productId) {
+                            qvBtn.setAttribute('data-quick-view', productId);
+                            var nameEl = card.querySelector('.f-card__title, .f-card__name');
+                            if (nameEl) qvBtn.setAttribute('data-quick-view-name', (nameEl.textContent || '').trim());
+                            var imgEl = card.querySelector('img');
+                            if (imgEl && imgEl.src) qvBtn.setAttribute('data-quick-view-image', imgEl.src);
+                        }
+                        qvBtn.setAttribute('aria-label', isArabic ? 'عرض سريع' : 'Quick view');
+                        qvBtn.innerHTML = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>';
+                        quickActions.appendChild(qvBtn);
+                    }
+
+                    // 2. Wishlist button (move inside quickActions)
+                    var wishlistHost = actions.querySelector('falak-wishlist-button') || actions.querySelector('.f-card__wishlist');
+                    if (wishlistHost && wishlistHost.parentElement !== quickActions) {
+                        quickActions.appendChild(wishlistHost);
+                    }
+
+                    // 3. Compare button (Arrows icon)
+                    var compBtn = actions.querySelector('[data-compare-toggle]');
+                    if (!compBtn && productId) {
+                        compBtn = document.createElement('button');
+                        compBtn.type = 'button';
+                        compBtn.className = 'f-card__compare f-card__icon-btn';
+                        compBtn.setAttribute('data-compare-toggle', productId);
+                        compBtn.setAttribute('aria-label', isArabic ? 'مقارنة' : 'Compare');
+                        compBtn.innerHTML = compareIcon;
+                        quickActions.appendChild(compBtn);
+                    } else if (compBtn && compBtn.parentElement !== quickActions) {
+                        quickActions.appendChild(compBtn);
+                    }
+
+                    // 4. Share / Copy Link button
+                    if (!quickActions.querySelector('.f-card__share') && (productId || productUrl)) {
+                        var shareBtn = document.createElement('button');
+                        shareBtn.type = 'button';
+                        shareBtn.className = 'f-card__share f-card__icon-btn';
+                        if (productUrl) shareBtn.setAttribute('data-share-url', productUrl);
+                        shareBtn.setAttribute('aria-label', isArabic ? 'نسخ الرابط' : 'Copy link');
+                        shareBtn.innerHTML = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>';
+                        quickActions.appendChild(shareBtn);
+                    }
                 }
 
-                // 2. Wishlist button (move inside quickActions)
-                var wishlistHost = actions.querySelector('falak-wishlist-button') || actions.querySelector('.f-card__wishlist');
-                if (wishlistHost && wishlistHost.parentElement !== quickActions) {
-                    quickActions.appendChild(wishlistHost);
-                }
-
-                // 3. Compare button (Arrows icon)
-                var compBtn = actions.querySelector('[data-compare-toggle]');
-                if (!compBtn && productId) {
-                    compBtn = document.createElement('button');
-                    compBtn.type = 'button';
-                    compBtn.className = 'f-card__compare f-card__icon-btn';
-                    compBtn.setAttribute('data-compare-toggle', productId);
-                    compBtn.setAttribute('aria-label', isArabic ? 'مقارنة' : 'Compare');
-                    compBtn.innerHTML = compareIcon;
-                    quickActions.appendChild(compBtn);
-                } else if (compBtn && compBtn.parentElement !== quickActions) {
-                    quickActions.appendChild(compBtn);
-                }
-
-                // 4. Share / Copy Link button
-                if (!quickActions.querySelector('.f-card__share') && (productId || productUrl)) {
-                    var shareBtn = document.createElement('button');
-                    shareBtn.type = 'button';
-                    shareBtn.className = 'f-card__share f-card__icon-btn';
-                    if (productUrl) shareBtn.setAttribute('data-share-url', productUrl);
-                    shareBtn.setAttribute('aria-label', isArabic ? 'نسخ الرابط' : 'Copy link');
-                    shareBtn.innerHTML = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>';
-                    quickActions.appendChild(shareBtn);
+                // Resolve product record once from host property or JSON attribute
+                var p = cardHost ? cardHost.product : null;
+                if (!p && cardHost && cardHost.hasAttribute('product')) {
+                    try { p = JSON.parse(cardHost.getAttribute('product')); } catch (e) {}
                 }
 
                 // Category line above title
-                var cardHost = card.closest('falak-product-card');
-                if (cardHost && !card.querySelector('.f-card__category')) {
-                    var p = cardHost.product;
-                    if (!p && cardHost.hasAttribute('product')) {
-                        try { p = JSON.parse(cardHost.getAttribute('product')); } catch (e) {}
-                    }
-                    if (p) {
-                        var catName = (isArabic && (p.category_name_ar || (p.category && p.category.name_ar))) ||
-                            p.category_name || (p.category && p.category.name) || p.subtitle_ar || p.subtitle;
-                        if (catName) {
-                            var body = card.querySelector('.f-card__body');
-                            if (body) {
-                                var catEl = document.createElement('span');
-                                catEl.className = 'f-card__category';
-                                catEl.textContent = catName;
-                                body.insertBefore(catEl, body.firstChild);
-                            }
+                if (p && !card.querySelector('.f-card__category')) {
+                    var catName = (isArabic && (p.category_name_ar || (p.category && p.category.name_ar))) ||
+                        p.category_name || (p.category && p.category.name) || p.subtitle_ar || p.subtitle;
+                    if (catName) {
+                        var body = card.querySelector('.f-card__body');
+                        if (body) {
+                            var catEl = document.createElement('span');
+                            catEl.className = 'f-card__category';
+                            catEl.textContent = catName;
+                            body.insertBefore(catEl, body.firstChild);
                         }
                     }
                 }
+
                 // Badge and offer stacking helper for cards
                 var hasBadge = !!card.querySelector('.f-card__badge');
                 var hasOffer = !!card.querySelector('.f-card__offer');
                 var hasShip = !!card.querySelector('.f-card__ship');
 
-                // If product metadata has free shipping and card doesn't have ship/offer badge, add it
-                if (!hasShip && !hasOffer && cardHost) {
-                    var prod = cardHost.product;
-                    if (!prod && cardHost.hasAttribute('product')) {
-                        try { prod = JSON.parse(cardHost.getAttribute('product')); } catch (e) {}
-                    }
-                    if (prod && (prod.free_shipping || prod.free_shipment || prod.freeShipping || prod.is_free_shipping)) {
-                        var media = card.querySelector('.f-card__media');
-                        if (media) {
-                            var shipEl = document.createElement('span');
-                            shipEl.className = 'f-card__ship';
-                            shipEl.textContent = isArabic ? 'شحن مجاني' : 'Free shipping';
-                            media.appendChild(shipEl);
-                            hasShip = true;
-                        }
+                if (!hasShip && !hasOffer && p && (p.free_shipping || p.free_shipment || p.freeShipping || p.is_free_shipping)) {
+                    var media = card.querySelector('.f-card__media');
+                    if (media) {
+                        var shipEl = document.createElement('span');
+                        shipEl.className = 'f-card__ship';
+                        shipEl.textContent = isArabic ? 'شحن مجاني' : 'Free shipping';
+                        media.appendChild(shipEl);
+                        hasShip = true;
                     }
                 }
 
@@ -578,8 +587,8 @@
             event.preventDefault();
             event.stopPropagation();
 
-            var card = btn.closest('.product-card') || btn.closest('[data-product-id]') || btn.closest('.f-card');
-            var productId = btn.getAttribute('data-wishlist-remove') || (card && card.getAttribute('data-product-id'));
+            var card = btn.closest('falak-product-card') || btn.closest('.product-card') || btn.closest('[data-product-id]') || btn.closest('.f-card');
+            var productId = btn.getAttribute('data-wishlist-remove') || (card && (card.getAttribute('product-id') || card.getAttribute('data-product-id')));
             if (!productId || btn.disabled) return;
 
             btn.disabled = true;
@@ -594,7 +603,7 @@
                     var grid = card.closest('[data-wishlist-grid]') || card.parentElement;
                     card.remove();
                     if (grid) {
-                        var remaining = grid.querySelectorAll('.product-card, .f-card, [data-product-id]');
+                        var remaining = grid.querySelectorAll('falak-product-card, .product-card');
                         var countEl = document.querySelector('.page-head__meta');
                         if (countEl) {
                             countEl.textContent = remaining.length + ' item(s)';

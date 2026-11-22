@@ -1,29 +1,25 @@
 {#
-    THE product card — unified definition matching Home page.
+    THE product card — one definition for the whole theme.
 
     The card is the platform's own <falak-product-card>, which is what the home
     rows already render through <falak-products-list> and
     <falak-products-slider>. This partial exists so the server-rendered pages
     (listing, search, brand, wishlist) render the SAME element rather than a
-    second copy of the markup — with native support for:
-    - Real discount value/percentage ribbons
-    - Free shipment & special offer ribbons
-    - Unified actions, buttons & styling across Home, Category, Search, Brand, Wishlist
+    second copy of the markup — the theme had two cards before, and the same
+    product wore a different one depending on where a shopper found it.
+
+    The record is handed over as a JSON attribute because these pages already
+    have it from the server; the element therefore paints without a fetch.
+
+        {% include 'pages.partials.product-card' %}
+
+    | product | object | a record already in hand (listing, search, brand…) |
+    | source  | string | analytics label; defaults to the enclosing page     |
 #}
 {% set is_wishlist = is_wishlist|default(account_page|default('') == 'wishlist') %}
-
 <falak-product-card
     product-id="{{ product.id }}"
     product="{{ product|json_encode|escape('html_attr') }}"
     show-add-button
-    show-wishlist
-    source="{{ source|default(is_wishlist ? 'wishlist' : 'listing') }}">
-    {% if is_wishlist %}
-        <button type="button" class="product-card__remove-wishlist" data-wishlist-remove="{{ product.id }}" aria-label="{{ trans('cart.remove')|default('Remove') }}" title="{{ trans('cart.remove')|default('Remove') }}">
-            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                <line x1="18" y1="6" x2="6" y2="18"></line>
-                <line x1="6" y1="6" x2="18" y2="18"></line>
-            </svg>
-        </button>
-    {% endif %}
-</falak-product-card>
+    {% if not is_wishlist %}show-wishlist{% endif %}
+    source="{{ source|default(is_wishlist ? 'wishlist' : 'listing') }}"></falak-product-card>
