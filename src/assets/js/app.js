@@ -4466,6 +4466,44 @@
         normalizeDateNumerals();
     }
 
+    /* Preferences modal: ensure AR / EN high contrast badge styling */
+    function syncLocaleOptionContrast(root) {
+        var options = (root || document).querySelectorAll('.f-locale__option, [data-lang]');
+        if (!options.length) return;
+        options.forEach(function (opt) {
+            var code = opt.querySelector('.f-locale__code');
+            if (!code) return;
+            var isCurrent = opt.classList.contains('is-current') || opt.getAttribute('aria-checked') === 'true';
+            if (isCurrent) {
+                code.style.setProperty('background-color', 'var(--color-primary, #c25867)', 'important');
+                code.style.setProperty('color', '#ffffff', 'important');
+                code.style.setProperty('border-color', 'var(--color-primary, #c25867)', 'important');
+                code.style.setProperty('font-weight', '700', 'important');
+            } else {
+                code.style.setProperty('background-color', '#e2e8f0', 'important');
+                code.style.setProperty('color', '#0f172a', 'important');
+                code.style.setProperty('border-color', '#cbd5e1', 'important');
+                code.style.setProperty('font-weight', '700', 'important');
+            }
+        });
+    }
+
+    document.addEventListener('click', function (e) {
+        if (e.target && e.target.closest && (e.target.closest('[data-lang]') || e.target.closest('.f-locale__option') || e.target.closest('[data-switch-toggle]') || e.target.closest('.f-locale__trigger') || e.target.closest('.main-menu__prefs') || e.target.closest('falak-localization-modal'))) {
+            setTimeout(function () { syncLocaleOptionContrast(); }, 40);
+            setTimeout(function () { syncLocaleOptionContrast(); }, 150);
+            setTimeout(function () { syncLocaleOptionContrast(); }, 350);
+        }
+    });
+
+    if (window.MutationObserver) {
+        var localeObs = new MutationObserver(function () {
+            var modal = document.querySelector('falak-localization-modal, #falak-localization');
+            if (modal) syncLocaleOptionContrast(modal);
+        });
+        localeObs.observe(document.documentElement, { childList: true, subtree: true });
+    }
+
     if (document.querySelector('falak-order-summary')) {
         enhanceOrderSummaryPrices();
         document.querySelectorAll('falak-order-summary').forEach(function (sum) {
