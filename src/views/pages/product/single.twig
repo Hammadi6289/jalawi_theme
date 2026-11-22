@@ -12,7 +12,20 @@
 {% block content %}
     <div class="container product-single">
         {% if theme.settings.get('product_show_breadcrumbs', true) %}
-            <falak-breadcrumb></falak-breadcrumb>
+            {% set active_cat = (product.categories|default([])|length > 0) ? product.categories|first : product.category|default(null) %}
+            {% if active_cat and active_cat.name|default('') and active_cat.url|default('') %}
+                {% set crumbs = [
+                    { title: trans('common.home'), label: trans('common.home'), url: store.url|default('/') },
+                    { title: active_cat.name, label: active_cat.name, url: active_cat.url },
+                    { title: product.name, label: product.name, url: '' }
+                ] %}
+            {% else %}
+                {% set crumbs = [
+                    { title: trans('common.home'), label: trans('common.home'), url: store.url|default('/') },
+                    { title: product.name, label: product.name, url: '' }
+                ] %}
+            {% endif %}
+            <falak-breadcrumb items="{{ crumbs|json_encode|escape('html_attr') }}"></falak-breadcrumb>
         {% endif %}
 
         {% set is_printing = product.is_printing|default(false) %}

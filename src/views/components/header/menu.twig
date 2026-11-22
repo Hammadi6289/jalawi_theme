@@ -64,8 +64,17 @@
                     {% set link_type = link.link_type|default(link['topnav_links.link_type']|default('custom')) %}
                     {% if link_type is iterable %}{% set link_type = link_type|first %}{% endif %}
                     {% set link_category = link.link_category|default(link['topnav_links.link_category']|default(null)) %}
+                    {% if link_category is iterable and link_category.id is not defined and link_category.url is not defined %}
+                        {% set link_category = link_category|first %}
+                    {% endif %}
                     {% set link_product = link.link_product|default(link['topnav_links.link_product']|default(null)) %}
-                    {% if link_type == 'category' and link_category %}{% set link_url = '/products?category_id[]=' ~ link_category %}
+                    {% if link_type == 'category' and link_category %}
+                        {% set cat_raw = link_category.id|default(link_category.url|default(link_category)) %}
+                        {% if '/' in cat_raw %}
+                            {% set link_url = cat_raw %}
+                        {% else %}
+                            {% set link_url = '/products?category_id[]=' ~ cat_raw %}
+                        {% endif %}
                     {% elseif link_type == 'product' and link_product %}{% set link_url = '/product/' ~ link_product %}
                     {% elseif link_type == 'products' %}{% set link_url = '/products' %}
                     {% elseif link_type == 'home' %}{% set link_url = '/' %}{% endif %}
@@ -126,8 +135,17 @@
                     {% set tile_type = card.link_type|default(card['mega_menu_cards.link_type']|default('custom')) %}
                     {% if tile_type is iterable %}{% set tile_type = tile_type|first %}{% endif %}
                     {% set tile_category = card.link_category|default(card['mega_menu_cards.link_category']|default(null)) %}
+                    {% if tile_category is iterable and tile_category.id is not defined and tile_category.url is not defined %}
+                        {% set tile_category = tile_category|first %}
+                    {% endif %}
                     {% set tile_product = card.link_product|default(card['mega_menu_cards.link_product']|default(null)) %}
-                    {% if tile_type == 'category' and tile_category %}{% set tile_link = '/products?category_id[]=' ~ tile_category %}
+                    {% if tile_type == 'category' and tile_category %}
+                        {% set cat_raw = tile_category.id|default(tile_category.url|default(tile_category)) %}
+                        {% if '/' in cat_raw %}
+                            {% set tile_link = cat_raw %}
+                        {% else %}
+                            {% set tile_link = '/products?category_id[]=' ~ cat_raw %}
+                        {% endif %}
                     {% elseif tile_type == 'product' and tile_product %}{% set tile_link = '/product/' ~ tile_product %}
                     {% elseif tile_type == 'products' %}{% set tile_link = '/products' %}
                     {% elseif tile_type == 'home' %}{% set tile_link = '/' %}{% endif %}

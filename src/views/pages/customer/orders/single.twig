@@ -37,7 +37,13 @@
                         {% else %}
                             <span>{{ item.name }}</span>
                         {% endif %}
-                        <span class="cart-item__meta">{{ item.quantity }} × {{ falak_currency(item.price) }}</span>
+                        <span class="cart-item__meta">
+                            {{ item.quantity }} × {{ falak_currency(item.price) }}
+                            {% set item_orig = item.original_price|default(item.old_amount|default(item.compare_at|default(0))) %}
+                            {% if item_orig and item_orig > item.price %}
+                                <del class="cart-item__was-price">{{ falak_currency(item_orig) }}</del>
+                            {% endif %}
+                        </span>
                     </div>
                 </li>
             {% endfor %}

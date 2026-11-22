@@ -7208,6 +7208,14 @@ body:has(.compare-panel:not([hidden])) {
 .f-order__item-tags { display: flex; flex-wrap: wrap; gap: 0.3rem; }
 .f-order__item-tags:empty { display: none; }
 .f-order__item-total { font-weight: 700; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.f-order__item-was, .cart-item__was-price {
+    margin-inline-start: 0.4rem;
+    color: var(--f-text-faint, #888);
+    font-size: 0.82em;
+    font-weight: normal;
+    text-decoration: line-through;
+    opacity: 0.7;
+}
 .f-order__item-rate { align-self: flex-start; margin-block-start: 0.25rem; }
 .f-order__item-reviewed { display: inline-flex; align-items: center; gap: 0.4rem; font-size: 0.8rem; color: var(--f-text-soft); }
 
@@ -21703,7 +21711,8 @@ custom-falak-blog-comments {
     inset: 0;
     inline-size: 100%;
     block-size: 100%;
-    object-fit: cover;
+    object-fit: contain;
+    background: var(--color-surface, #f8f9fa);
 }
 
 .qv__slide--empty { background: var(--color-surface); opacity: 1; }

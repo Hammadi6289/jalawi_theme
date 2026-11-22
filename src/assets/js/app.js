@@ -4313,4 +4313,82 @@
         new MutationObserver(function () { dropNotificationRows(menu); })
             .observe(menu, { childList: true, subtree: true });
     });
+
+    /* Phone number validation in login modal: reject dummy numbers or repetitive digits */
+    document.addEventListener('submit', function (event) {
+        var form = event.target;
+        if (!form || !form.matches || !form.matches('falak-login-modal form[data-step="phone"]')) return;
+
+        var field = form.querySelector('[data-digits="phone"]');
+        var value = field ? field.value.trim().replace(/[\s-]/g, '') : '';
+        if (!value) return;
+
+        var digits = value.replace(/\D/g, '');
+        var isDummy = digits.length < 7 || /^(\d)\1+$/.test(digits) || /^0{3,}/.test(digits);
+        var isInvalidPrefix = (value.charAt(0) === '+' && value.slice(0, 2) === '+0') || (value.slice(0, 2) === '00' && value.slice(0, 3) === '000');
+
+        if (isDummy || isInvalidPrefix) {
+            event.preventDefault();
+            event.stopImmediatePropagation();
+
+            var modal = form.closest('falak-login-modal');
+            var message = modal && modal.trans ? modal.trans('checkout.phone_invalid') : '';
+            if (!message || message === 'checkout.phone_invalid') {
+                message = document.documentElement.lang === 'en'
+                    ? 'Please enter a valid phone number.'
+                    : 'يرجى إدخال رقم جوال صحيح.';
+            }
+
+            var error = form.querySelector('[data-error]');
+            if (error) {
+                error.textContent = message;
+                error.hidden = false;
+            }
+            if (field) field.focus();
+        }
+    }, true);
+
+    /* Enhance order summary item prices if original/discounted price is available */
+    function enhanceOrderSummaryPrices(root) {
+        (root || document).querySelectorAll('falak-order-summary').forEach(function (summary) {
+            var orderRaw = summary.getAttribute('order');
+            if (!orderRaw) return;
+            var orderData = null;
+            try { orderData = JSON.parse(orderRaw); } catch (e) {}
+            if (!orderData || !Array.isArray(orderData.items)) return;
+
+            var itemsMap = {};
+            orderData.items.forEach(function (it) {
+                if (it.product_id) itemsMap[it.product_id] = it;
+                if (it.name) itemsMap[it.name] = it;
+            });
+
+            summary.querySelectorAll('.f-order__item').forEach(function (row) {
+                if (row.querySelector('.f-order__item-was')) return;
+                var nameEl = row.querySelector('.f-order__item-name');
+                var name = nameEl ? nameEl.textContent.trim() : '';
+                var itemData = itemsMap[name];
+                if (!itemData) return;
+
+                var orig = itemData.original_price || itemData.old_amount || itemData.compare_at;
+                if (orig && Number(orig) > Number(itemData.price)) {
+                    var totalEl = row.querySelector('.f-order__item-total');
+                    if (totalEl) {
+                        var del = document.createElement('del');
+                        del.className = 'f-order__item-was';
+                        del.textContent = (window.falak && window.falak.currency) ? window.falak.currency.format(orig * (itemData.quantity || 1)) : String(orig);
+                        totalEl.parentNode.insertBefore(del, totalEl.nextSibling);
+                    }
+                }
+            });
+        });
+    }
+
+    if (document.querySelector('falak-order-summary')) {
+        enhanceOrderSummaryPrices();
+        document.querySelectorAll('falak-order-summary').forEach(function (sum) {
+            new MutationObserver(function () { enhanceOrderSummaryPrices(sum); })
+                .observe(sum, { childList: true, subtree: true });
+        });
+    }
 })();
