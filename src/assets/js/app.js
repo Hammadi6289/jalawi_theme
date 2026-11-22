@@ -4352,35 +4352,65 @@
     function enhanceOrderSummaryPrices(root) {
         (root || document).querySelectorAll('falak-order-summary').forEach(function (summary) {
             var orderRaw = summary.getAttribute('order');
-            if (!orderRaw) return;
             var orderData = null;
-            try { orderData = JSON.parse(orderRaw); } catch (e) {}
-            if (!orderData || !Array.isArray(orderData.items)) return;
+            if (orderRaw) {
+                try { orderData = JSON.parse(orderRaw); } catch (e) {}
+            }
+            if (!orderData && summary.order) {
+                orderData = summary.order;
+            }
 
-            var itemsMap = {};
-            orderData.items.forEach(function (it) {
-                if (it.product_id) itemsMap[it.product_id] = it;
-                if (it.name) itemsMap[it.name] = it;
-            });
+            function applyPrices(oData) {
+                if (!oData) return;
+                var rawItems = oData.items || oData.order_items || oData.orderItems || [];
+                if (!Array.isArray(rawItems)) return;
 
-            summary.querySelectorAll('.f-order__item').forEach(function (row) {
-                if (row.querySelector('.f-order__item-was')) return;
-                var nameEl = row.querySelector('.f-order__item-name');
-                var name = nameEl ? nameEl.textContent.trim() : '';
-                var itemData = itemsMap[name];
-                if (!itemData) return;
+                var itemsMap = {};
+                rawItems.forEach(function (it, idx) {
+                    if (it.product_id) itemsMap[String(it.product_id)] = it;
+                    if (it.name) itemsMap[it.name.trim()] = it;
+                    if (it.product_name) itemsMap[it.product_name.trim()] = it;
+                    itemsMap['index_' + idx] = it;
+                });
 
-                var orig = itemData.original_price || itemData.old_amount || itemData.compare_at;
-                if (orig && Number(orig) > Number(itemData.price)) {
-                    var totalEl = row.querySelector('.f-order__item-total');
-                    if (totalEl) {
-                        var del = document.createElement('del');
-                        del.className = 'f-order__item-was';
-                        del.textContent = (window.falak && window.falak.currency) ? window.falak.currency.format(orig * (itemData.quantity || 1)) : String(orig);
-                        totalEl.parentNode.insertBefore(del, totalEl.nextSibling);
+                var rows = summary.querySelectorAll('.f-order__item, .cart-item');
+                rows.forEach(function (row, idx) {
+                    if (row.querySelector('.f-order__item-was, .cart-item__was-price')) return;
+                    var nameEl = row.querySelector('.f-order__item-name, .cart-item__info a, .cart-item__info span');
+                    var name = nameEl ? nameEl.textContent.trim() : '';
+                    var itemData = itemsMap[name] || itemsMap['index_' + idx];
+                    if (!itemData) return;
+
+                    var price = Number(itemData.price != null ? itemData.price : itemData.unit_price);
+                    var prod = itemData.product || {};
+                    var orig = Number(itemData.original_price || itemData.old_amount || itemData.compare_at || prod.compare_at || prod.price_cents || prod.original_price || 0);
+
+                    if (orig && orig > price) {
+                        var totalEl = row.querySelector('.f-order__item-total, .cart-item__meta');
+                        if (totalEl) {
+                            var del = document.createElement('del');
+                            del.className = 'f-order__item-was cart-item__was-price';
+                            var qty = Number(itemData.quantity) || 1;
+                            del.textContent = (window.falak && window.falak.currency) ? window.falak.currency.format(orig * qty) : String(orig * qty);
+                            totalEl.parentNode.insertBefore(del, totalEl.nextSibling);
+                        }
                     }
-                }
-            });
+                });
+            }
+
+            applyPrices(orderData);
+
+            var orderNumber = summary.getAttribute('order-number');
+            if (orderNumber && !summary._orderFetched) {
+                summary._orderFetched = true;
+                fetch('/api/customer/orders/' + encodeURIComponent(orderNumber))
+                    .then(function (r) { return r.json(); })
+                    .then(function (res) {
+                        var o = res && (res.order || res.data || res);
+                        if (o) applyPrices(o);
+                    })
+                    .catch(function () {});
+            }
         });
     }
 
