@@ -44,6 +44,39 @@
         })();
     </script>
 
+    {# Force English date & time formatting throughout Jalawi theme across all platform components and locales #}
+    <script>
+        (function () {
+            try {
+                if (window.Intl && window.Intl.DateTimeFormat) {
+                    var NativeDTF = window.Intl.DateTimeFormat;
+                    window.Intl.DateTimeFormat = function (locales, options) {
+                        var forced = locales;
+                        if (!locales || (typeof locales === 'string' && locales.indexOf('ar') === 0) || (Array.isArray(locales) && locales.some(function (l) { return typeof l === 'string' && l.indexOf('ar') === 0; }))) {
+                            forced = 'en-GB';
+                        }
+                        return new NativeDTF(forced, options);
+                    };
+                    window.Intl.DateTimeFormat.prototype = NativeDTF.prototype;
+                    window.Intl.DateTimeFormat.supportedLocalesOf = NativeDTF.supportedLocalesOf;
+                }
+                var proto = Date.prototype;
+                var wrapDateMethod = function (originalMethod) {
+                    return function (locales, options) {
+                        var forced = locales;
+                        if (!locales || (typeof locales === 'string' && locales.indexOf('ar') === 0)) {
+                            forced = 'en-GB';
+                        }
+                        return originalMethod.call(this, forced, options);
+                    };
+                };
+                if (proto.toLocaleDateString) proto.toLocaleDateString = wrapDateMethod(proto.toLocaleDateString);
+                if (proto.toLocaleTimeString) proto.toLocaleTimeString = wrapDateMethod(proto.toLocaleTimeString);
+                if (proto.toLocaleString) proto.toLocaleString = wrapDateMethod(proto.toLocaleString);
+            } catch (e) {}
+        })();
+    </script>
+
     <title>{% block title %}{{ seo.title }}{% endblock %}</title>
     <meta name="description" content="{% block meta_description %}{{ seo.description }}{% endblock %}">
 
@@ -57,7 +90,7 @@
 
     {% block styles %}{% endblock %}
     {# ?v= busts browser caches from before the dev no-cache header; bump on asset changes #}
-    <link rel="stylesheet" href="{{ 'styles/app.css'|asset }}?v=172">
+    <link rel="stylesheet" href="{{ 'styles/app.css'|asset }}?v=173">
 
     <style>
         :root {
@@ -247,7 +280,7 @@
     {# platform injection: FalakSDK script + init #}
     {% hook 'body:end' %}
 
-    <script defer src="{{ 'js/app.js'|asset }}?v=81"></script>
+    <script defer src="{{ 'js/app.js'|asset }}?v=82"></script>
     <script defer src="{{ 'js/blog.js'|asset }}?v=4"></script>
     {% block scripts %}{% endblock %}
 </body>

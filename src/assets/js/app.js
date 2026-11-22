@@ -4448,11 +4448,31 @@
         });
     }
 
+    /*  English date numerals */
+    function normalizeDateNumerals(root) {
+        var dateSelectors = 'time, .order-head__date, .order-row__date, .f-order__date, .f-orders__date, .f-order__step-date, .f-comments__date, .blog-card__date, .blog-comment__date, .article-date';
+        (root || document).querySelectorAll(dateSelectors).forEach(function (el) {
+            if (el.textContent && /[٠-٩]/.test(el.textContent)) {
+                el.textContent = el.textContent.replace(/[٠-٩]/g, function (d) {
+                    return String(d.charCodeAt(0) - 1632);
+                });
+            }
+        });
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', function () { normalizeDateNumerals(); });
+    } else {
+        normalizeDateNumerals();
+    }
+
     if (document.querySelector('falak-order-summary')) {
         enhanceOrderSummaryPrices();
         document.querySelectorAll('falak-order-summary').forEach(function (sum) {
-            new MutationObserver(function () { enhanceOrderSummaryPrices(sum); })
-                .observe(sum, { childList: true, subtree: true });
+            new MutationObserver(function () {
+                enhanceOrderSummaryPrices(sum);
+                normalizeDateNumerals(sum);
+            }).observe(sum, { childList: true, subtree: true });
         });
     }
 })();
