@@ -464,20 +464,55 @@
 
                 // Category line above title
                 var cardHost = card.closest('falak-product-card');
-                if (cardHost && cardHost.product && !card.querySelector('.f-card__category')) {
+                if (cardHost && !card.querySelector('.f-card__category')) {
                     var p = cardHost.product;
-                    var catName = (isArabic && (p.category_name_ar || (p.category && p.category.name_ar))) ||
-                        p.category_name || (p.category && p.category.name) || p.subtitle_ar || p.subtitle;
-                    if (catName) {
-                        var body = card.querySelector('.f-card__body');
-                        if (body) {
-                            var catEl = document.createElement('span');
-                            catEl.className = 'f-card__category';
-                            catEl.textContent = catName;
-                            body.insertBefore(catEl, body.firstChild);
+                    if (!p && cardHost.hasAttribute('product')) {
+                        try { p = JSON.parse(cardHost.getAttribute('product')); } catch (e) {}
+                    }
+                    if (p) {
+                        var catName = (isArabic && (p.category_name_ar || (p.category && p.category.name_ar))) ||
+                            p.category_name || (p.category && p.category.name) || p.subtitle_ar || p.subtitle;
+                        if (catName) {
+                            var body = card.querySelector('.f-card__body');
+                            if (body) {
+                                var catEl = document.createElement('span');
+                                catEl.className = 'f-card__category';
+                                catEl.textContent = catName;
+                                body.insertBefore(catEl, body.firstChild);
+                            }
                         }
                     }
                 }
+                // Badge and offer stacking helper for cards
+                var hasBadge = !!card.querySelector('.f-card__badge');
+                var hasOffer = !!card.querySelector('.f-card__offer');
+                var hasShip = !!card.querySelector('.f-card__ship');
+
+                // If product metadata has free shipping and card doesn't have ship/offer badge, add it
+                if (!hasShip && !hasOffer && cardHost) {
+                    var prod = cardHost.product;
+                    if (!prod && cardHost.hasAttribute('product')) {
+                        try { prod = JSON.parse(cardHost.getAttribute('product')); } catch (e) {}
+                    }
+                    if (prod && (prod.free_shipping || prod.free_shipment || prod.freeShipping || prod.is_free_shipping)) {
+                        var media = card.querySelector('.f-card__media');
+                        if (media) {
+                            var shipEl = document.createElement('span');
+                            shipEl.className = 'f-card__ship';
+                            shipEl.textContent = isArabic ? 'شحن مجاني' : 'Free shipping';
+                            media.appendChild(shipEl);
+                            hasShip = true;
+                        }
+                    }
+                }
+
+                if (hasBadge && (hasOffer || hasShip)) {
+                    card.classList.add('has-badge-and-offer');
+                    if (hasOffer && hasShip) {
+                        card.classList.add('has-both-offer-and-ship');
+                    }
+                }
+
                 // Price compare_at sync if missing on .product-card
                 var priceEl = card.querySelector('.product-card__price');
                 if (priceEl && !priceEl.querySelector('del, .product-card__price-was')) {
