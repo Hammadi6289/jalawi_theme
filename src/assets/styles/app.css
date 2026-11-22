@@ -16791,8 +16791,7 @@ html[lang="ar"] #falak-search .f-search__list:not(:empty)::before {
     align-items: center;
     justify-content: space-between;
     gap: 0.5rem;
-    width: 100%;
-    max-width: 100%;
+    inline-size: 100%;
 }
 
 .site-topbar__contact {
@@ -17327,8 +17326,6 @@ body.compare-is-open {
     gap: 0.5rem;
     min-height: 0;
     padding-block: 0.625rem;
-    width: 100%;
-    max-width: 100%;
 }
 
 .site-header__start {
