@@ -7891,6 +7891,16 @@ falak-announcement:not(.f-announce--scroll) .f-announce__inner {
     opacity: 1;
 }
 
+.site-header--sticky.is-scrolled .site-header__navbar {
+    border-top-color: transparent;
+    border-bottom-color: transparent;
+}
+
+.topnav-is-dark .site-header--sticky.is-scrolled .site-header__navbar {
+    border-top-color: transparent;
+    border-bottom-color: transparent;
+}
+
 .site-header__topbar-inner {
     display: flex;
     align-items: center;
@@ -7902,6 +7912,7 @@ falak-announcement:not(.f-announce--scroll) .f-announce__inner {
 .site-header__navbar {
     border-top: 1px solid var(--color-border);
     border-bottom: 1px solid var(--color-border);
+    transition: border-color 0.3s ease;
 }
 
 .cat-bar ul {
