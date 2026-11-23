@@ -22450,6 +22450,37 @@ a.qv__eyebrow:hover { color: var(--color-primary); }
     }
 }
 
+/* Booking wizard (Appointments) & My Bookings modal */
+
+.f-booking {
+    --bk-brand: var(--color-primary, #c25867);
+    --bk-text: var(--color-text, #1e293b);
+    --bk-brand-ink: color-mix(in srgb, var(--bk-brand) 82%, #000);
+    --bk-bg: var(--color-surface, #ffffff);
+    --bk-tint: color-mix(in srgb, var(--bk-brand) 10%, var(--color-surface, #ffffff));
+    --bk-line: var(--color-border, #e2e8f0);
+    --bk-soft: var(--color-text-soft, #64748b);
+    --bk-ok: var(--color-success, #16a34a);
+}
+
+/* Hide outer falak-modal header so the wizard's internal clean header (.f-booking__top) is shown without duplication */
+#falak-booking-wizard .f-modal__header,
+.f-booking .f-modal__header,
+falak-booking-wizard .f-modal__header,
+#falak-my-bookings .f-modal__header,
+.f-my-bookings .f-modal__header,
+falak-my-bookings .f-modal__header {
+    display: none !important;
+}
+
+#falak-booking-wizard .f-modal__body,
+.f-booking .f-modal__body,
+falak-booking-wizard .f-modal__body {
+    border-radius: var(--radius-lg, 1rem) !important;
+    overflow: hidden !important;
+    background: var(--color-surface, #ffffff) !important;
+}
+
 .product-personalization {
     display: block;
     width: 100%;
