@@ -3835,7 +3835,7 @@
                 + this.escape(t(p.inStock ? 'product.in_stock' : 'product.out_of_stock'))
                 + '</span>'
                 + '<span class="qv__sku" data-qv-sku-wrap' + (p.sku ? '' : ' hidden') + '>'
-                + this.escape(t('product.sku')) + ' '
+                + this.escape(t('product.sku')) + ': '
                 + '<span dir="ltr" data-qv-sku>' + this.escape(p.sku || '') + '</span>'
                 + '</span>'
                 + (p.isTaxable ? '<span class="qv__tax">' + this.escape(t('product.tax_included')) + '</span>' : '')
@@ -4050,7 +4050,7 @@
                     summary.textContent = groups
                         .filter(g => selected[g.key] !== undefined)
                         .map(g => (typeof options.valueLabel === 'function' ? options.valueLabel(g, selected[g.key]) : selected[g.key]))
-                        .join(' Â· ');
+                        .join(' · ');
                 }
             };
 
@@ -4129,8 +4129,16 @@
             return '';
         }
 
-        trans(key) {
-            return window.falak.lang.get(key);
+        trans(key, fallback) {
+            const val = window.falak && window.falak.lang && window.falak.lang.get ? window.falak.lang.get(key) : '';
+            if (!val || val === key) {
+                if (key === 'product.tax_included') {
+                    const isAr = document.documentElement.dir === 'rtl' || (window.falak && window.falak.lang && window.falak.lang.locale === 'ar');
+                    return isAr ? 'شامل الضريبة' : 'Tax included';
+                }
+                return fallback || key;
+            }
+            return val;
         }
 
         /* The API returns media as bare storage paths ('products/x.jpg'), so
